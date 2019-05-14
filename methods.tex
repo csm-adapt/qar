@@ -11,7 +11,7 @@ Fully dense neural network (NN) architectures, such as the one shown in Figure~\
 
 The resulting network,
 \begin{equation}
-	f(x) = \sigma(\boldsymbol\theta_n \sigma(\boldsymbol\theta_{n-1} \sigma(\ldots \sigma({\bold x}))))
+	f(x) = \sigma(\boldsymbol\theta_n \sigma(\boldsymbol\theta_{n-1} \sigma(\ldots \boldsymbol\theta_2 \sigma(\boldsymbol\theta_1{\bold x}))))
 	\label{eqn:nn analytical form}
 \end{equation}
 is an arbitrary function generator, but at present, the network weights $\boldsymbol\theta_i$ can not map back to analytic forms that capture and describe the underlying physics. There are, however, many such mappings through polynomial series expansions,

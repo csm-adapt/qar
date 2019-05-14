@@ -27,11 +27,11 @@ The goal is to iteratively improve on this constitutive model one term at a time
 
 The analytical form, combining Equations~(\ref{eqn:nn analytical form}) and (\ref{eqn:sigmoid zeta expansion}), the estimated output of a two-layer NN can be written as
 \begin{eqnarray}
-	\widehat{\bold y} & = & \frac{1}{2} - 4 \sum_{m=1}^\infty b_m \left( \boldsymbol\theta_2 \left( \frac{1}{4} - \sum_{n=1}^\infty a_n (\boldsymbol\theta_1 {\bold x})^{2n-1} \right) \right)^{2m - 1} \\
-		& = & \frac{1}{2} - 4 \sum_{m=1}^\infty b_m \boldsymbol\theta_2^{2m - 1} \left( \frac{1}{4} - a_1 (\boldsymbol\theta_1 {\bold x}) - a_2 (\boldsymbol\theta_1 {\bold x})^3 - \ldots \right)^{2m - 1} \nonumber \\
-		& = & \frac{1}{2} - 4 \sum_{m=1}^\infty b_m \boldsymbol\theta_2^{2m - 1} \left(v_0 + v_1 + \ldots \right)^{2m - 1},\ v_0 = \frac{1}{4}, v_1 = a_1 \boldsymbol\theta_1 {\bold x}, v2 = \ldots \nonumber \\
-		& = & \frac{1}{2} - 4 \sum_{m=1}^\infty b_m \boldsymbol\theta_2^{2m - 1} \sum_{k_1 + k_2 + \ldots + k_n = 2m - 1} \binom{2m-1}{k_0, k_1, k_2, \ldots, k_n} v_0^{k_0} v_1^{k_1} \ldots v_n^{k_n} \nonumber \\
-		& = & \frac{1}{2} - 4 \sum_{m=1}^\infty \sum_{k_1 + k_2 + \ldots + k_n = 2m - 1} b_m \boldsymbol\theta_2^{2m - 1} \binom{2m-1}{k_0, k_1, k_2, \ldots, k_n} v_0^{k_0} v_1^{k_1} \ldots v_n^{k_n}
+	\widehat{\bold y} & = & \frac{1}{2} - 2 \sum_{m=1}^\infty b_m \left( 2\boldsymbol\theta_2 \left( \frac{1}{4} - \sum_{n=1}^\infty a_n (\boldsymbol\theta_1 {\bold x})^{2n-1} \right) \right)^{2m - 1} \\
+		& = & \frac{1}{2} - 2 \sum_{m=1}^\infty 2^{2m-1} b_m \boldsymbol\theta_2^{2m - 1} \left( \frac{1}{4} - a_1 (\boldsymbol\theta_1 {\bold x}) - a_2 (\boldsymbol\theta_1 {\bold x})^3 - \ldots \right)^{2m - 1} \nonumber \\
+		& = & \frac{1}{2} - \sum_{m=1}^\infty 2^{2m} b_m \boldsymbol\theta_2^{2m - 1} \left(v_0 + v_1 + \ldots \right)^{2m - 1},\ v_0 = \frac{1}{4}, v_1 = a_1 \boldsymbol\theta_1 {\bold x}, v2 = \ldots \nonumber \\
+		& = & \frac{1}{2} - \sum_{m=1}^\infty 2^{2m} b_m \boldsymbol\theta_2^{2m - 1} \sum_{k_1 + k_2 + \ldots + k_n = 2m - 1} \binom{2m-1}{k_0, k_1, k_2, \ldots, k_n} v_0^{k_0} v_1^{k_1} \ldots v_n^{k_n} \nonumber \\
+		& = & \frac{1}{2} - \sum_{m=1}^\infty \sum_{k_1 + k_2 + \ldots + k_n = 2m - 1} 2^{2m} b_m \boldsymbol\theta_2^{2m - 1} \binom{2m-1}{k_0, k_1, k_2, \ldots, k_n} v_0^{k_0} v_1^{k_1} \ldots v_n^{k_n}
 \end{eqnarray}
 where
 \[
