@@ -1,0 +1,41 @@
+\section{Discussion}\label{discussion}
+
+Many non-trivial problems in materials science, and in science more broadly, are explained not through a single constitutive relationship, but through a superposition of contributing physics. 
+
+Figure~\ref{fig:stress} shows an artificial dataset constructed to replicate the impact of yield stress in a two-phase, solid-solution strengthened alloy system. Using a combination of composite theory for the contribution of flow stress, {\color{red} NAME} solid solution \cite{solid solution}, and Hall-Petch \cite{Hall-Petch} strengthening, the expected yield stress is
+
+\begin{equation}
+	\sigma_y = F_v^A \sigma_f^A + F_v^B \sigma_f^B + \sum_i C_i [x_i]^{2/3} + \sum_j k_j d_j^{-1/2} + \ldots
+\end{equation}
+
+\noindent with free parameters \\[2ex]
+\begin{tabular}{l l}
+	$F_v^i$	& Volume fraction of phase $i$ \\
+	$[x_i]$	& Concentration of solute $i$ \\
+	$d_j$	& Average grain diameter of phase $j$
+\end{tabular}
+\\[2ex]
+\noindent and fixed parameters \\[2ex]
+\begin{tabular}{l l}
+	$\sigma_f^i$	& Flow stress of phase $i$ \\
+	$C_i$		& Solid solution strengthening coefficient for solute species $i$ \\
+	$k_j$		& Hall-Petch strengthening coefficient for phase $j$
+\end{tabular}
+\\[2ex]
+
+The goal is to iteratively improve on this constitutive model one term at a time, and monitor the effect on the residuals between the predicted yield, $\hat{\sigma_y}$ and the actual yield $\sigma_y$.
+
+The analytical form, combining Equations~(\ref{eqn:nn analytical form}) and (\ref{eqn:sigmoid zeta expansion}), the estimated output of a two-layer NN can be written as
+\begin{eqnarray}
+	\widehat{\bold y} & = & \frac{1}{2} - 4 \sum_{m=1}^\infty b_m \left( \boldsymbol\theta_2 \left( \frac{1}{4} - \sum_{n=1}^\infty a_n (\boldsymbol\theta_1 {\bold x})^{2n-1} \right) \right)^{2m - 1} \\
+		& = & \frac{1}{2} - 4 \sum_{m=1}^\infty b_m \boldsymbol\theta_2^{2m - 1} \left( \frac{1}{4} - a_1 (\boldsymbol\theta_1 {\bold x}) - a_2 (\boldsymbol\theta_1 {\bold x})^3 - \ldots \right)^{2m - 1} \nonumber \\
+		& = & \frac{1}{2} - 4 \sum_{m=1}^\infty b_m \boldsymbol\theta_2^{2m - 1} \left(v_0 + v_1 + \ldots \right)^{2m - 1},\ v_0 = \frac{1}{4}, v_1 = a_1 \boldsymbol\theta_1 {\bold x}, v2 = \ldots \nonumber \\
+		& = & \frac{1}{2} - 4 \sum_{m=1}^\infty b_m \boldsymbol\theta_2^{2m - 1} \sum_{k_1 + k_2 + \ldots + k_n = 2m - 1} \binom{2m-1}{k_0, k_1, k_2, \ldots, k_n} v_0^{k_0} v_1^{k_1} \ldots v_n^{k_n} \nonumber \\
+		& = & \frac{1}{2} - 4 \sum_{m=1}^\infty \sum_{k_1 + k_2 + \ldots + k_n = 2m - 1} b_m \boldsymbol\theta_2^{2m - 1} \binom{2m-1}{k_0, k_1, k_2, \ldots, k_n} v_0^{k_0} v_1^{k_1} \ldots v_n^{k_n}
+\end{eqnarray}
+where
+\[
+	\binom{2m-1}{k_0, k_1, \ldots, k_n} = \frac{(2m-1)!}{k_0! k_1! \ldots k_n!}
+\]
+
+{\color{red} How does dropout affect this?}
