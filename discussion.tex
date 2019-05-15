@@ -66,38 +66,73 @@ The analytical form, combining Equations~(\ref{eqn:nn analytical form}) and (\re
 							\tilde {\bold x} )%
 						\tilde {\bold x} )%
 					\tilde {\bold x})^k \nonumber \\
-		&   & \vdots \nonumber \\
-		&   & \text{where}\ \tilde a_i = \boldsymbol\theta_2^T a_i, %
-					\ \tilde{\bold x} = \boldsymbol\theta_1^T {\bold x} \nonumber \\
-		& = & \sum_{N=0}^\infty %
-				b_N %
-				\sum_{j=0}^N \binom{N}{j} \tilde a_0^{N-j} %
-				\sum_{k=0}^j \binom{j}{k} \tilde a_1^{j-k} %
-				\cdots %
-				\tilde{\bold x}^{j+k+\cdots} \\
-		& = & \sum_{N=0}^\infty %
-				\sum_{j=0}^N %
-				\sum_{k=0}^j %
-				\cdots %
-					b_N %
-					\binom{N}{j} \left( \boldsymbol\theta_2^T a_0 \right)^{N-j} %
-					\binom{j}{k} \left( \boldsymbol\theta_2^T a_1 \right)^{j-k} %
-					\cdots %
-					\left(\boldsymbol\theta_1^T {\bold x}\right)^{j+k+\cdots} \nonumber \\
-		& = & \sum_{N=0}^\infty %
-				\sum_{j=0}^N %
-				\sum_{k=0}^j %
-				\cdots %
-					b_N %
-					\binom{N}{j} %
-					\binom{j}{k} %
-					\cdots %
-					\left( \boldsymbol\theta_2^T a_0 \right)^{N-j} %
-					\left( \boldsymbol\theta_2^T a_1 \right)^{j-k} %
-					\cdots %
-					\left(\boldsymbol\theta_1^T {\bold x}\right)^{j+k+\cdots} \nonumber \\
-		& = & \sum_{k=0}^\infty c_k \left( \boldsymbol\theta_1 x \right)^k
+		&   & \vdots
 \end{eqnarray}
-{\color{red} If $a_i = 0\ \forall\ i\ \text{even}$, then are Equations~(13-14) everywhere 0?}
+\noindent where $\tilde a_i = \boldsymbol\theta_2^T a_i$ and $\tilde{\bold x} = \boldsymbol\theta_1^T {\bold x}$. However from Equation~(\ref{eqn:sigmoid zeta expansion}), $a_i  = 0\ \text{for}\ i = 2, 4, 6, \ldots$, and therefore,
+\begin{eqnarray}
+	{\bold y}_1 & = & \sum_{k=0}^\infty a_k (\boldsymbol\theta_1^T {\bold x})^k \nonumber \\
+	{\bold y}_2 & = & \sum_{k=0}^\infty b_k (\boldsymbol\theta_2^T {\bold y}_1)^k \nonumber \\
+		& = & b_0 {\bold 1} + \nonumber\\
+		&   & + b_1 (\tilde a_0 +%
+					(\tilde a_1 + %
+						(\tilde a_3 + %
+							(\tilde a_5 + %
+								(\ldots) \tilde {\bold x}^2 )%
+							\tilde {\bold x}^2 )%
+						\tilde {\bold x}^2 )%
+					\tilde {\bold x}) \nonumber \\
+		&   & + b_2 (\tilde a_0 +%
+					(\tilde a_1 + %
+						(\tilde a_3 + %
+							(\tilde a_5 + %
+								(\ldots) \tilde {\bold x}^2 )%
+							\tilde {\bold x}^2 )%
+						\tilde {\bold x}^2 )%
+					\tilde {\bold x})^2 \nonumber \\
+		&   & \vdots \nonumber \\
+		&   & + b_k (\tilde a_0 +%
+					(\tilde a_1 + %
+						(\tilde a_3 + %
+							(\tilde a_5 + %
+								(\ldots) \tilde {\bold x}^2 )%
+							\tilde {\bold x}^2 )%
+						\tilde {\bold x}^2 )%
+					\tilde {\bold x})^k \nonumber \\
+		&   & \vdots
+\end{eqnarray}
+\noindent where the $\tilde{\bold x}^2 = \tilde{\bold x} \odot \tilde{\bold x}$, the Hadamard product of $\tilde{\bold x}$ with itself.
+%\noindent which expands to
+%\begin{eqnarray)
+%	{\bold y}_2 & = & \sum_{N=0}^\infty %
+%				b_N %
+%				\sum_{j=0}^N \binom{N}{j} \tilde a_0^{N-j} %
+%				\sum_{k=0}^j \binom{j}{k} \tilde a_1^{j-k} %
+%				\cdots %
+%				\tilde{\bold x}^{j+k+\cdots} \\
+%		& = & \sum_{N=0}^\infty %
+%				\sum_{j=0}^N %
+%				\sum_{k=0}^j %
+%				\cdots %
+%					b_N %
+%					\binom{N}{j} \left( \boldsymbol\theta_2^T a_0 \right)^{N-j} %
+%					\binom{j}{k} \left( \boldsymbol\theta_2^T a_1 \right)^{j-k} %
+%					\cdots %
+%					\left(\boldsymbol\theta_1^T {\bold x}\right)^{j+k+\cdots} \nonumber \\
+%		& = & \sum_{N=0}^\infty %
+%				\sum_{j=0}^N %
+%				\sum_{k=0}^j %
+%				\cdots %
+%					b_N %
+%					\binom{N}{j} %
+%					\binom{j}{k} %
+%					\cdots %
+%					\left( \boldsymbol\theta_2^T a_0 \right)^{N-j} %
+%					\left( \boldsymbol\theta_2^T a_1 \right)^{j-k} %
+%					\cdots %
+%					\left(\boldsymbol\theta_1^T {\bold x}\right)^{j+k+\cdots} \nonumber \\
+%		& = & \sum_{k=0}^\infty c_k \left( \boldsymbol\theta_1 x \right)^k
+%\end{eqnarray}
+
+\noindent {\color{red} If $a_i = 0\ \forall\ i\ \text{even}$, then are Equations~(13-14) everywhere 0?}
 
 \noindent {\color{red} How does dropout affect this?}
