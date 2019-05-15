@@ -101,6 +101,39 @@ The analytical form, combining Equations~(\ref{eqn:nn analytical form}) and (\re
 		&   & \vdots
 \end{eqnarray}
 \noindent where the $\tilde{\bold x}^2 = \tilde{\bold x} \odot \tilde{\bold x}$, the Hadamard product of $\tilde{\bold x}$ with itself.
+\begin{align*}
+& \sum_{N=0}^\infty \sum_{k=0}^{N} \sum_{l=0}^{k} \sum_{m=0}^{l} \ldots %
+	b_N %
+	\binom{N}{k,l,m,\ldots} %
+	\tilde a_0^k \tilde a_1^l \tilde a_3^m \ldots %
+	\tilde {\bold x}^{N-k\ldots} %
+	({\tilde {\bold x}^2})^{N-k-l\ldots} %
+	({\tilde {\bold x}^2})^{N-k-l-m\ldots} \\
+\end{align*}
+\noindent where $N = k+l+m+n+\ldots$
+\begin{align*}
+& \sum_{N=0}^\infty \sum_{k=0}^{N} \sum_{l=0}^{k} \sum_{m=0}^{l} \ldots %
+	b_N %
+	\binom{N}{k,l,m,\ldots} %
+	\tilde a_0^k \tilde a_1^l \tilde a_3^m \ldots %
+	\tilde {\bold x}^{l+m+n+\ldots} %
+	({\tilde {\bold x}^2})^{m+n+\ldots} %
+	({\tilde {\bold x}^2})^{n+\ldots}
+\end{align*}
+
+Collecting coefficients and terms of power, $k$,
+\begin{eqnarray*}
+{\bold y_2} & = & \sum_{N=0}^\infty \sum_{k=0}^{N} \sum_{l=0}^{k} \sum_{m=0}^{l} \ldots %
+	b_N %
+	\binom{N}{k,l,m,\ldots} %
+	\tilde a_0^k \tilde a_1^l \tilde a_3^m \ldots %
+	\tilde {\bold x}^{l+m+n+\ldots} %
+	({\tilde {\bold x}^2})^{m+n+\ldots} %
+	({\tilde {\bold x}^2})^{n+\ldots} \\
+	& = & \sum_{k=0}^\infty c_k \tilde{\bold x}^k %
+\end{eqnarray*}
+\noindent that, having the same form as Equation~(\ref{eqn:sigmoid zeta expansion}) creates a sequential process for determining the coefficients of the power series expansion of each layer in an ANN.
+
 %\noindent which expands to
 %\begin{eqnarray)
 %	{\bold y}_2 & = & \sum_{N=0}^\infty %
