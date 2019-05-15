@@ -55,9 +55,13 @@ such that,
 \end{equation}
 and therefore,
 \begin{eqnarray}
-	\sigma(x) & = & \frac{1}{2} - 2 \sum_{n=1}^\infty \frac{(-1)^n}{\pi^{2n}} \left( \sum_{k=0}^\infty \frac{1}{(2k+1)^{2n}} \right) x^{2n-1} \\
-		& = & \frac{1}{2} - 2 \sum_{n=1}^\infty \frac{(-1)^n}{\pi^{2n}} \left( 4^{-n} \left( 4^n - 1 \right) \zeta(2n) \right) x^{2n-1} \nonumber \\
-		& = & \frac{1}{2} - 2 \sum_{n=1}^\infty \left( \frac{-1}{4\pi^2} \right)^n \left( 4^n - 1 \right) \zeta(2n) x^{2n-1} \nonumber \\
-		& = & \frac{1}{2} - 2 \sum_{n=1}^\infty a_n x^{2n - 1},\ a_n = \left( \frac{-1}{4\pi^2} \right)^n \left( 4^n - 1 \right) \zeta(2n)
+	\sigma(x) & = & \frac{1}{2} - \sum_{n=1}^\infty 2 \frac{(-1)^n}{\pi^{2n}} \left( \sum_{k=0}^\infty \frac{1}{(2k+1)^{2n}} \right) x^{2n-1} \\
+		& = & \frac{1}{2} - \sum_{n=1}^\infty 2 \frac{(-1)^n}{\pi^{2n}} \left( 4^{-n} \left( 4^n - 1 \right) \zeta(2n) \right) x^{2n-1} \nonumber \\
+		& = & \frac{1}{2} - \sum_{n=1}^\infty \underbrace{2 \left( \frac{-1}{4\pi^2} \right)^n \left( 4^n - 1 \right) \zeta(2n)}_{a_n} x^{2n-1} \nonumber \\
+		& = & \sum_{n=0}^\infty a_n x^n,\ a_n = \left\{ \begin{array}{l l}
+			1/2	& n = 0 \\
+			-2 \left( \frac{-1}{4\pi^2} \right)^{(n+1)/2} \left( 4^{(n+1)/2} - 1 \right)\zeta(n+1)	& n\ \text{odd} \\
+			0	& n\ \text{even}
+		\end{array}\right.
 		\label{eqn:sigmoid zeta expansion}
 \end{eqnarray}
