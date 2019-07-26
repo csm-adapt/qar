@@ -91,16 +91,16 @@ allows for the softplus function to be represented as
 
 If the expansion of $e^x$ is performed, then it can be seen that
 \begin{equation}
-	(\sum_{k=0}^\infty x^k a_k)^n = 								(a_0+x(a_1+x(a_2+x(...))))^n
+	(\sum_{k=0}^\infty x^k a_k)^n = 								(a_0+x(a_1+x(a_2+xa_3...)))^n
 \end{equation}
 
 Using the binomial theorem
 \begin{equation}
-	(a+b)^n = \sum_{k=0}^{n} \binom{n}{k} a^{n-k} b^k
+	(a+b)^n = \sum_{m=0}^{n} \binom{n}{m} a^{n-m} b^m
 \end{equation}
-where, $a=a_0$ and $b=(x(a_1+x(a_2+x(...))))^n$, the series expansion of the exponential can be represented as
+where, $a=a_0$ and $b=(x(a_1+x(a_2+xa_3...)))^n$, the series expansion of the exponential can be represented as
 \begin{equation}
-	(\sum_{k=0}^\infty x^k a_k)^n = \sum_{k=0}^{n} 				\binom{n}{k} a_0^{n-k} (a_1+x(a_2+x(...)))^n x^n
+	(\sum_{k=0}^\infty x^k a_k)^n = \sum_{m=0}^{n} 				\binom{n}{m} a_0^{n-m} (a_1+x(a_2+xa_3...))^n x^n
 \end{equation}
 
 Continuing with this approach, it can be seen that 
