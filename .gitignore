@@ -1,7 +1,7 @@
 .DS_Store
+*.pdf
 *.log
 *.aux
 *.gz
-
-.DS_Store
-.DS_Store
+*.fdb_latexmk
+*.fls
