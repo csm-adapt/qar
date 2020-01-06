@@ -2,5 +2,5 @@
 *.log
 *.aux
 *.gz
-
-.DS_Store
+*.fdb_latexmk
+*.fls

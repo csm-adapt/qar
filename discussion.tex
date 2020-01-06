@@ -1,6 +1,37 @@
 \section{Discussion}\label{discussion}
 
-Many non-trivial problems in materials science, and in science more broadly, are explained not through a single constitutive relationship, but through a superposition of contributing physics. 
+% Find \alpha_k for neural network (NN) expansion
+% Find \beta_k for constitutive relationship (CR) expansion
+% Solve for C_k through fit (least-squares for now) of \alpha_k to \beta_k
+
+% Hadamard (element-wise) product does not distribute.
+In the solution of the
+
+% data pre-processing
+To avoid implicit bias, data preprocessing is an important first step in training a neural network. Commonly, data is whitened, also known as scaling or standardizing, ${\bf x}_s: {\bf x}_s = \frac{{\bf x} - \overline{\bf x}}{\sigma}$, where $\overline{\bf x}$ is the arithmetic mean and $\sigma$ is the standard deviation of the data set, ${\bf x}$. However, a model trained on such scaled data would change the space such that the primal space of the model (scaled) would differ from the primal space of the constitutive relationship (unscaled).
+
+To accommodate whitened data, which is necessary to remove implicit bias while training a neural network, the constitutive relationship must also operate in the scaled primal space. After model training and fit of the physical constants in the constitutive relationship from $\boldsymbol{\alpha}$, the dual space of the neural network expansion, and $\boldsymbol{\beta}$, the dual space of the constitutive relationship expansion, the inverse transformation should be applied to closed-form constitutive relationship to extract the physical constant, e.g.
+\begin{align*}
+    f(x) &= C_0 + C_1 x_s \\
+        &= C_0 + C_1 \left( \frac{x - \overline{x}}{\sigma} \right) \\
+        &= C_0^\prime + C_1^\prime x
+\end{align*}
+where
+\begin{conditions}
+    C_0^\prime & $C_0 - C_1 \overline{x}/\sigma$ \\
+    C_1^\prime & $C_1/\sigma$
+\end{conditions}
+Note that this accommodation may introduce a bias/offset even in constitutive relationships where no such offset was present before.
+
+% comment on the distance metric
+The Euclidean ($L_2\textrm{-norm}$) distance is used in optimizations, such as the training of neural networks and other machine learning algorithms, through the mean-square error,
+\begin{equation*}
+    \argmin_{\boldsymbol{\theta}} \|{\bf y} - \boldsymbol{\theta}{\bf x}.
+\end{equation*}
+However, because of the curse of dimensionality, the $L_2\textrm{-norm}$ is not a desirable metric in high-dimensional spaces.
+
+% original
+Many non-trivial problems in materials science, and in science more broadly, are explained not through a single constitutive relationship, but through a superposition of contributing physics.
 
 Figure~\ref{fig:stress} shows an artificial dataset constructed to replicate the impact of yield stress in a two-phase, solid-solution strengthened alloy system. Using a combination of composite theory for the contribution of flow stress, {\color{red} NAME} solid solution \cite{solid solution}, and Hall-Petch \cite{Hall-Petch} strengthening, the expected yield stress is
 
@@ -24,116 +55,6 @@ Figure~\ref{fig:stress} shows an artificial dataset constructed to replicate the
 \\[2ex]
 
 The goal is to iteratively improve on this constitutive model one term at a time, and monitor the effect on the residuals between the predicted yield, $\hat{\sigma_y}$ and the actual yield $\sigma_y$.
-
-The analytical form, combining Equations~(\ref{eqn:nn analytical form}) and (\ref{eqn:sigmoid zeta expansion}), the estimated output of a two-layer NN can be written as
-
-\begin{eqnarray}
-	{\bold y}_1 & = & \sum_{k=0}^\infty a_k (\boldsymbol\theta_1^T {\bold x})^k \nonumber \\
-	{\bold y}_2 & = & \sum_{k=0}^\infty b_k (\boldsymbol\theta_2^T {\bold y}_1)^k \nonumber \\
-		& = & b_0 {\bold 1} + \nonumber\\
-		&   & + b_1 (\tilde a_0 +%
-					(\tilde a_1 + %
-						(\tilde a_2 + %
-							(\tilde a_3 + %
-								(\ldots) \tilde {\bold x} )%
-							\tilde {\bold x} )%
-						\tilde {\bold x} )%
-					\tilde {\bold x}) \nonumber \\
-		&   & + b_2 (\tilde a_0 +%
-					(\tilde a_1 + %
-						(\tilde a_2 + %
-							(\tilde a_3 + %
-								(\ldots) \tilde {\bold x} )%
-							\tilde {\bold x} )%
-						\tilde {\bold x} )%
-					\tilde {\bold x})^2 \nonumber \\
-		&   & \vdots \nonumber \\
-		&   & + b_k (\tilde a_0 +%
-					(\tilde a_1 + %
-						(\tilde a_2 + %
-							(\tilde a_3 + %
-								(\ldots) \tilde {\bold x} )%
-							\tilde {\bold x} )%
-						\tilde {\bold x} )%
-					\tilde {\bold x})^k \nonumber \\
-		&   & \vdots
-\end{eqnarray}
-\noindent where $\tilde a_i = \boldsymbol\theta_2^T a_i$ and $\tilde{\bold x} = \boldsymbol\theta_1^T {\bold x}$. All $\boldsymbol\theta_i$, ${\bold x}$, and ${\bold y}$ are augmented to include the bias, ${\bold b}_i$, that is,
-\begin{eqnarray}
-	{\bold x}&:& {\bold x} \leftarrow \begin{pmatrix}
-								1 \\
-								{\bold x}
-							\end{pmatrix} = \begin{pmatrix}
-											1 \\
-											x_0 \\
-											x_1 \\
-											\vdots \\
-											x_n
-										\end{pmatrix}\\
-	{\bold y}&:& {\bold y} \leftarrow \begin{pmatrix}
-								1 \\
-								{\bold y}
-							\end{pmatrix} \\
-	\boldsymbol\theta_i&:& \boldsymbol\theta_i \leftarrow \begin{pmatrix} {\bold b}_i & \boldsymbol\theta_i \end{pmatrix}
-\end{eqnarray}
-However from Equation~(\ref{eqn:sigmoid zeta expansion}), $a_i  = 0\ \text{for}\ i = 2, 4, 6, \ldots$, and therefore,
-\begin{eqnarray}
-	{\bold y}_1 & = & \sum_{k=0}^\infty a_k (\boldsymbol\theta_1^T {\bold x})^k \nonumber \\
-	{\bold y}_2 & = & \sum_{k=0}^\infty b_k (\boldsymbol\theta_2^T {\bold y}_1)^k \nonumber \\
-		& = & b_0 {\bold 1} + \nonumber\\
-		&   & + b_1 (\tilde a_0 +%
-					(\tilde a_1 + %
-						(\tilde a_3 + %
-							(\tilde a_5 + %
-								(\ldots) \tilde {\bold x}^2 )%
-							\tilde {\bold x}^2 )%
-						\tilde {\bold x}^2 )%
-					\tilde {\bold x}) \nonumber \\
-		&   & + b_2 (\tilde a_0 +%
-					(\tilde a_1 + %
-						(\tilde a_3 + %
-							(\tilde a_5 + %
-								(\ldots) \tilde {\bold x}^2 )%
-							\tilde {\bold x}^2 )%
-						\tilde {\bold x}^2 )%
-					\tilde {\bold x})^2 \nonumber \\
-		&   & \vdots \nonumber \\
-		&   & + b_k (\tilde a_0 +%
-					(\tilde a_1 + %
-						(\tilde a_3 + %
-							(\tilde a_5 + %
-								(\ldots) \tilde {\bold x}^2 )%
-							\tilde {\bold x}^2 )%
-						\tilde {\bold x}^2 )%
-					\tilde {\bold x})^k \nonumber \\
-		&   & \vdots
-\end{eqnarray}
-\noindent where the $\tilde{\bold x}^2 = \tilde{\bold x} \odot \tilde{\bold x}$, the Hadamard product of $\tilde{\bold x}$ with itself.
-\begin{eqnarray}
-	{\bold y}_2 & = & \sum_{N=0}^\infty \sum_{k=0}^{N} \sum_{l=0}^{k} \sum_{m=0}^{l} \ldots %
-		b_N %
-		\binom{N}{k,l,m,\ldots} %
-		\tilde a_0^k \tilde a_1^l \tilde a_3^m \ldots %
-		\tilde {\bold x}^{N-k\ldots} %
-		({\tilde {\bold x}^2})^{N-k-l\ldots} %
-		({\tilde {\bold x}^2})^{N-k-l-m\ldots} \nonumber \\
-	& = & \sum_{N=0}^\infty \sum_{k=0}^{N} \sum_{l=0}^{k} \sum_{m=0}^{l} \ldots %
-		b_N %
-		\binom{N}{k,l,m,\ldots} %
-		\tilde a_0^k \tilde a_1^l \tilde a_3^m \ldots %
-		\tilde {\bold x}^{l+m+n+\ldots} %
-		({\tilde {\bold x}^2})^{m+n+\ldots} %
-		({\tilde {\bold x}^2})^{n+\ldots}
-	\label{eqn:ANN power series coefficient generating function}
-\end{eqnarray}
-\noindent where $k+l+m+n+\ldots = N$. Collecting coefficients and terms of power $k$,
-\begin{equation*}
-	{\bold y_2} =  \sum_{k=0}^\infty c_k \tilde{\bold x}^k
-\end{equation*}
-\noindent that, having the same form as Equation~(\ref{eqn:sigmoid zeta expansion}) creates a sequential process for determining the coefficients of the power series expansion of each layer in an ANN. Importantly, the output layer in a ANN regression is a single node with a linear activation, so the final layer, $y_f$, working from the last hidden layer, ${\bold y}_n$, is simply,
-\begin{equation}
-	y_f = \boldsymbol\theta_n^T {\bold y}_n
-\end{equation}
 
 Together, this leads to a seven-step process for systematically and incrementally extracting physics information from an ANN:
 \begin{enumerate}
