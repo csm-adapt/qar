@@ -40,19 +40,20 @@ The variable $\boldsymbol x$ represents a column vector containing $\boldsymbol 
 
 e.g., 
 \begin{equation}
-	\sigma_2 \begin{bmatrix}
+	\theta_1 \begin{bmatrix}
 				x_{1} \\
 				x_{2} \\
 				\vdots \\
 				x_{n}
 			\end{bmatrix}
 	\Rightarrow \begin{bmatrix}
-					\sigma_{11} x_{1} & \sigma_{12} x_{2} & \ldots & \sigma_{1n} x_{n} \\ 
-					\sigma_{21} x_{1} & \sigma_{22} x_2 \\
-					\vdots & & \ddots \\
-					\sigma_{n1} x_{1} \\
+					\theta_{11} x_{1} + \theta_{12} x_{2} + \ldots \theta_{1n} x_{n} \\ 
+					\theta_{21} x_{1} + \theta_{22} x_{2} + \ldots \theta_{2n} x_{n} \\
+					\vdots \\
+					\theta_{n1} x_{1} + \theta_{n2} x_{2} + \ldots \theta_{nn} x_{n} \\
 				\end{bmatrix}			
 \end{equation}
+
 
 
 Although ReLU (rectified linear units) have become a more common activation function, its discontinuity at $x = 0$ requires an infinite series to fully capture the behavior at this transition. However, the softplus function,%However, the sigmoid function,
@@ -249,3 +250,9 @@ From Equation~(\ref{eqn:sigmoid zeta expansion}), $a_i  = 0\ \text{for}\ i = 2, 
 \begin{equation}
 	y_f = \boldsymbol\theta_n^T {\bold y}_n
 \end{equation}
+
+
+%If no reference, prove that the primal/dual is unique. 
+%Weidmann J. (1980) Linear operators and their adjoints. In: Linear Operators in Hilbert Spaces. Graduate Texts in Mathematics, vol 68. Springer, New York, NY
+%Riesz representation theorem for proving that the dual is unique???
+
