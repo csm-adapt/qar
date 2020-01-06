@@ -19,7 +19,41 @@ is an arbitrary function generator, but at present, the network weights $\boldsy
 	f(x) = \sum_{n=0}^\infty a_n x^n
 \end{equation}
 
-We hypothesize that the physics of a process can be extracted by fitting the polynomial expansions of known physical relationships to the polynomial coefficients of a polynomial series expansion of Equation~(\ref{eqn:nn analytical form}).
+We hypothesize that the physics of a process can be extracted by fitting the polynomial expansions of known physical relationships to the polynomial coefficients of a polynomial series expansion of Equation~(\ref{eqn:nn analytical form}). \\
+\\*
+
+The ReLU function is given below in Equation~(\ref{eqn:ReLU}):
+\begin{equation}
+	f(x) = 
+	\begin{cases}
+		x, & \text{if}\ x > 0 \\
+		0, & \text{otherwise}
+	\end{cases}
+	\label{eqn:ReLU}
+\end{equation}
+
+\begin{equation}
+	f(x) = \sigma(\theta_n \sigma(\theta_{n-1} \sigma(\ldots \theta_2 \sigma(\theta_1 x))))
+\end{equation}
+\\
+The variable $\boldsymbol x$ represents a column vector containing $\boldsymbol n$ elements, and thus, the output from each node will be multplied by the respective weight, $\theta$, before the application of the subsequent acitivation function. \\*
+
+e.g., 
+\begin{equation}
+	\sigma_2 \begin{bmatrix}
+				x_{1} \\
+				x_{2} \\
+				\vdots \\
+				x_{n}
+			\end{bmatrix}
+	\Rightarrow \begin{bmatrix}
+					\sigma_{11} x_{1} & \sigma_{12} x_{2} & \ldots & \sigma_{1n} x_{n} \\ 
+					\sigma_{21} x_{1} & \sigma_{22} x_2 \\
+					\vdots & & \ddots \\
+					\sigma_{n1} x_{1} \\
+				\end{bmatrix}			
+\end{equation}
+
 
 Although ReLU (rectified linear units) have become a more common activation function, its discontinuity at $x = 0$ requires an infinite series to fully capture the behavior at this transition. However, the softplus function,%However, the sigmoid function,
 %\begin{equation}
