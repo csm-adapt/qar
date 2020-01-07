@@ -22,7 +22,23 @@ is an arbitrary function generator, but at present, the network weights $\boldsy
 We hypothesize that the physics of a process can be extracted by fitting the polynomial expansions of known physical relationships to the polynomial coefficients of a polynomial series expansion of Equation~(\ref{eqn:nn analytical form}). \\
 \\*
 
-The ReLU function is given below in Equation~(\ref{eqn:ReLU}):
+The Softmax activation function is given in Equation
+
+\begin{equation}
+	\sigma(\bold z)_i = 
+	\frac{e^{z_i}}{\sum\limits_{j=1}^k e^{z_j}}
+\end{equation}
+
+The series expansion for the exponential in the numerator of the Softmax is given below
+\begin{equation}
+	e^x = \sum_{k=0}^\infty \frac{x^k}{k!}
+\end{equation}
+where, $a_k = \frac{1}{k!}$, can be expressed as
+\begin{equation}
+	e^x = \sum_{k=0}^\infty x^k a_k
+\end{equation}
+
+The ReLU (rectified linear units) function is the most commonly applied activation function and is given below in Equation~(\ref{eqn:ReLU}):
 \begin{equation}
 	f(x) = 
 	\begin{cases}
@@ -32,15 +48,12 @@ The ReLU function is given below in Equation~(\ref{eqn:ReLU}):
 	\label{eqn:ReLU}
 \end{equation}
 
-\begin{equation}
-	f(x) = \sigma(\theta_n \sigma(\theta_{n-1} \sigma(\ldots \theta_2 \sigma(\theta_1 x))))
-\end{equation}
-\\
-The variable $\boldsymbol x$ represents a column vector containing $\boldsymbol n$ elements, and thus, the output from each node will be multplied by the respective weight, $\theta$, before the application of the subsequent acitivation function. \\*
+The variable $\bold x$ in Equation~(\ref{eqn:nn analytical form}) represents a column vector containing $\boldsymbol n$ input elements, and thus, the output from each node will be multplied by the respective weight before the application of the subsequent activation function.
 
 e.g., 
 \begin{equation}
-	\theta_1 \begin{bmatrix}
+	\bold z =
+	\theta^{(1)} \begin{bmatrix}
 				x_{1} \\
 				x_{2} \\
 				\vdots \\
@@ -50,56 +63,33 @@ e.g.,
 					\theta_{11} x_{1} + \theta_{12} x_{2} + \ldots \theta_{1n} x_{n} \\ 
 					\theta_{21} x_{1} + \theta_{22} x_{2} + \ldots \theta_{2n} x_{n} \\
 					\vdots \\
-					\theta_{n1} x_{1} + \theta_{n2} x_{2} + \ldots \theta_{nn} x_{n} \\
+					\theta_{m1} x_{1} + \theta_{m2} x_{2} + \ldots \theta_{mn} x_{n} \\
 				\end{bmatrix}			
 \end{equation}
 
+and $\boldsymbol\sigma (\bold z)$ serves as the input of the next layer in the network, where $\bold z = (\boldsymbol\theta^{(1)} \bold x)$. 
 
+The generating function for the ReLU is given in Equation~(\ref{eqn: ReLU generating function}) and it is dependent on both the input variables and the network weights. 
+\begin{equation}
+	\ a_n = 
+		\begin{cases}
+			1 & \bold z > 0 \\
+			0 & \text{otherwise}
+		\end{cases}
+	\label{eqn: ReLU generating function}
+\end{equation}
 
-Although ReLU (rectified linear units) have become a more common activation function, its discontinuity at $x = 0$ requires an infinite series to fully capture the behavior at this transition. However, the softplus function,%However, the sigmoid function,
-%\begin{equation}
-%	\sigma(x) = \frac{1}{1 + e^{-x}}
-%	\label{eqn:sigmoid}
-%\end{equation}
-%is a special case of the generating function for the Euler polynomial coefficients,
-%\begin{equation}
-%	\frac{2e^{x t}}{1 + e^t} = \sum_{n=0}^\infty E_n(x) \frac{t^n}{n!}
-%\end{equation}
-%where, for $x = 0$,
-%\begin{equation}
-%	\sigma(x) = \frac{1}{2} \sum_{n=0}^\infty E_n(0) \frac{(-1)^n}{n!}.
-%	\label{eqn:sigmoid Euler expansion}
-%\end{equation}
-%
-%The Euler polynomials at $x=0$,
-%\begin{equation}
-%	E_n(0) = -2(n+1)^{-1} \left( 2^{n+1} - 1 \right) B_{n+1}
-%\end{equation}
-%where $B_n$ is the $n^\textrm{th}$ Bernoulli number. Since Bernoulli numbers of odd index, with the exception of $B_1$, are zero, $E_i(0) = 0$ for $i = 2, 4, 6, \ldots, 2n$. Therefore, the summand and limits of Equation~(\ref{eqn:sigmoid Euler expansion}) change to
-%\begin{equation}
-%	\sigma(x) = \frac{1}{2} - \frac{1}{2} \sum_{n=1}^\infty \left( \frac{E_{2n-1(0)}}{(2n-1)!} \right) x^{2n-1}.
-%\end{equation}
-%
-%The series representation of $E_{2n-1}(x)$
-%\begin{equation}
-%	E_{2n-1}(x) = \frac{(-1)^n 4 (2n - 1)!}{\pi^{2n+1}} \sum_{k=0}^\infty \frac{\cos [(2k + 1) \pi x]}{(2k + 1)^{2n}}
-%\end{equation}
-%such that,
-%\begin{equation}
-%	E_{2n-1}(0) = \frac{(-1)^n 4 (2n - 1)!}{\pi^{2n+1}} \sum_{k=0}^\infty \frac{1}{(2k + 1)^{2n}}
-%\end{equation}
-%and therefore,
-%\begin{eqnarray}
-%	\sigma(x) & = & \frac{1}{2} - \sum_{n=1}^\infty 2 \frac{(-1)^n}{\pi^{2n}} \left( \sum_{k=0}^\infty \frac{1}{(2k+1)^{2n}} \right) x^{2n-1} \\
-%		& = & \frac{1}{2} - \sum_{n=1}^\infty 2 \frac{(-1)^n}{\pi^{2n}} \left( 4^{-n} \left( 4^n - 1 \right) \zeta(2n) \right) x^{2n-1} \nonumber \\
-%		& = & \frac{1}{2} - \sum_{n=1}^\infty \underbrace{2 \left( \frac{-1}{4\pi^2} \right)^n \left( 4^n - 1 \right) \zeta(2n)}_{a_n} x^{2n-1} \nonumber \\
-%		& = & \sum_{n=0}^\infty a_n x^n,\ a_n = \left\{ \begin{array}{l l}
-%			1/2	& n = 0 \\
-%			-2 \left( \frac{-1}{4\pi^2} \right)^{(n+1)/2} \left( 4^{(n+1)/2} - 1 \right)\zeta(n+1)	& n\ \text{odd} \\
-%			0	& n\ \text{even}
-%		\end{array}\right.
-%		\label{eqn:sigmoid zeta expansion}
-%\end{eqnarray}
+The linear generating function is given in Equation~(\ref{eqn: linear generating function}) and it is only dependent upon $\bold n$. 
+\begin{equation}
+	\ a_n = 
+		\begin{cases}
+			1 & \bold n = 1 \\
+			0 & \text{otherwise}
+		\end{cases}
+	\label{eqn: linear generating function}
+\end{equation}
+
+Although ReLU (rectified linear units) have become a more common activation function, its discontinuity at $x = 0$ requires an infinite series to fully capture the behavior at this transition. However, the softplus function,
 
 \begin{equation}
 	f(x) = log(1+e^x)
@@ -256,3 +246,32 @@ From Equation~(\ref{eqn:sigmoid zeta expansion}), $a_i  = 0\ \text{for}\ i = 2, 
 %Weidmann J. (1980) Linear operators and their adjoints. In: Linear Operators in Hilbert Spaces. Graduate Texts in Mathematics, vol 68. Springer, New York, NY
 %Riesz representation theorem for proving that the dual is unique???
 
+%New Softplus Derivation 1/7
+\begin{align*}
+	f(x) & = log(1+e^x)\\
+	& = \frac{1}{\alpha}log(1+e^{\alpha x}), \quad \alpha > 0 \\
+	& = \frac{1}{\alpha}log(z), \quad z = 1 + e^{\alpha x} \\
+	& = \frac{1}{\alpha}\sum\limits_{k=1}^\infty 
+	\frac{1}{k}\left(\frac{z-1}{z}\right)^k \\
+	& = \frac{1}{\alpha}\sum\limits_{k=1}^\infty 
+	\frac{1}{k}(z-1)^{k} z^{-k} \\
+	& = \frac{1}{\alpha}\sum\limits_{k=1}^\infty 
+	\frac{1}{k} e^{\alpha x k} (1 + e^{\alpha x})^{k} \\
+	& = \frac{1}{\alpha}\sum\limits_{k=1}^\infty 
+	\frac{1}{k} \left(\sum\limits_{m=0}^\infty 
+	\frac{\alpha^{m} x^{m}}{m!}\right)^k \left(1 + \sum\limits_{n=0}^{k} \frac{\alpha^{n} x^{n}}{n!}\right)^{-k}
+\end{align*}
+
+From Gradshteyn and Ryzhik - 0.314 Power series raised to powers.
+\begin{equation}
+	\left(\sum\limits_{k=0}^{\infty}a_{k}x^{k}\right)^{n} = \sum\limits_{k=0}^{\infty}c_{k}x^{k} \\
+	\label{eqn:power series raised to powers}
+\end{equation}
+where
+\begin{equation}
+	c_{0} = a_{0}^{n}, \quad c_{m} = \frac{1}{ma_{0}}\sum\limits_{k=0}^{\infty}c_{k}x^{k}
+\end{equation}
+
+\begin{align*}
+	& = \frac{1}{\alpha}\sum\limits_{k=1}^{\infty}\frac{1}{k}\sum\limits_{m=0}^{\infty}c_{m}x^{m}\left( 1+\sum\limits_{n=0}^{\infty}\frac{\alpha^{n}x^{n}}{n!}\right)^{-k}
+\end{align*}
