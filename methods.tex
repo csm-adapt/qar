@@ -22,23 +22,34 @@ is an arbitrary function generator, but at present, the network weights $\boldsy
 We hypothesize that the physics of a process can be extracted by fitting the polynomial expansions of known physical relationships to the polynomial coefficients of a polynomial series expansion of Equation~(\ref{eqn:nn analytical form}). \\
 \\*
 
-The Softmax activation function is given in Equation
+
+
+%Beginning of softmax derivation 1/7
+The Softmax activation function is given in Equation (\ldots)
 
 \begin{equation}
 	\sigma(\bold z)_i = 
 	\frac{e^{z_i}}{\sum\limits_{j=1}^k e^{z_j}}
 \end{equation}
 
-The series expansion for the exponential in the numerator of the Softmax is given below
+The partion function, $\bold Z$, is defined below as
 \begin{equation}
-	e^x = \sum_{k=0}^\infty \frac{x^k}{k!}
+	\bold Z = \sum\limits_{j=1}^k e^{z_j}
 \end{equation}
-where, $a_k = \frac{1}{k!}$, can be expressed as
+The series expansion for the exponential is given by the following
 \begin{equation}
-	e^x = \sum_{k=0}^\infty x^k a_k
+	e^{z_{i}} = \sum_{k=0}^{\infty}\frac{1}{k!} z_{i}^{k}
 \end{equation}
+Therefore
+\begin{equation}
+	\sigma(\bold z)_i = 
+	\sum\limits_{k=0}^{\infty} \alpha_{k}z_{i}^{k}
+\end{equation}
+Where $\alpha_k = \frac{1}{{\bold Z}k!}$ is the generating function for the Softmax
+%End of softmax derivation 1/7
 
-The ReLU (rectified linear units) function is the most commonly applied activation function and is given below in Equation~(\ref{eqn:ReLU}):
+
+The ReLU (rectified linear units) function is another commonly used activation function and is given below in Equation~(\ref{eqn:ReLU}):
 \begin{equation}
 	f(x) = 
 	\begin{cases}
@@ -89,46 +100,51 @@ The linear generating function is given in Equation~(\ref{eqn: linear generating
 	\label{eqn: linear generating function}
 \end{equation}
 
-Although ReLU (rectified linear units) have become a more common activation function, its discontinuity at $x = 0$ requires an infinite series to fully capture the behavior at this transition. However, the softplus function,
+Although ReLU (rectified linear units) have become a more common activation function, its discontinuity at $x = 0$ requires an infinite series to fully capture the behavior at this transition. 
 
-\begin{equation}
-	f(x) = log(1+e^x)
-\end{equation}
+%Beginning of old softplus derivation and could probably be deleted
+%However, the softplus function,
+%
+%\begin{equation}
+%	f(x) = log(1+e^x)
+%\end{equation}
+%
+%The series expansion for the exponential
+%\begin{equation}
+%	e^x = \sum_{k=0}^\infty \frac{x^k}{k!}
+%\end{equation}
+%where, $a_k = \frac{1}{k!}$, can be expressed as
+%\begin{equation}
+%	e^x = \sum_{k=0}^\infty x^k a_k
+%\end{equation}
+%
+%A similar series expansion for the logarithm
+%\begin{equation}
+%	log(1+x) = \sum_{n=1}^\infty (-1)^{n+1} \frac{x^n}{n}
+%\end{equation}
+%where, $x = e^x$,
+%allows for the softplus function to be represented as
+%\begin{equation}
+%	f(x) = \sum_{n=1}^\infty \frac{(-1)^{n+1}}{n} 				(\sum_{k=0}^\infty x^k a_k)^n
+%\end{equation}
+%
+%If the expansion of $e^x$ is performed, then it can be seen that
+%\begin{equation}
+%	(\sum_{k=0}^\infty x^k a_k)^n = 								(a_0+x(a_1+x(a_2+xa_3...)))^n
+%\end{equation}
+%
+%Using the binomial theorem
+%\begin{equation}
+%	(a+b)^n = \sum_{m=0}^{n} \binom{n}{m} a^{n-m} b^m
+%\end{equation}
+%where, $a=a_0$ and $b=(x(a_1+x(a_2+xa_3...)))^n$, the series expansion of the exponential can be represented as
+%\begin{equation}
+%	(\sum_{k=0}^\infty x^k a_k)^n = \sum_{m=0}^{n} 				\binom{n}{m} a_0^{n-m} (a_1+x(a_2+xa_3...))^n x^n
+%\end{equation}
+%
+%Continuing with this approach, it can be seen that ...
+%End of old softplus derivation
 
-The series expansion for the exponential
-\begin{equation}
-	e^x = \sum_{k=0}^\infty \frac{x^k}{k!}
-\end{equation}
-where, $a_k = \frac{1}{k!}$, can be expressed as
-\begin{equation}
-	e^x = \sum_{k=0}^\infty x^k a_k
-\end{equation}
-
-A similar series expansion for the logarithm
-\begin{equation}
-	log(1+x) = \sum_{n=1}^\infty (-1)^{n+1} \frac{x^n}{n}
-\end{equation}
-where, $x = e^x$,
-allows for the softplus function to be represented as
-\begin{equation}
-	f(x) = \sum_{n=1}^\infty \frac{(-1)^{n+1}}{n} 				(\sum_{k=0}^\infty x^k a_k)^n
-\end{equation}
-
-If the expansion of $e^x$ is performed, then it can be seen that
-\begin{equation}
-	(\sum_{k=0}^\infty x^k a_k)^n = 								(a_0+x(a_1+x(a_2+xa_3...)))^n
-\end{equation}
-
-Using the binomial theorem
-\begin{equation}
-	(a+b)^n = \sum_{m=0}^{n} \binom{n}{m} a^{n-m} b^m
-\end{equation}
-where, $a=a_0$ and $b=(x(a_1+x(a_2+xa_3...)))^n$, the series expansion of the exponential can be represented as
-\begin{equation}
-	(\sum_{k=0}^\infty x^k a_k)^n = \sum_{m=0}^{n} 				\binom{n}{m} a_0^{n-m} (a_1+x(a_2+xa_3...))^n x^n
-\end{equation}
-
-Continuing with this approach, it can be seen that ...
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The analytical form, combining Equations~(\ref{eqn:nn analytical form}) and (\ref{eqn:sigmoid zeta expansion}), the estimated output of a two-layer NN can be written as an expansion:
@@ -246,7 +262,9 @@ From Equation~(\ref{eqn:sigmoid zeta expansion}), $a_i  = 0\ \text{for}\ i = 2, 
 %Weidmann J. (1980) Linear operators and their adjoints. In: Linear Operators in Hilbert Spaces. Graduate Texts in Mathematics, vol 68. Springer, New York, NY
 %Riesz representation theorem for proving that the dual is unique???
 
-%New Softplus Derivation 1/7
+
+
+%Beginning of new Softplus Derivation 1/7
 \begin{align*}
 	f(x) & = log(1+e^x)\\
 	& = \frac{1}{\alpha}log(1+e^{\alpha x}), \quad \alpha > 0 \\
@@ -273,5 +291,35 @@ where
 \end{equation}
 
 \begin{align*}
+	& = c_{0} = \frac{\alpha^{0}}{0!}=1, \quad c_{l} = \frac{1}{l}\sum\limits_{j=1}^{l}(jk-l+j)\frac{\alpha^{l}}{l!}c_{l-j} \\
 	& = \frac{1}{\alpha}\sum\limits_{k=1}^{\infty}\frac{1}{k}\sum\limits_{m=0}^{\infty}c_{m}x^{m}\left( 1+\sum\limits_{n=0}^{\infty}\frac{\alpha^{n}x^{n}}{n!}\right)^{-k}
+	& = d_{0} = 1, \quad d_{l}=\frac{1}{l}\sum\limits_{j=1}^{l}(ji-l+j)\frac{\alpha^{l}}{l!}d_{l-j} \\
+	& = \frac{1}{\alpha}\sum\limits_{k=1}^{\infty}\frac{1}{k}\left[ \frac{\sum\limits_{m=0}^{\infty}c_{m}x^{m}}{\sum\limits_{i=0}^{k}\frac{1}{{k \choose i}}\sum\limits_{n=0}^{\infty}d_{n}x^{n}} \right] \\
 \end{align*}
+
+After rearranging of variables
+
+\begin{align*}
+	& = \frac{1}{\alpha}\sum\limits_{k=1}^{\infty}\frac{1}{k}\left[ \frac{\sum\limits_{m=0}^{\infty}c_{m}x^{m}}{\sum\limits_{n=0}^{\infty}\sum\limits_{i=0}^{k}\frac{1}{{k \choose i}}d_{n}x^{n}} \right] \\
+\end{align*}
+
+And therefore
+\begin{align*}
+	& = \frac{1}{\alpha}\sum\limits_{k=1}^{\infty}\frac{1}{k}\left[ \frac{\sum\limits_{m=0}^{\infty}c_{m}x^{m}}{\sum\limits_{n=0}^{\infty}d_{n}'x^{n}} \right]
+\end{align*}
+
+Where $d_{n}' = \sum\limits_{i=0}^{k}\frac{1}{{k \choose i}}d_{n}$
+
+From Gradshteyn and Ryzhik - 0.313 Division of power series.
+
+\begin{equation}
+	b_{m} = \sum\limits_{j=1}^{m}c_{m}-b_{m-j}d_{j}
+\end{equation}
+
+\begin{align*}
+	& = \frac{1}{\alpha}\sum\limits_{k=1}^{\infty}\frac{1}{k}\sum\limits_{n=0}^{\infty}b_{n}x^{n} \\
+	& = \sum\limits_{n=0}^{\infty}\sum\limits_{k=1}^{\infty}\frac{b_{n}}{\alpha k}x^{n}=\frac{1}{\alpha}log(1+e^{\alpha x})
+\end{align*}
+
+where $\sum\limits_{k=1}^{\infty}\frac{b_{n}}{\alpha k}$ is the generating function for the softplus
+%End of new softplus derivation 1/7
