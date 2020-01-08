@@ -1,4 +1,7 @@
-However, the sigmoid function,
+\section{Appendix}\label{sec:appendix}
+
+\subsection{Activation Functions}
+\subsubsection{The logistic sigmoid}
 \begin{equation}
 	\sigma(x) = \frac{1}{1 + e^{-x}}
 	\label{eqn:sigmoid}
@@ -42,3 +45,47 @@ and therefore,
 		\end{array}\right.
 		\label{eqn:sigmoid zeta expansion}
 \end{eqnarray}
+
+\subsection{Coefficient Generating Functions for Common Functions}
+
+Central to this approach is the connection ability to represent a constitutive relationship and a neural network on the same vector/covector space. This is done through a polynomial series expansion of both the neural network, covered in the text, and the constitutive relationship. Select generating functions are provided here.
+
+\begin{table}[htp]
+\caption{Examples of coefficient generating functions for functional forms commonly found in materials physics.}
+\begin{center}
+\begin{tabular}{c | c c c c}
+	k	& %
+		$C a^x$	& %
+			$C x^n$	& %
+				$Ce^{-\beta x}$	& %
+					$C x^{-1/2}$ \\[2ex]
+	\hline
+	0	& %
+		$1$	& %
+			--	& %
+				$C$	& %
+					$C$ \\[2ex]
+	1	& %
+		$C \ln a$	& %
+			--	& %
+				$-\beta C$		& %
+					$-\frac{1}{2}C$ \\[2ex]
+	2	& %
+		$\frac{(\ln a)^2}{2} C$	& %
+			--	&  %
+				$\frac{\beta^2}{2} C$	& %
+					$\frac{3}{8}C$	\\[2ex]
+	\vdots & \multicolumn{4}{c}{\vdots} \\[2ex]
+	n	& %
+		$\frac{(\ln a)^n}{n!} C$	& %
+			$\left\{\begin{array}{c l}
+				C & \text{if}\ k = n \\
+				0 & \text{otherwise}
+			  \end{array}\right.$	& %
+				$(-1)^n\frac{\beta^n}{n!} C$	& %
+					$C \prod_{i=1}^n (-1)\frac{2i - 1}{2i}$ \\[2ex]
+	\hline
+\end{tabular}
+\end{center}
+\label{tab:generating functions of common functions}
+\end{table}

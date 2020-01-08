@@ -1,7 +1,7 @@
 \section{Discussion}\label{discussion}
 
 % original
-Many non-trivial problems in materials science, and in science more broadly, are explained not through a single constitutive relationship, but through a superposition of contributing physics.
+Many non-trivial problems in materials science, and in science more broadly, are explained not through a single constitutive relationship, but through a combination of contributing physics.
 
 % Figure~\ref{fig:stress} shows an artificial dataset constructed to replicate the impact of yield stress in a two-phase, solid-solution strengthened alloy system. Using a combination of composite theory for the contribution of flow stress, {\color{red} NAME} solid solution \cite{solid solution}, and Hall-Petch \cite{Hall-Petch} strengthening, the expected yield stress is
 %
@@ -53,90 +53,61 @@ In the limit as $\alpha$ approaches infinity, this converges to the ReLU. Practi
 \begin{condition}
     Both the neural network and the constitutive relationship must depend on the same independent variables.
 \end{condition}
-That is, they must be described on the same basis vectors. The fit between the coefficients of the neural network expansion--$\boldsymbol{\alpha}$, the covector space of the neural network's basis vectors--and the coefficients of the series expansion of the constitutive relationship (its covector space, $\boldsymbol{\beta}$) is only possible because both span the same subspace and share a common description of the solution within that subspace, that is, the covector spaces are colinear. {\color{red} Help! I don't have the mathematical background to say this correctly. That is, choose $A$ such that $A$ maps between the vector and covector spaces. If $A: A(Y) \to Y^*$ and $A: A(X) \to X^*$, then $Y^* = X^*$ if, and only if, $Y = X$.}
+That is, they must be described on the same basis vectors. The fit between the coefficients of the neural network expansion--$\boldsymbol{\alpha}$, the covector space of the neural network's basis vectors--and the coefficients of the series expansion of the constitutive relationship (its covector space, $\boldsymbol{\beta}$) is only possible because both span the same subspace and share a common description of the solution within that subspace, that is, the covector spaces are colinear. That is, suppose that $A$ maps between a vector space and its covector space. If $A: A(X) = X^*$ and $A: A(Y) = Y^*$, then $X^* = Y^*$ if and only if $X = Y$.
 
-No neural network layer operation that leaves the vector space intact, such as dropout or explicitly setting specific $\theta_{ij}$, would compromise the comparability between the covector spaces of the neural network and constitutive relationship series expansions. However, any neural network layer operation that changes the vector space, such as layer normalization, must be explicitly included in the neural network series expansion. In order to maintain a consistent framework, any such change should be expressed as an activation function and incorporated through a coefficient generating function. For example, the coefficient generating function for data standardization would be
+If ${\bf x} = ([c], d)$ are the concentration of a solute and grain size, respectively, then the constitutive relationship expansion would be,
+\begin{align}
+    \sigma_y &= \sigma_f  + C [c]^{2/3} + \frac{k}{\sqrt{d}} \nonumber \\
+        &= \sigma_f + \underbrace{\sum_{k=0}^{\infty} a_k [c]^k}_{\text{solute}} + \underbrace{\sum_{k=0}^{\infty} b_k d^k}_{\text{Hall-Petch}} \nonumber \\
+        &= \sigma_f + \sum_{k=0}^{\infty} a_k \he[\left( {\bf S}_\text{solute}{\bf x} \right)]{k} + \sum_{k=0}^{\infty} b_k \he[\left( {\bf S}_\text{Hall-Petch} {\bf x} \right)]{k}
+    \label{eqn:simplified strengthening}
+\end{align}
+where
+\begin{conditions}
+    \sigma_f & Matrix flow stress. \\
+    a_k & Coefficient generating function for $x^{2/3}$. \\
+    b_k & Coefficient generating function for $x^{-1/2}$. \\
+    {\bf S}_\text{solute} & Selection vector/matrix for choosing the solute concentration from the input vector. \\
+    {\bf S}_\text{Hall-Petch} & Selection vector/matrix for choosing the grain size from the input vector.
+\end{conditions}
+(Coefficient generating functions can be found in Table~\ref{tab:generating functions of common functions}.) Combining Equations~\ref{eqn:simplified strengthening} and \ref{eqn:hadamard exponent vector},
+\begin{multline*}
+    \sigma_y = \sigma_f + \sum_{k=0}^\infty a_k \left[ \sum_{l_1=0}^k \binom{k}{l_1, l_2} \prod_{m=1}^2 (({\bf S}_\text{solute})_m {\bf x}_m)^{l_m} \right] \\
+        + \sum_{k=0}^\infty b_k \left[ \sum_{l_1=0}^k \binom{k}{l_1, l_2} \prod_{m=1}^2 (({\bf S}_\text{Hall-Petch})_m {\bf x}_m)^{l_m} \right],\ l_2 = k - l_1
+\end{multline*}
+which further simplifies to
+\begin{multline*}
+    \sigma_y = \sigma_f + \sum_{k=0}^\infty \sum_{l_1=0}^k a_k \binom{k}{l_1, l_2} \prod_{m=1}^2 ({\bf S}_\text{solute})_m^{l_m} \prod_{m=1}^2{\bf x}_m^{l_m} \\
+        + \sum_{k=0}^\infty \sum_{l_1=0}^k b_k \binom{k}{l_1, l_2} \prod_{m=1}^2 ({\bf S}_\text{Hall-Petch})_m^{l_m} \prod_{m=1}^2{\bf x}_m^{l_m}
+\end{multline*}
+such that the term $\prod_{m=1}^2{\bf x}_m^{l_m}$ serves as the common basis set over which the summation occurs, so that now, having a common basis, this simplifies to,
 \begin{equation}
-    \alpha_n = \begin{cases}
-        -\overline{\bf z}/\sigma    & \mbox{if } n = 0, \\
-        1/\sigma                   & \mbox{if } n = 1, \\
+    \sigma_y = \sigma_f + \sum_{k=0}^\infty \sum_{l_1=0}^k \binom{k}{l_1, l_2} \left( a_k \prod_{m=1}^2 ({\bf S}_\text{solute})_m^{l_m} + b_k \prod_{m=1}^2 ({\bf S}_\text{Hall-Petch})_m^{l_m} \right) \prod_{m=1}^2{\bf x}_m^{l_m}
+\end{equation}
+
+It should be noted here that this common basis is a function of the length (dimension) of the input vector and of the order of the expansion. Therefore, two series will share the same basis vector and the same covector space if and only if they are taken to the same order. In addition, because there is no guarantee that the input vector space directions are orthogonal, there is no guarantee that the cross-term interactions will vanish and, therefore, must be included explicitly. This expansion includes all cross-terms and, through the element-wise exponentiation, also explicitly captures all combinations of powers of all cross-terms. Equation~\ref{eqn:ANN power series coefficient generating function} shows that the polynomial series expansion for the first layer of a neural network,
+\[
+    y^{(1)} = \sum_k \alpha^{(1)}_k \he[\left( \boldsymbol{\theta}^{(1)} {\bf x} \right)]{k},
+\]
+similarly relies on the element-wise exponential, $(\bullet)\he{n}$, as does the expansion of all layers. Unlike scalar exponentiation, element-wise exponentiation does not distribute, as seen in Equation~\ref{eqn:nondistributive hadamard}, and because element-wise exponentiation does not distribute, this equation explicitly captures all possible (second, $x_i^m x_j^n$; third, $x_i^m x_j^n x_k^p$; fourth, $x_i^m x_j^n x_k^p x_l^r$; etc.) cross-interactions of each term in $(\boldsymbol{\theta}{\bf x})$ at all polynomial orders. This is equivalent, then, to expanding over the basis set that includes all cross-interactions in the input vector space for both the constitutive relation and neural network polynomial expansions.
+
+% data pre-processing
+Data preprocessing is an important step in training a neural network to avoid implicit bias. Commonly, data is whitened, also known as scaling or standardization, ${\bf z}_s^{(k)}: {\bf z}_s^{(k)} = \frac{{\bf z}^{(k)} - \overline{{\bf z}^{(k)}}}{\sigma}$, where $\overline{{\bf z}^{(k)}}$ is the arithmetic mean and $\sigma$ the standard deviation of data in layer, $k$. However, a model trained on such scaled data would no longer share the vector space of the constitutive relationship. To ensure that both the neural network and constitutive relation expansions share a common vector space, and thus a common covector space, this whitening procedure must be integrated into the construction of the neural network architecture.
+
+Procedurally, the neural network expansion proceeds as described in Section~\ref{methods}. The input to each layer, which is the output from the previous layer, is subjected first to an affine transformation, then to an activation function. The activation function is completely described though its polynomial expansion and the corresponding coefficient generating function. Using this same structure, then, data whitening can be applied to any layer, including the input layer, as an identity tranform ($\boldsymbol{\theta} = {\bf I}_d$, where $d$ is the dimension of the source layer) followed by the whitening expansion whose coefficient generating function is simply,
+\begin{equation}
+    \alpha_k({\bf z}) = \begin{cases}
+        -\overline{\bf z}/\sigma    & \mbox{if } k = 0, \\
+        1/\sigma                    & \mbox{if } k = 1, \\
         0                           & \mbox{otherwise}
     \end{cases}
 \end{equation}
 where
 \begin{conditions}
-    \overline{\bf z}    & Arithmetic mean of the layer input values. \\
-    \sigma              & Standard deviation of the layer input values.
+    \overline{\bf z}    & The mean of the data into the standarization layer. \\
+    \sigma              & The standard deviation of the data into the standardization layer.
 \end{conditions}
-
-% Many series expansions, such as polynomial series, Fourier series, and Bl\"och series, expand over orthogonal bases: $x^i \perp x^j\ \forall\ i \ne j$; and similarly, $\sin k_i x \perp \sin k_j x\ \forall\ k_i \ne k_j$). For function $f(z)$, suppose $S_n(z)$ is a functional series expansion that uniformly converge in the domain of $f(z)$, then the error in the expansion can be driven to be arbitrarily small,
-% \begin{align}
-%     |z\{f(x) - S_n(z)\}| &\le \varepsilon \nonumber \\
-%     \left| \int_{z_1 = -\infty}^\infty f(x) - S_n(z) dz \right| &\le \int_{|z_1|}^\infty \frac{\varepsilon}{z} dz
-% \end{align}
-% then the
-%
-%  Because the basis functions are orthogonal in these asymptotic expansions, all cross terms are zero. Suppose a function, $f(z)$, and its series expansion, $S(z) = \sum_k s_k(z)$, that converges uniformly over the domain of $f(z)$. The error in the approximation $S$ of $f$,
-% \begin{equation}
-%     |f(z) - S(z)| \le \varepsilon
-% \end{equation}
-% for an arbitrary, positive value for $\varepsilon$.
-%
-% {\color{red} This is true due to the Poincar\'e Theorem, where the error between a function and... (This orthogonality only makes sense if we integrate over the corresponding domain, $-\infty$ to $\infty$ in these cases, but we are not integrating. Is this because of the construction of series expansions? Are series expansions based on expectation values; that the expectation value of a function is equal to the expectation value of its expansion? If this is true, then for a random, uniform variable the expectation value introduces this integral and the cross-terms disappear.)}
-
-There is no guarantee that the input vector space is orthogonal, so cross-term interactions will not vanish and must be included explicitly. Therefore, this method is based on a fully dense neural network to introduce all cross-terms. Furthermore when introduced into a polynomial expansion, element-wise exponentiation also explicitly captures all combinations of powers of all cross-terms. Equation~\ref{eqn:ANN power series coefficient generating function} shows the polynomial series expansion for the first layer of a neural network,
-\[
-    y^{(1)} = \sum_k \alpha^{(1)}_k \he[\left( \boldsymbol{\theta}^{(1)} {\bf x} \right)]{k},
-\]
-which relies on the element-wise exponential, $(\bullet)\he{n}$, as does the expansion of all layers. Unlike scalar exponentiation, element-wise exponentiation does not distribute, as seen in Equation~\ref{eqn:nondistributive hadamard}, and because element-wise exponentiation does not distribute, this equation explicitly captures all possible (second, $x_i^m x_j^n$; third, $x_i^m x_j^n x_k^p$; fourth, $x_i^m x_j^n x_k^p x_l^r$; etc.) cross-interactions of each term in $(\boldsymbol{\theta}{\bf x})$ at all polynomial orders. This is equivalent, then, of expanding over the basis set that includes all cross-interactions in the input vector space, and therefore, does not assume the column vectors of the input spare are orthogonal.
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% This should go in the Methods section
-{\color{red}
-This should go in the methods section.
-
-For two matrices, $A: A \in \mathbb{R}^{m \times n}$ and $B: B \in \mathbb{R}^{n \times q}$,
-
-\begin{subequations}
-\begin{align}
-        \left( AB \right)^n &= \he[\left( \densematrix{a}{m}{p} \densematrix{b}{p}{q} \right)]{p} \nonumber \\
-            &= \left( \begin{matrix}
-                {\bf a}_{1k}{\bf b}_{k1}  & {\bf a}_{1k}{\bf b}_{k2}    & \multirow{2}{*}{\cdots}    & {\bf a}_{1k}{\bf b}_{kq}   \\
-                {\bf a}_{2k}{\bf b}_{k1}  & {\bf a}_{2k}{\bf b}_{k2}    &                            & \multirow{2}{*}{\vdots} \\
-                \multicolumn{2}{c}{\vdots}    & \ddots           &          \\
-                {\bf a}_{mk}{\bf b}_{k1}  &      \multicolumn{2}{c}{\cdots}        & {\bf a}_{mk}{\bf b}_{kq}
-            \end{matrix}\he[\right)]{p} \nonumber \\
-            &= \begin{pmatrix}
-                ({\bf a}_{1k}{\bf b}_{k1})^{p}  & ({\bf a}_{1k}{\bf b}_{k2})^{p}    & \multirow{2}{*}{\cdots}    & ({\bf a}_{1k}{\bf b}_{kq})^{p}   \\
-                ({\bf a}_{2k}{\bf b}_{k1})^{p}  & ({\bf a}_{2k}{\bf b}_{k2})^{p}     &                            & \multirow{2}{*}{\vdots} \\
-                \multicolumn{2}{c}{\vdots}    & \ddots           &          \\
-                ({\bf a}_{mk}{\bf b}_{k1})^{p}  &      \multicolumn{2}{c}{\cdots}        & ({\bf a}_{mk}{\bf b}_{kq})^{p}
-            \end{pmatrix} \label{eqn:hadmard exponent matrix} \\
-        ({\bf a}_{ik}{\bf b}_{kj})^{p} &= (a_{i1}b_{1j} + a_{i2}b_{2j} + \cdots + a_{in}b_{nj})^p \nonumber \\
-            &= \sum_{k_1=0}^p \sum_{k_2=0}^{p-k_1} \cdots \sum_{k_{n-1}=0}^{p-k_1-k_2-\ldots-k_{n-2}} \binom{p}{k_1, k_2, \ldots, k_n} \prod_{m=1}^n (a_{im}b_{mj})^{k_m} %
-    \label{eqn:hadamard exponent vector}
-\end{align}
-\label{eqn:nondistributive hadamard}
-\end{subequations}
-where $p = \sum_i k_i$, i.e. $k_n = p - k_1 - k_2 - \cdots - k_{n-1}$ and summation over a repeated index is assumed. That is, Equation~\ref{eqn:hadamard exponent vector} is the expansion of the element-wise exponent of a vector product, $({\bf a}{\bf b})\he{p} = ({\bf a}{\bf b})^p \ne \he[{\bf a}]{p}\he[{\bf b}]{p}$.
-}
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% data pre-processing
-To avoid implicit bias, data preprocessing is an important first step in training a neural network. Commonly, data is whitened, also known as scaling or standardization, ${\bf z}_s^{(k)}: {\bf z}_s^{(k)} = \frac{{\bf z}^{(k)} - \overline{{\bf z}^{(k)}}}{\sigma}$, where $\overline{{\bf z}^{(k)}}$ is the arithmetic mean and $\sigma$ the standard deviation of data in layer, $k$. However, a model trained on such scaled data would no longer share the vector space of the constitutive relationship. To accommodate whitened data, then, the constitutive relationship must also operate on the scaled vector space.
-
-After model training and fit of the physical constants in the constitutive relationship from $\boldsymbol{\alpha}$, the covector space of the neural network expansion, and $\boldsymbol{\beta}$, the dual space of the constitutive relationship expansion, the inverse transformation should be applied to the closed-form constitutive relationship to extract the physical constant, e.g.
-\begin{align*}
-    f(x) &= C_0 + C_1 x_s \\
-        &= C_0 + C_1 \left( \frac{x - \overline{x}}{\sigma} \right) \\
-        &= C_0^\prime + C_1^\prime x
-\end{align*}
-where
-\begin{conditions}
-    C_0^\prime & $C_0 - C_1 \overline{x}/\sigma$ \\
-    C_1^\prime & $C_1/\sigma$
-\end{conditions}
-Note that this accommodation may introduce a bias/offset even in constitutive relationships where no such offset was present before.
+By introducing such a whitening layer, data standardization can be included at any point in the neural network architecture.
 
 % dimensional sufficiency
 {\color{red} TBW. This must answer the question: how do we know if we've measured the right things--not the number of measurements, but that we have enough information? How do we know that the solution has converged? Example: A model is to be fit to the number of cakes produced by a bakery. If we are given weights of flour and sugar and number of eggs, our model can accurately tell us the \emph{volume} of cakes produced, but not the number. If this bakery makes cupcakes, but the model is trained across a spectrum of bakers, such as purveyors of wedding cakes and catering companies who work with large sheet cakes, then our dimensions (flour, sugar, eggs) are insufficient to fit the number of cakes produced. If, however, we also include number of orders and revenue, some information about the \emph{quanta} of cakes is baked into those two additional dimensions (sorry, I couldn't help myself). Therefore, a model based only on (flour, sugar, eggs) is dimensionally insufficient, but a model based on (flour, sugar, eggs, order size, revenue) is dimensionally sufficient.
@@ -160,46 +131,6 @@ This leads to a seven-step process for systematically and incrementally extracti
 	\item Perform an optimization, \emph{e.g.} least squares, fit to find the fitting parameters from \#\ref{item:coefficients}
 	\item Calculate the residuals of the ANN power series expansion coefficient vector, and from this residual vector, the error in the model. If the accuracy is sufficient for the application, stop; otherwise, expand the constitutive relationship from step \#\ref{item:hypothesis} and repeat.
 \end{enumerate}
-
-\begin{table}[htp]
-\caption{Examples of coefficient generating functions for functional forms commonly found in materials physics.}
-\begin{center}
-\begin{tabular}{c | c c c c}
-	k	& %
-		$C a^x$	& %
-			$C x^n$	& %
-				$Ce^{-\beta x}$	& %
-					$C x^{-1/2}$ \\[2ex]
-	\hline
-	0	& %
-		$1$	& %
-			--	& %
-				$C$	& %
-					$C$ \\[2ex]
-	1	& %
-		$C \ln a$	& %
-			--	& %
-				$-\beta C$		& %
-					$-\frac{1}{2}C$ \\[2ex]
-	2	& %
-		$\frac{(\ln a)^2}{2} C$	& %
-			--	&  %
-				$\frac{\beta^2}{2} C$	& %
-					$\frac{3}{8}C$	\\[2ex]
-	\vdots & \multicolumn{4}{c}{\vdots} \\[2ex]
-	n	& %
-		$\frac{(\ln a)^n}{n!} C$	& %
-			$\left\{\begin{array}{c l}
-				C & \text{if}\ k = n \\
-				0 & \text{otherwise}
-			  \end{array}\right.$	& %
-				$(-1)^n\frac{\beta^n}{n!} C$	& %
-					$C \prod_{i=1}^n (-1)\frac{2i - 1}{2i}$ \\[2ex]
-	\hline
-\end{tabular}
-\end{center}
-\label{tab:generating functions of common functions}
-\end{table}%
 
 
 %\noindent {\color{red} How does dropout affect this? It doesn't. Dropout simply sets specific $\boldsymbol\theta$ to zero, which is handled seamlessly in the previous treatment.}
