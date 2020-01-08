@@ -1,16 +1,131 @@
 \section{Discussion}\label{discussion}
 
+% original
+Many non-trivial problems in materials science, and in science more broadly, are explained not through a single constitutive relationship, but through a superposition of contributing physics.
+
+% Figure~\ref{fig:stress} shows an artificial dataset constructed to replicate the impact of yield stress in a two-phase, solid-solution strengthened alloy system. Using a combination of composite theory for the contribution of flow stress, {\color{red} NAME} solid solution \cite{solid solution}, and Hall-Petch \cite{Hall-Petch} strengthening, the expected yield stress is
+%
+% \begin{equation}
+% 	\sigma_y = F_v^A \sigma_f^A + F_v^B \sigma_f^B + \sum_i C_i [x_i]^{2/3} + \sum_j k_j d_j^{-1/2} + \ldots
+% \end{equation}
+%
+% \noindent with free parameters \\[2ex]
+% \begin{conditions}
+% 	F_v^i  & Volume fraction of phase $i$ \\
+% 	$[x_i]$  & Concentration of solute $i$ \\
+% 	d_j    & Average grain diameter of phase $j$
+% \end{conditions}
+% \\[2ex]
+% \noindent and fixed parameters \\[2ex]
+% \begin{conditions}
+% 	\sigma_f^i & Flow stress of phase $i$ \\
+% 	C_i        & Solid solution strengthening coefficient for solute species $i$ \\
+% 	k_j        & Hall-Petch strengthening coefficient for phase $j$
+% \end{tabular}
+% \\[2ex]
+
+% The goal is to iteratively improve on this constitutive model, one term at a time, and monitor the effect on the residuals between the predicted yield, $\hat{\sigma_y}$ and the actual yield $\sigma_y$.
+The goal of this approach is to identify the coefficients of an hypothesized constitutive relationship, coefficients that capture the specific physics of a process, through a least-squares fit between the covector space of a neural network series expansion, $\boldsymbol{\alpha}(\boldsymbol{\theta})$, which is a function of the model parameters, and the covector space of the constitutive relationship, $\boldsymbol{\beta}(C_k)$, which is a function of the physical constants of the model.
+
 % Find \alpha_k for neural network (NN) expansion
 % Find \beta_k for constitutive relationship (CR) expansion
 % Solve for C_k through fit (least-squares for now) of \alpha_k to \beta_k
+Having fit the model parameters, $\boldsymbol{\theta}$, on a vector space spanned by the column vectors of ${\bf x}$, the coefficients (the covector basis) of the neural network expansion, $\boldsymbol{\alpha}(\boldsymbol{\theta})$, capture the functional relationship between the input space and the response space, both affine and non-linear contributions, introduced through those parameters, $\boldsymbol{\theta}$, and the coefficient generating functions for the activation, e.g. Equations~\ref{eqn:ReLU generating function} (Rectified Linear Unit, ReLU) and \ref{eqn:softmax generating function} (softmax), respectively.
 
-% Hadamard (element-wise) product does not distribute.
-In the solution of the
+Naturally, the activation generating functions must match the activation function chosen in the neural network model architecture. Equation~\ref{eqn:ReLU generating function} is derived for ReLU activation, the most common hidden layer activation. (Generating functions for other activations are provided in the appendix.) In addition to the hidden layers, activation functions must also be chosen for the output layer. The two most common output activations are linear (Eq.~\ref{eqn:linear generating function}) and softmax (Eq.~\ref{eqn:softmax generating function}) for regression and classification, respectively.
+
+% ReLU activation depends on the data, others do not.
+ReLU activation,
+\[
+    \sigma(z) = \begin{cases}
+            z   & \mbox{if } z > 0, \\
+            0   & \mbox{otherwise}
+        \end{cases}
+\]
+is discontinuous in the first derivative at $z_i = 0$. Therefore, the coefficient generating function of this activation must either be either a function of the input data, ${\bf z}$ or a small modification must be made to the softplus,
+\begin{equation}
+    \sigma(z; \alpha) = \frac{1}{\alpha} \ln\left( 1 + e^{\alpha x} \right).
+    \label{eqn:modified softmax}
+\end{equation}
+In the limit as $\alpha$ approaches infinity, this converges to the ReLU. Practically, though, $\alpha$ can be assigned a large value and the coefficient generating function no longer depends on the input data, see Equation~\ref{eqn:modified softplus generating function} in {\color{red} the appendix}. However, because of the high computational cost of expressing the coefficients using the modified softplus, and the relative low cost of forward evaluation of the trained neural network in order to apply Equation~\ref{eqn:ReLU generating function}, expressing the coefficient generating function of ReLU in terms of the input data, as in Equation~\ref{eqn:ReLU generating function}, rather than the training-data-agnostic approach in Equation~\ref{eqn:modified softplus generating function} would seem more practical.
+
+% possible because \alpha and \beta both span the same subspace.
+\begin{condition}
+    Both the neural network and the constitutive relationship must depend on the same independent variables.
+\end{condition}
+That is, they must be described on the same basis vectors. The fit between the coefficients of the neural network expansion--$\boldsymbol{\alpha}$, the covector space of the neural network's basis vectors--and the coefficients of the series expansion of the constitutive relationship (its covector space, $\boldsymbol{\beta}$) is only possible because both span the same subspace and share a common description of the solution within that subspace, that is, the covector spaces are colinear. {\color{red} Help! I don't have the mathematical background to say this correctly. That is, choose $A$ such that $A$ maps between the vector and covector spaces. If $A: A(Y) \to Y^*$ and $A: A(X) \to X^*$, then $Y^* = X^*$ if, and only if, $Y = X$.}
+
+No neural network layer operation that leaves the vector space intact, such as dropout or explicitly setting specific $\theta_{ij}$, would compromise the comparability between the covector spaces of the neural network and constitutive relationship series expansions. However, any neural network layer operation that changes the vector space, such as layer normalization, must be explicitly included in the neural network series expansion. In order to maintain a consistent framework, any such change should be expressed as an activation function and incorporated through a coefficient generating function. For example, the coefficient generating function for data standardization would be
+\begin{equation}
+    \alpha_n = \begin{cases}
+        -\overline{\bf z}/\sigma    & \mbox{if } n = 0, \\
+        1/\sigma                   & \mbox{if } n = 1, \\
+        0                           & \mbox{otherwise}
+    \end{cases}
+\end{equation}
+where
+\begin{conditions}
+    \overline{\bf z}    & Arithmetic mean of the layer input values. \\
+    \sigma              & Standard deviation of the layer input values.
+\end{conditions}
+
+% Many series expansions, such as polynomial series, Fourier series, and Bl\"och series, expand over orthogonal bases: $x^i \perp x^j\ \forall\ i \ne j$; and similarly, $\sin k_i x \perp \sin k_j x\ \forall\ k_i \ne k_j$). For function $f(z)$, suppose $S_n(z)$ is a functional series expansion that uniformly converge in the domain of $f(z)$, then the error in the expansion can be driven to be arbitrarily small,
+% \begin{align}
+%     |z\{f(x) - S_n(z)\}| &\le \varepsilon \nonumber \\
+%     \left| \int_{z_1 = -\infty}^\infty f(x) - S_n(z) dz \right| &\le \int_{|z_1|}^\infty \frac{\varepsilon}{z} dz
+% \end{align}
+% then the
+%
+%  Because the basis functions are orthogonal in these asymptotic expansions, all cross terms are zero. Suppose a function, $f(z)$, and its series expansion, $S(z) = \sum_k s_k(z)$, that converges uniformly over the domain of $f(z)$. The error in the approximation $S$ of $f$,
+% \begin{equation}
+%     |f(z) - S(z)| \le \varepsilon
+% \end{equation}
+% for an arbitrary, positive value for $\varepsilon$.
+%
+% {\color{red} This is true due to the Poincar\'e Theorem, where the error between a function and... (This orthogonality only makes sense if we integrate over the corresponding domain, $-\infty$ to $\infty$ in these cases, but we are not integrating. Is this because of the construction of series expansions? Are series expansions based on expectation values; that the expectation value of a function is equal to the expectation value of its expansion? If this is true, then for a random, uniform variable the expectation value introduces this integral and the cross-terms disappear.)}
+
+There is no guarantee that the input vector space is orthogonal, so cross-term interactions will not vanish and must be included explicitly. Therefore, this method is based on a fully dense neural network to introduce all cross-terms. Furthermore when introduced into a polynomial expansion, element-wise exponentiation also explicitly captures all combinations of powers of all cross-terms. Equation~\ref{eqn:ANN power series coefficient generating function} shows the polynomial series expansion for the first layer of a neural network,
+\[
+    y^{(1)} = \sum_k \alpha^{(1)}_k \he[\left( \boldsymbol{\theta}^{(1)} {\bf x} \right)]{k},
+\]
+which relies on the element-wise exponential, $(\bullet)\he{n}$, as does the expansion of all layers. Unlike scalar exponentiation, element-wise exponentiation does not distribute, as seen in Equation~\ref{eqn:nondistributive hadamard}, and because element-wise exponentiation does not distribute, this equation explicitly captures all possible (second, $x_i^m x_j^n$; third, $x_i^m x_j^n x_k^p$; fourth, $x_i^m x_j^n x_k^p x_l^r$; etc.) cross-interactions of each term in $(\boldsymbol{\theta}{\bf x})$ at all polynomial orders. This is equivalent, then, of expanding over the basis set that includes all cross-interactions in the input vector space, and therefore, does not assume the column vectors of the input spare are orthogonal.
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This should go in the Methods section
+{\color{red}
+This should go in the methods section.
+
+For two matrices, $A: A \in \mathbb{R}^{m \times n}$ and $B: B \in \mathbb{R}^{n \times q}$,
+
+\begin{subequations}
+\begin{align}
+        \left( AB \right)^n &= \he[\left( \densematrix{a}{m}{p} \densematrix{b}{p}{q} \right)]{p} \nonumber \\
+            &= \left( \begin{matrix}
+                {\bf a}_{1k}{\bf b}_{k1}  & {\bf a}_{1k}{\bf b}_{k2}    & \multirow{2}{*}{\cdots}    & {\bf a}_{1k}{\bf b}_{kq}   \\
+                {\bf a}_{2k}{\bf b}_{k1}  & {\bf a}_{2k}{\bf b}_{k2}    &                            & \multirow{2}{*}{\vdots} \\
+                \multicolumn{2}{c}{\vdots}    & \ddots           &          \\
+                {\bf a}_{mk}{\bf b}_{k1}  &      \multicolumn{2}{c}{\cdots}        & {\bf a}_{mk}{\bf b}_{kq}
+            \end{matrix}\he[\right)]{p} \nonumber \\
+            &= \begin{pmatrix}
+                ({\bf a}_{1k}{\bf b}_{k1})^{p}  & ({\bf a}_{1k}{\bf b}_{k2})^{p}    & \multirow{2}{*}{\cdots}    & ({\bf a}_{1k}{\bf b}_{kq})^{p}   \\
+                ({\bf a}_{2k}{\bf b}_{k1})^{p}  & ({\bf a}_{2k}{\bf b}_{k2})^{p}     &                            & \multirow{2}{*}{\vdots} \\
+                \multicolumn{2}{c}{\vdots}    & \ddots           &          \\
+                ({\bf a}_{mk}{\bf b}_{k1})^{p}  &      \multicolumn{2}{c}{\cdots}        & ({\bf a}_{mk}{\bf b}_{kq})^{p}
+            \end{pmatrix} \label{eqn:hadmard exponent matrix} \\
+        ({\bf a}_{ik}{\bf b}_{kj})^{p} &= (a_{i1}b_{1j} + a_{i2}b_{2j} + \cdots + a_{in}b_{nj})^p \nonumber \\
+            &= \sum_{k_1=0}^p \sum_{k_2=0}^{p-k_1} \cdots \sum_{k_{n-1}=0}^{p-k_1-k_2-\ldots-k_{n-2}} \binom{p}{k_1, k_2, \ldots, k_n} \prod_{m=1}^n (a_{im}b_{mj})^{k_m} %
+    \label{eqn:hadamard exponent vector}
+\end{align}
+\label{eqn:nondistributive hadamard}
+\end{subequations}
+where $p = \sum_i k_i$, i.e. $k_n = p - k_1 - k_2 - \cdots - k_{n-1}$ and summation over a repeated index is assumed. That is, Equation~\ref{eqn:hadamard exponent vector} is the expansion of the element-wise exponent of a vector product, $({\bf a}{\bf b})\he{p} = ({\bf a}{\bf b})^p \ne \he[{\bf a}]{p}\he[{\bf b}]{p}$.
+}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % data pre-processing
-To avoid implicit bias, data preprocessing is an important first step in training a neural network. Commonly, data is whitened, also known as scaling or standardizing, ${\bf x}_s: {\bf x}_s = \frac{{\bf x} - \overline{\bf x}}{\sigma}$, where $\overline{\bf x}$ is the arithmetic mean and $\sigma$ is the standard deviation of the data set, ${\bf x}$. However, a model trained on such scaled data would change the space such that the primal space of the model (scaled) would differ from the primal space of the constitutive relationship (unscaled).
+To avoid implicit bias, data preprocessing is an important first step in training a neural network. Commonly, data is whitened, also known as scaling or standardization, ${\bf z}_s^{(k)}: {\bf z}_s^{(k)} = \frac{{\bf z}^{(k)} - \overline{{\bf z}^{(k)}}}{\sigma}$, where $\overline{{\bf z}^{(k)}}$ is the arithmetic mean and $\sigma$ the standard deviation of data in layer, $k$. However, a model trained on such scaled data would no longer share the vector space of the constitutive relationship. To accommodate whitened data, then, the constitutive relationship must also operate on the scaled vector space.
 
-To accommodate whitened data, which is necessary to remove implicit bias while training a neural network, the constitutive relationship must also operate in the scaled primal space. After model training and fit of the physical constants in the constitutive relationship from $\boldsymbol{\alpha}$, the dual space of the neural network expansion, and $\boldsymbol{\beta}$, the dual space of the constitutive relationship expansion, the inverse transformation should be applied to closed-form constitutive relationship to extract the physical constant, e.g.
+After model training and fit of the physical constants in the constitutive relationship from $\boldsymbol{\alpha}$, the covector space of the neural network expansion, and $\boldsymbol{\beta}$, the dual space of the constitutive relationship expansion, the inverse transformation should be applied to the closed-form constitutive relationship to extract the physical constant, e.g.
 \begin{align*}
     f(x) &= C_0 + C_1 x_s \\
         &= C_0 + C_1 \left( \frac{x - \overline{x}}{\sigma} \right) \\
@@ -23,40 +138,19 @@ where
 \end{conditions}
 Note that this accommodation may introduce a bias/offset even in constitutive relationships where no such offset was present before.
 
+% dimensional sufficiency
+{\color{red} TBW. This must answer the question: how do we know if we've measured the right things--not the number of measurements, but that we have enough information? How do we know that the solution has converged? Example: A model is to be fit to the number of cakes produced by a bakery. If we are given weights of flour and sugar and number of eggs, our model can accurately tell us the \emph{volume} of cakes produced, but not the number. If this bakery makes cupcakes, but the model is trained across a spectrum of bakers, such as purveyors of wedding cakes and catering companies who work with large sheet cakes, then our dimensions (flour, sugar, eggs) are insufficient to fit the number of cakes produced. If, however, we also include number of orders and revenue, some information about the \emph{quanta} of cakes is baked into those two additional dimensions (sorry, I couldn't help myself). Therefore, a model based only on (flour, sugar, eggs) is dimensionally insufficient, but a model based on (flour, sugar, eggs, order size, revenue) is dimensionally sufficient.
+
+This is a broader question that may be beyond the scope of this paper. Let's return to this if, after completing the first pass, we feel that this can be addressed by what we've done.}
+
 % comment on the distance metric
-The Euclidean ($L_2\textrm{-norm}$) distance is used in optimizations, such as the training of neural networks and other machine learning algorithms, through the mean-square error,
-\begin{equation*}
-    \argmin_{\boldsymbol{\theta}} \|{\bf y} - \boldsymbol{\theta}{\bf x}.
-\end{equation*}
-However, because of the curse of dimensionality, the $L_2\textrm{-norm}$ is not a desirable metric in high-dimensional spaces.
+% The Euclidean ($L_2\textrm{-norm}$) distance is used in optimizations, such as the training of neural networks and other machine learning algorithms, through the mean-square error,
+% \begin{equation*}
+%     \argmin_{\boldsymbol{\theta}} \|{\bf y} - \boldsymbol{\theta}{\bf x}\|.
+% \end{equation*}
+% However because of the curse of dimensionality,~\cite{curse of dimensionality reference?} the $L_2\textrm{-norm}$ is not a desirable metric in high-dimensional spaces.
 
-% original
-Many non-trivial problems in materials science, and in science more broadly, are explained not through a single constitutive relationship, but through a superposition of contributing physics.
-
-Figure~\ref{fig:stress} shows an artificial dataset constructed to replicate the impact of yield stress in a two-phase, solid-solution strengthened alloy system. Using a combination of composite theory for the contribution of flow stress, {\color{red} NAME} solid solution \cite{solid solution}, and Hall-Petch \cite{Hall-Petch} strengthening, the expected yield stress is
-
-\begin{equation}
-	\sigma_y = F_v^A \sigma_f^A + F_v^B \sigma_f^B + \sum_i C_i [x_i]^{2/3} + \sum_j k_j d_j^{-1/2} + \ldots
-\end{equation}
-
-\noindent with free parameters \\[2ex]
-\begin{tabular}{l l}
-	$F_v^i$	& Volume fraction of phase $i$ \\
-	$[x_i]$	& Concentration of solute $i$ \\
-	$d_j$	& Average grain diameter of phase $j$
-\end{tabular}
-\\[2ex]
-\noindent and fixed parameters \\[2ex]
-\begin{tabular}{l l}
-	$\sigma_f^i$	& Flow stress of phase $i$ \\
-	$C_i$		& Solid solution strengthening coefficient for solute species $i$ \\
-	$k_j$		& Hall-Petch strengthening coefficient for phase $j$
-\end{tabular}
-\\[2ex]
-
-The goal is to iteratively improve on this constitutive model one term at a time, and monitor the effect on the residuals between the predicted yield, $\hat{\sigma_y}$ and the actual yield $\sigma_y$.
-
-Together, this leads to a seven-step process for systematically and incrementally extracting physics information from an ANN:
+This leads to a seven-step process for systematically and incrementally extracting physics information from an ANN:
 \begin{enumerate}
 	\item Collect data--features and targets--for which relationships are expected to exist.
 	\item Design and train a fully dense multi-layer perceptron network (ANN).

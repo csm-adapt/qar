@@ -5,7 +5,10 @@
 %\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
 \usepackage{graphicx}
 \usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
 \usepackage{epstopdf}
+\usepackage{multirow}
 \usepackage{xcolor}
 \usepackage{array}
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
@@ -19,12 +22,20 @@
 \DeclareMathOperator*{\argmin}{argmin}
 \DeclareMathOperator*{\argmax}{argmax}
 
-\newcommand{\he}[1]{\ensuremath{{}^{\circ #1}}}
+\newtheorem{condition}{Condition}
+
+\newcommand{\he}[2][{}]{\ensuremath{{#1}^{\circ #2}}}
+\newcommand{\densematrix}[3]{%
+    \ensuremath{\begin{pmatrix}
+        #1_{11}  & #1_{12}    & \multirow{2}{*}{\cdots}    & #1_{1#3}   \\
+        #1_{21}  & #1_{22}    &                            & \multirow{2}{*}{\vdots} \\
+        \multicolumn{2}{c}{\vdots}    & \ddots           &          \\
+        #1_{#21}  &      \multicolumn{2}{c}{\cdots}        & #1_{#2#3}
+    \end{pmatrix}}}
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \title{A General Approach for Learning Constitutive Relationships (Physical Laws) from Neural Networks}
 \author{Andrew Temple}
-\author{Matthew Miller}
 \author{Aaron Stebner}
 \author{Peter Collins}
 \author{Branden Kappes}
