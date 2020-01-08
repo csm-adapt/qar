@@ -25,7 +25,7 @@ Many non-trivial problems in materials science, and in science more broadly, are
 % \\[2ex]
 
 % The goal is to iteratively improve on this constitutive model, one term at a time, and monitor the effect on the residuals between the predicted yield, $\hat{\sigma_y}$ and the actual yield $\sigma_y$.
-The goal of this approach is to identify the coefficients of an hypothesized constitutive relationship, coefficients that capture the specific physics of a process, through a least-squares fit between the covector space of a neural network series expansion, $\boldsymbol{\alpha}(\boldsymbol{\theta})$, which is a function of the model parameters, and the covector space of the constitutive relationship, $\boldsymbol{\beta}(C_k)$, which is a function of the physical constants of the model.
+The goal of this approach is to identify the coefficients of a hypothesized constitutive relationship, coefficients that capture the specific physics of a process, through a least-squares fit between the covector space of a neural network series expansion, $\boldsymbol{\alpha}(\boldsymbol{\theta})$, which is a function of the model parameters, and the covector space of the constitutive relationship, $\boldsymbol{\beta}(C_k)$, which is a function of the physical constants of the model.
 
 % Find \alpha_k for neural network (NN) expansion
 % Find \beta_k for constitutive relationship (CR) expansion
@@ -91,7 +91,7 @@ There is no guarantee that the input vector space is orthogonal, so cross-term i
 which relies on the element-wise exponential, $(\bullet)\he{n}$, as does the expansion of all layers. Unlike scalar exponentiation, element-wise exponentiation does not distribute, as seen in Equation~\ref{eqn:nondistributive hadamard}, and because element-wise exponentiation does not distribute, this equation explicitly captures all possible (second, $x_i^m x_j^n$; third, $x_i^m x_j^n x_k^p$; fourth, $x_i^m x_j^n x_k^p x_l^r$; etc.) cross-interactions of each term in $(\boldsymbol{\theta}{\bf x})$ at all polynomial orders. This is equivalent, then, of expanding over the basis set that includes all cross-interactions in the input vector space, and therefore, does not assume the column vectors of the input spare are orthogonal.
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% This should go in the Methods section
+ This should go in the Methods section
 {\color{red}
 This should go in the methods section.
 
@@ -113,7 +113,7 @@ For two matrices, $A: A \in \mathbb{R}^{m \times n}$ and $B: B \in \mathbb{R}^{n
                 ({\bf a}_{mk}{\bf b}_{k1})^{p}  &      \multicolumn{2}{c}{\cdots}        & ({\bf a}_{mk}{\bf b}_{kq})^{p}
             \end{pmatrix} \label{eqn:hadmard exponent matrix} \\
         ({\bf a}_{ik}{\bf b}_{kj})^{p} &= (a_{i1}b_{1j} + a_{i2}b_{2j} + \cdots + a_{in}b_{nj})^p \nonumber \\
-            &= \sum_{k_1=0}^p \sum_{k_2=0}^{p-k_1} \cdots \sum_{k_{n-1}=0}^{p-k_1-k_2-\ldots-k_{n-2}} \binom{p}{k_1, k_2, \ldots, k_n} \prod_{m=1}^n (a_{im}b_{mj})^{k_m} %
+            &= \sum_{k_1=0}^p \sum_{k_2=0}^{p-k_1} \cdots \sum_{k_{n-1}=0}^{p-k_1-k_2-\ldots-k_{n-2}} \binom{p}{k_1, k_2, \ldots, k_n} \prod_{m=1}^n (a_{im}b_{mj})^{k_m} 
     \label{eqn:hadamard exponent vector}
 \end{align}
 \label{eqn:nondistributive hadamard}
