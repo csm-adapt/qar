@@ -24,7 +24,7 @@ We hypothesize that the physics of a process can be extracted by fitting the pol
 
 The ReLU function is given below in Equation~(\ref{eqn:ReLU}):
 \begin{equation}
-	f(x) = 
+	f(x) =
 	\begin{cases}
 		x, & \text{if}\ x > 0 \\
 		0, & \text{otherwise}
@@ -38,7 +38,7 @@ The ReLU function is given below in Equation~(\ref{eqn:ReLU}):
 \\
 The variable $\boldsymbol x$ represents a column vector containing $\boldsymbol n$ elements, and thus, the output from each node will be multplied by the respective weight, $\theta$, before the application of the subsequent acitivation function. \\*
 
-e.g., 
+e.g.,
 \begin{equation}
 	\sigma_2 \begin{bmatrix}
 				x_{1} \\
@@ -47,11 +47,11 @@ e.g.,
 				x_{n}
 			\end{bmatrix}
 	\Rightarrow \begin{bmatrix}
-					\sigma_{11} x_{1} & \sigma_{12} x_{2} & \ldots & \sigma_{1n} x_{n} \\ 
+					\sigma_{11} x_{1} & \sigma_{12} x_{2} & \ldots & \sigma_{1n} x_{n} \\
 					\sigma_{21} x_{1} & \sigma_{22} x_2 \\
 					\vdots & & \ddots \\
 					\sigma_{n1} x_{1} \\
-				\end{bmatrix}			
+				\end{bmatrix}
 \end{equation}
 
 
@@ -120,12 +120,12 @@ A similar series expansion for the logarithm
 where, $x = e^x$,
 allows for the softplus function to be represented as
 \begin{equation}
-	f(x) = \sum_{n=1}^\infty \frac{(-1)^{n+1}}{n} 				(\sum_{k=0}^\infty x^k a_k)^n
+	f(x) = \sum_{n=1}^\infty \frac{(-1)^{n+1}}{n} (\sum_{k=0}^\infty x^k a_k)^n
 \end{equation}
 
 If the expansion of $e^x$ is performed, then it can be seen that
 \begin{equation}
-	(\sum_{k=0}^\infty x^k a_k)^n = 								(a_0+x(a_1+x(a_2+xa_3...)))^n
+	(\sum_{k=0}^\infty x^k a_k)^n = (a_0+x(a_1+x(a_2+xa_3...)))^n
 \end{equation}
 
 Using the binomial theorem
