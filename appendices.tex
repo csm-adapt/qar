@@ -50,31 +50,39 @@ and therefore,
 
 Central to this approach is the connection ability to represent a constitutive relationship and a neural network on the same vector/covector space. This is done through a polynomial series expansion of both the neural network, covered in the text, and the constitutive relationship. Select generating functions are provided here.
 
-\begin{table}[htp]
+\begin{sidewaystable}[htp]
 \caption{Examples of coefficient generating functions for functional forms commonly found in materials physics.}
 \begin{center}
-\begin{tabular}{c | c c c c}
+\begin{tabular}{c | c c c c c c}
 	k	& %
 		$C a^x$	& %
 			$C x^n$	& %
 				$Ce^{-\beta x}$	& %
-					$C x^{-1/2}$ \\[2ex]
+					$C x^{-1/2}$ & %
+                        $C (1 + x)^\alpha$ & %
+                            $C \ln(1 + x)$ \\[2ex]
 	\hline
 	0	& %
 		$1$	& %
 			--	& %
 				$C$	& %
-					$C$ \\[2ex]
+					$C$ & %
+                        $C$ & %
+                            $0$ \\[2ex]
 	1	& %
 		$C \ln a$	& %
 			--	& %
 				$-\beta C$		& %
-					$-\frac{1}{2}C$ \\[2ex]
+					$-\frac{1}{2}C$ & %
+                        $C\alpha$ & %
+                            $C$ \\[2ex]
 	2	& %
 		$\frac{(\ln a)^2}{2} C$	& %
 			--	&  %
 				$\frac{\beta^2}{2} C$	& %
-					$\frac{3}{8}C$	\\[2ex]
+					$\frac{3}{8}C$	& %
+                        $C\frac{\alpha (\alpha - 1)}{2!}$ & %
+                            $\frac{-C}{2}$ \\[2ex]
 	\vdots & \multicolumn{4}{c}{\vdots} \\[2ex]
 	n	& %
 		$\frac{(\ln a)^n}{n!} C$	& %
@@ -83,9 +91,19 @@ Central to this approach is the connection ability to represent a constitutive r
 				0 & \text{otherwise}
 			  \end{array}\right.$	& %
 				$(-1)^n\frac{\beta^n}{n!} C$	& %
-					$C \prod_{i=1}^n (-1)\frac{2i - 1}{2i}$ \\[2ex]
+					$C \prod_{i=1}^n (-1)\frac{2i - 1}{2i}$ & %
+                        $C \frac{\prod_{i=1}^n \alpha - n + 1}{n!}$ & %
+                            $C\frac{(-1)^{n+1}}{n}$ \\[2ex]
 	\hline
+    Constraint & %
+        & %
+            & %
+                & %
+                    & %
+                        $-1 < x < 1$ & %
+                            $-1 < x \le 1$ \\
+    \hline
 \end{tabular}
 \end{center}
 \label{tab:generating functions of common functions}
-\end{table}
+\end{sidewaystable}

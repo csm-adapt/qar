@@ -51,7 +51,7 @@ For example, consider the Softmax activation function which is given in Equation
 	\frac{e^{z_i}}{\sum\limits_{j=1}^k e^{z_j}}
 \end{equation}
 
-The goal is to obtain a activation generating function for the chosen activation function in the neural network. 
+The goal is to obtain a activation generating function for the chosen activation function in the neural network.
 
 The partion function, $\bold Z$, is defined below as
 \begin{equation}
@@ -63,7 +63,7 @@ The series representation for the exponential is given by the following
 \end{equation}
 Therefore
 \begin{equation}
-	\sigma(\bold z)_i = 
+	\sigma(\bold z)_i =
 	\sum\limits_{k=0}^{\infty} \alpha_{k}z_{i}^{k}
 \end{equation}
 Where $\alpha_k = \frac{1}{{\bold Z}k!}$ is the generating function for the Softmax
@@ -100,12 +100,12 @@ Similarly, the linear generating function is given in Equation~(\ref{eqn: linear
 	\label{eqn: linear generating function}
 \end{equation}
 
-Although ReLU (rectified linear units) have become a more common activation function, its discontinuity at $x = 0$ requires an infinite series to fully capture the behavior at this transition. 
+Although ReLU (rectified linear units) have become a more common activation function, its discontinuity at $x = 0$ requires an infinite series to fully capture the behavior at this transition.
 
 However, the softplus function,
 
 %Beginning of new Softplus Derivation 1/7
-%The Softplus activation function is similar to the ReLU activation function, but unlike the ReLU, the first derivative of the Softplus is continuous. As will be discussed later, the Softplus can be modified such that it can be forced to converge to the ReLU. 
+%The Softplus activation function is similar to the ReLU activation function, but unlike the ReLU, the first derivative of the Softplus is continuous. As will be discussed later, the Softplus can be modified such that it can be forced to converge to the ReLU.
 \begin{align*}
 	f(x) & = log(1+e^x)\\
 	& = \frac{1}{\alpha}log(1+e^{\alpha x}), \quad \alpha > 0 \\
@@ -141,7 +141,7 @@ And therefore it can be seen that
 	& = \frac{1}{\alpha}\sum\limits_{k=1}^{\infty}\frac{1}{k}\sum\limits_{m=0}^{\infty}c_{m}x^{m}\left( 1+\sum\limits_{n=0}^{\infty}\frac{\alpha^{n}x^{n}}{n!}\right)^{-k} \\
 \end{align*}
 
-From Gradshteyn and Ryzhik - 1.1 Power of Binomials, 1.111 Power Series 
+From Gradshteyn and Ryzhik - 1.1 Power of Binomials, 1.111 Power Series
 \begin{equation}
 	(a+x)^n = \sum\limits_{k=0}^{n}{n \choose k}x^k a^{n-k}
 \end{equation}
@@ -169,7 +169,7 @@ After some rearranging of term, the result is given below.
 	& = \frac{1}{\alpha}\sum\limits_{k=1}^{\infty}\frac{1}{k}\left[ \frac{\sum\limits_{m=0}^{\infty}c_{m}x^{m}}{\sum\limits_{n=0}^{\infty}\sum\limits_{i=0}^{k}\frac{1}{{k \choose i}}d_{n}x^{n}} \right] \\
 \end{align*}
 
-And therefore the following is obtained. 
+And therefore the following is obtained.
 \begin{align*}
 	& = \frac{1}{\alpha}\sum\limits_{k=1}^{\infty}\frac{1}{k}\left[ \frac{\sum\limits_{m=0}^{\infty}c_{m}x^{m}}{\sum\limits_{n=0}^{\infty}d_{n}'x^{n}} \right]
 \end{align*}
@@ -182,7 +182,7 @@ Where
 From Gradshteyn and Ryzhik - 0.313 Division of power series.
 
 \begin{equation}
-	\frac{\sum\limits_{k=0}^{\infty}b_k x^k}{\sum\limits_{k=0}^{\infty}a_k x^k} 
+	\frac{\sum\limits_{k=0}^{\infty}b_k x^k}{\sum\limits_{k=0}^{\infty}a_k x^k}
 	= \frac{1}{a_0}\sum\limits_{k=0}^{\infty}c_kx^k
 \end{equation}
 
@@ -283,7 +283,7 @@ The element-wise exponent is used repeatedly in both the constitutive relation a
 
 \begin{subequations}
 \begin{align}
-        \left( AB \right)^{\circ n} &= \he[\left( \densematrix{a}{m}{n} \densematrix{b}{n}{q} \right)]{p} \nonumber \\
+        \left( AB \right)^{\circ p} &= \he[\left( \densematrix{a}{m}{n} \densematrix{b}{n}{q} \right)]{p} \nonumber \\
             &= \begin{pmatrix}
                 {\bf a}_{1k}{\bf b}_{k1}  & {\bf a}_{1k}{\bf b}_{k2}    & \cdots    & {\bf a}_{1k}{\bf b}_{kq}   \\
                 {\bf a}_{2k}{\bf b}_{k1}  & {\bf a}_{2k}{\bf b}_{k2}    &           & \vdots \\
@@ -297,12 +297,13 @@ The element-wise exponent is used repeatedly in both the constitutive relation a
                 ({\bf a}_{mk}{\bf b}_{k1})^{p}  & \cdots                            &           & ({\bf a}_{mk}{\bf b}_{kq})^{p}
             \end{pmatrix} \label{eqn:hadmard exponent matrix} \\[3ex]
         ({\bf a}_{ik}{\bf b}_{kj})^{p} &= (a_{i1}b_{1j} + a_{i2}b_{2j} + \cdots + a_{in}b_{nj})^p \nonumber \\
-            &= \sum_{k_1=0}^p \sum_{k_2=0}^{p-k_1} \cdots \sum_{k_{n-1}=0}^{p-k_1-k_2-\ldots-k_{n-2}} \binom{p}{k_1, k_2, \ldots, k_n} \prod_{m=1}^n (a_{im}b_{mj})^{k_m} %
+            &= \sum_{k1 + k2 + \cdots + k_n = p} \binom{p}{k_1, k_2, \ldots, k_n} \prod_{m=1}^n (a_{im}b_{mj})^{k_m} \nonumber \\
+            &= \sum_{\| {\bf k} \|_1 = p} \binom{p}{k_1, k_2, \ldots, k_n} \prod_{m=1}^n (a_{im}b_{mj})^{k_m} \\%
     \label{eqn:hadamard exponent vector}
 \end{align}
 \label{eqn:nondistributive hadamard}
 \end{subequations}
-where $p = \sum_i k_i$, i.e. $k_n = p - k_1 - k_2 - \cdots - k_{n-1}$ and summation over a repeated index is assumed. That is, Equation~\ref{eqn:hadamard exponent vector} is the expansion of the element-wise exponent of a vector product, $({\bf a}{\bf b})\he{p} = ({\bf a}{\bf b})^p \ne \he[{\bf a}]{p}\he[{\bf b}]{p}$.
+where summation over a repeated index is assumed. That is, Equation~\ref{eqn:hadamard exponent vector} is the expansion of the element-wise exponent of a vector product, $({\bf a}{\bf b})\he{p} = ({\bf a}{\bf b})^p \ne \he[{\bf a}]{p}\he[{\bf b}]{p}$.
 }
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
