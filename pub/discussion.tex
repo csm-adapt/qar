@@ -134,3 +134,246 @@ This leads to a seven-step process for systematically and incrementally extracti
 
 
 %\noindent {\color{red} How does dropout affect this? It doesn't. Dropout simply sets specific $\boldsymbol\theta$ to zero, which is handled seamlessly in the previous treatment.}
+
+
+% ----- POWER SERIES COEFFICIENT DERIVATION ----- %
+We can represent the recursive structure of a neural network as a series of transformations on a particular power series. Using this method, we are able to write an algorithm that will compute the coefficients of a power series determined by some neural network up to some order of approximation. We tackle this in two steps to illuminate the properties of this solution. First, we describe the problem in a scalar sense where the interpretation is easy to understand and the solution is comprehensible. Second, we derive a vector approach that would be used in the case of a typical neural network which has more intricate and less obvious details. We describe each of these scenarios purely mathematically so that this derivation may be used for machine learning methods other than neural networks.
+
+\section{Scalar Transformation}
+
+\subsection{Notation}
+Suppose that $x \in \mathbb{R}$ is a scalar, $y \in \mathbb{R}$ is a scalar, $\theta \in \mathbb{R}$ is a scalar, and $\sigma: \mathbb{R} \to \mathbb{R}$ is an analytic function. Since $\sigma$ is analytic, it can be represented as
+
+\begin{align*}
+    \sigma(x)
+    &= s_0 + s_1 x + s_2 x^2 + \cdots \\
+    &= \sum_{k=0}^{\infty} s_{k} x^{k}.
+\end{align*}
+
+Suppose that we can represent $x$ as a power series of another scalar $z$.
+
+\begin{align*}
+    x
+    &= a_0 + a_1 z + a_2 z^2 + \cdots \\
+    &= \sum_{n=0}^{\infty} a_{n} z^{n}.
+\end{align*}
+
+Finally, suppose that we have the relation
+
+\begin{equation*}
+    y = \sigma(\theta x)
+\end{equation*}
+
+\subsection{Objective}
+We want to represent $y$ as a power series of $z$.
+
+\begin{align*}
+    y
+    &= b_0 + b_1 z + b_2 z^2 + \cdots \\
+    &= \sum_{n=0}^{\infty} b_{n} z^{n}
+\end{align*}
+
+We will rewrite the expression for $y$ to find these coefficients $b_i$ for $i = 0, 1, 2, \ldots$
+
+\begin{align*}
+    y
+    &= \sigma(\theta x) \\
+    &= \sum_{k=0}^{\infty} s_k (\theta x)^k \\
+    &= \sum_{k=0}^{\infty} s_k \left(\theta \sum_{n=0}^{\infty} a_{n} z^{n}\right)^{k} \\
+    &= \sum_{k=0}^{\infty} s_k \theta^k \left(\sum_{n=0}^{\infty} a_{n} z^{n}\right)^{k} \\
+    &= \sum_{k=0}^{\infty} s_k \theta^k \left(\sum_{k_0 + k_1 + k_2 + \cdots = k} \binom{k}{k_0, k_1, k_2, \cdots} \prod_{n=0}^{\infty} (a_n z^{n})^{k_n} \right)
+\end{align*}
+
+\subsection{Coefficient Extraction}
+
+To extract the coefficient $b_i$ from the previous equation, we must find terms satisfying 
+
+\begin{align*}
+    i
+    &= 0 k_0 + 1 k_1 + 2 k_2 + \cdots \\
+    &= \sum_{n=0}^{\infty} n k_n
+\end{align*}
+
+and
+
+\begin{align*}
+    k
+    &= k_0 + k_1 + k_2 + \cdots \\
+    &= \sum_{n=0}^{\infty} k_n
+\end{align*}
+
+If satisfying both of these conditions, then the value
+
+\begin{equation*}
+    s_k \theta^k \binom{k}{k_0, k_1, k_2, \cdots} \prod_{n=0}^{\infty} a_n^{k_n}
+\end{equation*}
+
+is added to the sum of $b_i$. In concise terms we formulate
+
+\begin{align*}
+    b_i
+    &= \sum_{k=0}^{\infty} s_k \theta^k \sum_{\substack{k_0 + k_1 + k_2 + \cdots = k \\ 0 k_0 + 1 k_1 + 2 k_2 + \cdots = i}} \binom{k}{k_0, k_1, k_2, \cdots} \prod_{n=0}^{\infty} a_n^{k_n} \\
+    &= \sum_{k=0}^{\infty} s_k \theta^k \sum_{\substack{k_0 + k_1 + k_2 + \cdots + k_i = k \\ 0 k_0 + 1 k_1 + 2 k_2 + \cdots + i k_i = i}} \binom{k}{k_0, k_1, k_2, \cdots, k_i} \prod_{n=0}^{\infty} a_n^{k_n} 
+\end{align*}
+
+\subsection{Worked Coefficients}
+
+We can find $b_0$. $i = 0 \implies k_1 = k_2 = \cdots = 0$ so $k_0 = k$. Therefore,
+
+\begin{align*}
+    b_0 
+    &= \sum_{k=0}^{\infty} s_k \theta^k \sum_{\substack{k_0 + k_1 + k_2 + \cdots = k \\ 0 k_0 + 1 k_1 + 2 k_2 + \cdots = 0}} \binom{k}{k_0, k_1, k_2, \cdots} \prod_{n=0}^{\infty} a_n^{k_n} \\
+    &= \sum_{k=0}^{\infty} s_k \theta^k \binom{k}{k} a_0^{k} \\
+    &= \sum_{k=0}^{\infty} s_k \theta^k a_0^k
+\end{align*}
+
+We can also find $b_1$. $i = 1 \implies k_1 = 1, k_2 = k_3 = \cdots = 0$ so $k_0 = k - 1$ and $k_1 = 1$. Therefore,
+
+\begin{align*}
+    b_1
+    &= \sum_{k=0}^{\infty} s_k \theta^k \sum_{\substack{k_0 + k_1 + k_2 + \cdots = k \\ 0 k_0 + 1 k_1 + 2 k_2 + \cdots = 1}} \binom{k}{k_0, k_1, k_2, \cdots} \prod_{n=0}^{\infty} a_n^{k_n} \\
+    &= \sum_{k=0}^{\infty} s_k \theta^k \binom{k}{k - 1, 1} a_0^{k - 1} a_1 \\
+    &= \sum_{k=0}^{\infty} k s_k \theta^k a_0^{k-1} a_1
+\end{align*}
+
+We can also find $b_2$, but the formulation is slightly more complicated. 
+
+\begin{itemize}
+    \item $i = 2 \implies k_3 = k_4 = k_5 = \cdots = 0$ and
+    \begin{itemize}
+        \item $k_2 = 0, k_1 = 2, k_0 = k - 2$ or
+        \item $k_2 = 1, k_1 = 0, k_0 = k - 1$
+    \end{itemize}
+\end{itemize}
+
+Therefore,
+
+\begin{align*}
+    b_2
+    &= \sum_{k=0}^{\infty} s_k \theta^k \sum_{\substack{k_0 + k_1 + k_2 + \cdots = k \\ 0 k_0 + 1 k_1 + 2 k_2 + \cdots = 2}} \binom{k}{k_0, k_1, k_2, \cdots} \prod_{n=0}^{\infty} a_n^{k_n} \\
+    &= \sum_{k=0}^{\infty} s_k \theta^k \left(\binom{k}{k - 2, 2, 0}a_0^{k-2} a_1^{2} + \binom{k}{k - 1, 0, 1}a_0^{k-1} a_2\right) \\
+    &= \sum_{k=0}^{\infty} s_k \theta^k \left(\frac{k(k-1)}{2} a_0^{k-2}a_1^{2} + k a_0^{k-1}a_2\right)
+\end{align*}
+
+Note that when calculating $b_i$, the value of $i$ constrains $k_{i+1} = k_{i+2} = \cdots = 0$. Also, $k_1, k_2 \cdots, k_i$ are finite and $k_0 = k - k_1 - k_2 - \cdots - k_i$.
+
+\section{Vector Transformation}
+\subsection{Notation}
+
+Suppose that $\mathbf{x} \in \mathbb{R}^d, (d \in \mathbb{Z})$ is a vector, $\mathbf{y} \in \mathbb{R}^c, (c \in \mathbb{Z})$ is a vector, $\mathbf{\Theta} \in \mathbb{R}^{c \times d}$ is a matrix, and $\sigma: \mathbb{R} \to \mathbb{R}$ is an analytic function. Since $\sigma$ is analytic, it can be represented as
+
+\begin{align*}
+    \sigma(x)
+    &= s_0 + s_1 x + s_2 x^2 + \cdots \\
+    &= \sum_{k=0}^{\infty} s_{k} x^{k}.
+\end{align*}
+
+Suppose that we can represent each entry of $\mathbf{x}$ as a power series of the entries of a vector $\mathbf{z} \in \mathbb{R}^{w}, (w \in \mathbb{Z})$.
+
+\begin{align*}
+    \forall i &= 1, \cdots, d, \\ x_i
+    &= a^{(i)}_{0,0,\cdots,0} + a^{(i)}_{1,0,\cdots,0} z_1 + a^{(i)}_{2,0,\cdots,0} z_1^2 + \cdots \\
+    &+ a^{(i)}_{0,1,\cdots,0} z_2 + a^{(i)}_{1,1,\cdots,0} z_1 z_2 + a^{(i)}_{2,1,\cdots,0} z_1^2 z_2 + \cdots \\
+    &+ a^{(i)}_{0,0,\cdots,1} z_w + a^{(i)}_{1,0,\cdots,1} z_1 z_w + a^{(i)}_{2,0,\cdots,1} z_1^2 z_w + \cdots \\
+    &= \sum_{n_1,n_2,\cdots,n_w}^{\infty,\infty,\cdots,\infty} a^{(i)}_{n_1,n_2,\cdots,n_w} z_1^{n_1} z_2^{n_2} \cdots z_w^{n_w}.
+\end{align*}
+
+Finally, suppose that we have the relation
+
+\begin{equation*}
+    \mathbf{y} = \circ\sigma(\mathbf{\Theta} \mathbf{x})
+\end{equation*}
+
+where $\circ\sigma: \mathbb{R}^{c} \to \mathbb{R}^{c}$ is the $\sigma$ function applied element-wise to a vector.
+
+\subsection{Objective}
+We want to represent each entry of $\mathbf{y}$ as a power series of the entries of $\mathbf{z}$.
+
+\begin{align*}
+    \forall i &= 1, \cdots, c, \\ y_i
+    &= b^{(i)}_{0,0,\cdots,0} + b^{(i)}_{1,0,\cdots,0} z_1 + b^{(i)}_{2,0,\cdots,0} z_1^2 + \cdots \\
+    &+ b^{(i)}_{0,1,\cdots,0} z_2 + b^{(i)}_{1,1,\cdots,0} z_1 z_2 + b^{(i)}_{2,1,\cdots,0} z_1^2 z_2 + \cdots \\
+    &+ b^{(i)}_{0,0,\cdots,1} z_w + b^{(i)}_{1,0,\cdots,1} z_1 z_w + b^{(i)}_{2,0,\cdots,1} z_1^2 z_w + \cdots \\
+    &= \sum_{n_1,n_2,\cdots,n_w}^{\infty,\infty,\cdots,\infty} b^{(i)}_{n_1,n_2,\cdots,n_w} z_1^{n_1} z_2^{n_2} \cdots z_w^{n_w}.
+\end{align*}
+
+We will rewrite the expression for $y_i$ to find these coefficients $b^{(i)}_{n_1, n_2, \cdots, n_w}$ for $(n_1, n_2, \cdots, n_w)$ from $(0, 0, \cdots, 0)$ to $(\infty, \infty, \cdots, \infty)$.
+
+\begin{align*}
+    \forall i &= 1, \cdots, c, \\ y_i
+    &= \left[\circ\sigma(\mathbf{\Theta} \mathbf{x})\right]_i \\
+    &= \sigma(\left[\mathbf{\Theta} \mathbf{x}\right]_i) \\
+    &= \sigma(\mathbf{\theta}_i \mathbf{x}) \\
+    &= \sum_{k=0}^{\infty} s_k (\mathbf{\theta}_i \mathbf{x})^k \\
+    &= \sum_{k=0}^{\infty} s_k \left(\sum_{j=1}^{d} \theta_{ij} x_{j}\right)^k \\
+    &= \sum_{k=0}^{\infty} s_k \left(\sum_{k_1 + \cdots + k_d = k} \binom{k}{k_1, \cdots, k_d} \prod_{j=1}^{d} (\theta_{ij} x_j)^{k_j} \right) \\
+    &= \sum_{k=0}^{\infty} s_k \left(\sum_{k_1 + \cdots + k_d = k} \binom{k}{k_1, \cdots, k_d} \prod_{j=1}^{d}\theta_{ij}^{k_j} \left(\sum_{n_1, \cdots, n_w}^{\infty,
+    \cdots, \infty} a^{(j)}_{n_1,\cdots,n_w} z_1^{n_1}  \cdots z_w^{n_w} \right)^{k_j}\right) \\
+    &= \sum_{k=0}^{\infty} s_k \left(\sum_{k_1 + \cdots + k_d = k} \binom{k}{k_1, \cdots, k_d} \prod_{j=1}^{d} \theta_{ij}^{k_j} \left(\sum_{\sum [l] = k_j} \binom{k_j}{[l]} \prod_{n_1, \cdots, n_w}^{\infty, \cdots, \infty} (a^{(j)}_{n_1, \cdots, n_w} z_1^{n_1} \cdots z_w^{n_w})^{l_{n_1, \cdots, n_w}} \right)\right)
+\end{align*}
+
+where
+
+\begin{align*}
+    [l] = l_{\underbrace{0, \cdots, 0}_{\times w}}, \ldots, l_{\underbrace{\infty, \cdots, \infty}_{\times w}}
+\end{align*}
+
+\subsection{Coefficient Extraction}
+
+To extract the coefficient $b^{(i)}_{m_1, \cdots, m_w}$ from the previous equation, we must find terms satisfying index constraints
+
+\begin{align*}
+    k_1 + k_2 + \cdots + k_d &= k \\
+    l_{0, \cdots, 0} + \cdots + l_{\infty, \cdots, \infty} &= k_j
+\end{align*}
+
+and power constraints
+
+\begin{align*}
+    \sum_{n_1, \cdots, n_w}^{\infty, \cdots, \infty} n_1 l_{n_1, \cdots, n_w} &= m_1 \\
+    \sum_{n_1, \cdots, n_w}^{\infty, \cdots, \infty} n_2 l_{n_1, \cdots, n_w} &= m_2 \\
+    \vdots \qquad &= \;\; \vdots \\
+    \sum_{n_1, \cdots, n_w}^{\infty, \cdots, \infty} n_w l_{n_1, \cdots, n_w} &= m_w.
+\end{align*}
+
+Notice that the power constraints can be simplified slightly since any solution must also satisfy
+
+\begin{equation*}
+    l_{n_1, \cdots, n_{p-1}, m_p + 1, n_{p+1}, \cdots, n_w} = l_{n_1, \cdots, n_{p-1}, m_p + 2, n_{p+1}, \cdots, n_w} = \cdots = 0
+\end{equation*}
+
+resulting in
+
+\begin{align*}
+    \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_1 l_{n_1, \cdots, n_w} &= m_1 \\
+    \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_2 l_{n_1, \cdots, n_w} &= m_2 \\
+    \vdots \qquad &= \;\; \vdots \\
+    \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_w l_{n_1, \cdots, n_w} &= m_w.
+\end{align*}
+
+If satisfying all of these constraints, then the value
+
+\begin{equation*}
+    s_k \binom{k}{k_1, \cdots, k_d} \binom{k_j}{[l]} \theta_{ij}^{k_j} (a^{(j)}_{n_1, \cdots, n_w})^{l_{n_1, \cdots, n_w}}
+\end{equation*}
+
+is added to the sum of $b^{(i)}_{m_1, \cdots, m_w}$. In concise terms we formulate
+
+\begin{align*}
+    b^{(i)}_{m_1, \cdots, m_w} = \sum_{k=0}^{\infty} s_k \sum_{k_1 + \cdots + k_d = k} \binom{k}{k_1, \cdots, k_d} \prod_{j=1}^{d} \theta_{ij}^{k_j} \sum_{\substack{l_{0, \cdots, 0} + \cdots + l_{\infty, \cdots, \infty} = k_j \\ \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_1 l_{n_1, \cdots, n_w} = m_1 \\ \vdots \\ \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_w l_{n_1, \cdots, n_w} = m_w}} \binom{k_j}{[l]} (a^{(j)}_{n_1, \cdots, n_w})^{l_{n_1, \cdots, n_w}}
+\end{align*}
+
+The only issue is that of finding solutions to the constraints.
+
+\subsection{Interpretation}
+
+We can use this method for deriving power series for repeatedly composed functions with linear transformations (i.e. $\mathbf{y} = f(\mathbf{\Theta}_3 f(\mathbf{
+\Theta}_1 f(\mathbf{\Theta}_1 \mathbf{x})))$). We represent our original input variable as $\mathbf{x} = \mathbf{z}$ so that we have coefficients $a_{1, 0, \cdots, 0} = a_{0, 1, \cdots, 0} = \cdots = a_{0, 0, \cdots, 1} = 1$ with all other coefficients zero. Then, we update $\mathbf{a}$ each composition of the function to obtain $\mathbf{b}$ for $\mathbf{y}$. This can be easily applied to neural networks.
+
+\vspace{0.10in}
+\noindent
+In order to make this method computationally feasible, we must truncate the power series at some precision. Say the maximum power we wish on any variable is $K$, then, we simply replace instances of $\sum_{k=0}^{\infty} s_k x^k$ with $\sum_{k=0}^{K} s_k x^k$. This works because our power constraints limit the maximum powers of our variable. Thus, coefficients of order $0, 1, \cdots, K$ will have no error and our approximation will only have truncation error from dropping terms with order $> K$.
+
+\subsection{Constraint Analysis}
+
+The constraints are of a form of a restricted partition within number theory. There is literature concerning these exact constraints (see https://arxiv.org/pdf/1611.09931.pdf). We can construct an algorithm that operates in $\mathcal{O}(K^w)$ time by looping each indices $l_{0, \cdots, 0}, \cdots, l_{m_1, \cdots, m_w}$ from $0$ to $K$ and checking if they satisfy the constraints. This warrants some future study to see if there are ways to reduce the operation time and find solutions to the system of constraints more quickly.
