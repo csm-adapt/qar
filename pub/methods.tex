@@ -284,25 +284,25 @@ where $\sum\limits_{k=1}^{\infty}\frac{b_{n}}{\alpha k}$ is the generating funct
 The element-wise exponent is used repeatedly in both the constitutive relation and neural network expansions. For the product of two matrices, $A: A \in \mathbb{R}^{m \times n}$ and $B: B \in \mathbb{R}^{n \times q}$, the element-wise exponent results in an expanded basis that explicitly includes the cross terms from ${\bf A}$ and ${\bf B}$.
 
 \begin{subequations}
-% \begin{align}
-%         \left( AB \right)^{\circ p} &= \he[\left( \densematrix{a}{m}{n} \densematrix{b}{n}{q} \right)]{p} \nonumber \\
-%             &= \begin{pmatrix}
-%                 {\bf a}_{1k}{\bf b}_{k1}  & {\bf a}_{1k}{\bf b}_{k2}    & \cdots    & {\bf a}_{1k}{\bf b}_{kq}   \\
-%                 {\bf a}_{2k}{\bf b}_{k1}  & {\bf a}_{2k}{\bf b}_{k2}    &           & \vdots \\
-%                 \vdots                    &                             & \ddots    &          \\
-%                 {\bf a}_{mk}{\bf b}_{k1}  & \cdots                      &           & {\bf a}_{mk}{\bf b}_{kq}
-%             \end{pmatrix}^{\circ p} \nonumber \\
-%             &= \begin{pmatrix}
-%                 ({\bf a}_{1k}{\bf b}_{k1})^{p}  & ({\bf a}_{1k}{\bf b}_{k2})^{p}    & \cdots    & ({\bf a}_{1k}{\bf b}_{kq})^{p}   \\
-%                 ({\bf a}_{2k}{\bf b}_{k1})^{p}  & ({\bf a}_{2k}{\bf b}_{k2})^{p}    &           & \vdots \\
-%                 \vdots                          &                                   & \ddots           &          \\
-%                 ({\bf a}_{mk}{\bf b}_{k1})^{p}  & \cdots                            &           & ({\bf a}_{mk}{\bf b}_{kq})^{p}
-%             \end{pmatrix} \label{eqn:hadmard exponent matrix} \\[3ex]
-%         ({\bf a}_{ik}{\bf b}_{kj})^{p} &= (a_{i1}b_{1j} + a_{i2}b_{2j} + \cdots + a_{in}b_{nj})^p \nonumber \\
-%             &= \sum_{k1 + k2 + \cdots + k_n = p} \binom{p}{k_1, k_2, \ldots, k_n} \prod_{m=1}^n (a_{im}b_{mj})^{k_m} \nonumber \\
-%             &= \sum_{\| {\bf k} \|_1 = p} \binom{p}{k_1, k_2, \ldots, k_n} \prod_{m=1}^n (a_{im}b_{mj})^{k_m} \\%
-%     \label{eqn:hadamard exponent vector}
-% \end{align}
+\begin{align}
+        \left( AB \right)^{\circ p} &= \he[\left( \densematrix{a}{m}{n} \densematrix{b}{n}{q} \right)]{p} \nonumber \\
+            &= \begin{pmatrix}
+                {\bf a}_{1k}{\bf b}_{k1}  & {\bf a}_{1k}{\bf b}_{k2}    & \cdots    & {\bf a}_{1k}{\bf b}_{kq}   \\
+                {\bf a}_{2k}{\bf b}_{k1}  & {\bf a}_{2k}{\bf b}_{k2}    &           & \vdots \\
+                \vdots                    &                             & \ddots    &          \\
+                {\bf a}_{mk}{\bf b}_{k1}  & \cdots                      &           & {\bf a}_{mk}{\bf b}_{kq}
+            \end{pmatrix}^{\circ p} \nonumber \\
+            &= \begin{pmatrix}
+                ({\bf a}_{1k}{\bf b}_{k1})^{p}  & ({\bf a}_{1k}{\bf b}_{k2})^{p}    & \cdots    & ({\bf a}_{1k}{\bf b}_{kq})^{p}   \\
+                ({\bf a}_{2k}{\bf b}_{k1})^{p}  & ({\bf a}_{2k}{\bf b}_{k2})^{p}    &           & \vdots \\
+                \vdots                          &                                   & \ddots           &          \\
+                ({\bf a}_{mk}{\bf b}_{k1})^{p}  & \cdots                            &           & ({\bf a}_{mk}{\bf b}_{kq})^{p}
+            \end{pmatrix} \label{eqn:hadmard exponent matrix} \\[3ex]
+        ({\bf a}_{ik}{\bf b}_{kj})^{p} &= (a_{i1}b_{1j} + a_{i2}b_{2j} + \cdots + a_{in}b_{nj})^p \nonumber \\
+            &= \sum_{k1 + k2 + \cdots + k_n = p} \binom{p}{k_1, k_2, \ldots, k_n} \prod_{m=1}^n (a_{im}b_{mj})^{k_m} \nonumber \\
+            &= \sum_{\| {\bf k} \|_1 = p} \binom{p}{k_1, k_2, \ldots, k_n} \prod_{m=1}^n (a_{im}b_{mj})^{k_m} \\%
+    \label{eqn:hadamard exponent vector}
+\end{align}
 \label{eqn:nondistributive hadamard}
 \end{subequations}
 where summation over a repeated index is assumed. That is, Equation~\ref{eqn:hadamard exponent vector} is the expansion of the element-wise exponent of a vector product, $({\bf a}{\bf b})\he{p} = ({\bf a}{\bf b})^p \ne \he[{\bf a}]{p}\he[{\bf b}]{p}$.
@@ -453,7 +453,7 @@ Finally, suppose that we have the relation
 	\label{eqn:scalar layer relation}
 \end{equation}
 
-This represents a layer of an ANN with input $x$, weight $\theta$, output $y$, and activation $\sigma$. The value of $z$ can be intrepreted as the input to the entire ANN.
+This represents a single-neuron layer of an ANN with input $x$, weight $\theta$, output $y$, and activation $\sigma$. The value of $z$ can be intrepreted as the input to the entire ANN.
 
 \subsubsection{Objective}
 We wish to represent $y$ as a power series of $z$. That is,
@@ -485,11 +485,11 @@ At this point, it is infeasible to attempt to write Equation (\ref{eqn:scalar y 
 First, as a result of the multinomial theorem, we have a constraint on the inner sum in Equation (\ref{eqn:scalar y expansion}) that is
 
 \begin{equation}
-	k = \sum_{n=0}^{\infty} k_n.
+	k = \sum_{n=0}^{\infty} k_n
 	\label{eqn:scalar index constraint}
 \end{equation}
 
-This is a constraint on the index of the sum so we shall call this an index constraint.\\
+where each $k_n$ must be a non-negative integer. This is a constraint on the index of the sum so we shall call this an index constraint.\\
 
 Second, the coefficient $b_i$ is associated with the term $z^i$ so we must form an equality between $i$ and the power on $z$ in Equation (\ref{eqn:scalar y expansion}). To satisfy this equality, we note that
 
@@ -511,7 +511,7 @@ Notice that the power constraint implies $k_{i + 1} = k_{i + 2} = \cdots = 0$. T
 	k = \sum_{n=0}^{i} k_n, \qquad i = \sum_{n=0}^{i} n k_n
 \end{equation}
 
-If a set of $k_j$ for $j = 0, 1, 2, \ldots$ satisfy both of these constraints, then, the constant coefficients of $z^i$ which are 
+If a collection of $k_j$ for $j = 0, 1, 2, \ldots$ satisfy both of these constraints, then, the constant coefficients of $z^i$ which are 
 
 \begin{equation*}
     s_k \theta^k \binom{k}{k_0, k_1, \cdots, k_i} \prod_{n=0}^{\infty} a_n^{k_n}
@@ -524,7 +524,7 @@ may be pulled out and added to the sum of $b_i$. In concise terms we have derive
 	\label{eqn:scalar power series result}
 \end{equation}
 
-Thus, we have derived a tractable method of computing the coefficients of a power series after a linear and nonlinear transformation.
+Thus, we have derived a tractable method of computing the coefficients of a power series after a linear and nonlinear transformation. We have included some worked examples of these coefficients in Appendix \ref{sec:worked scalar coeffs}.
 %End of scalar coefficients derivation.%
 
 %If no reference, prove that the primal/dual is unique.

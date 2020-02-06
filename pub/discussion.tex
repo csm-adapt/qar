@@ -137,125 +137,136 @@ This leads to a seven-step process for systematically and incrementally extracti
 
 
 %Beginning of vector coefficients derivation.%
-\section{Vector Transformation}
-\subsection{Notation}
+\subsection{Polynomial Expansion of a Vector Layer}
+\label{sec:polynomial series vector}
+
+This derivation will be a generalization of the derivation given in Section \ref{sec:polynomial series scalar} where each layer of the ANN may have an arbitrary number of neurons. We show a similar result to before where we find coefficients for a power series after linear and nonlinear transformations.
+
+\subsubsection{Notation}
 
 Suppose that $\mathbf{x} \in \mathbb{R}^d, (d \in \mathbb{Z})$ is a vector, $\mathbf{y} \in \mathbb{R}^c, (c \in \mathbb{Z})$ is a vector, $\mathbf{\Theta} \in \mathbb{R}^{c \times d}$ is a matrix, and $\sigma: \mathbb{R} \to \mathbb{R}$ is an analytic function. Since $\sigma$ is analytic, it can be represented as
 
-\begin{align*}
+\begin{align}
     \sigma(x)
-    &= s_0 + s_1 x + s_2 x^2 + \cdots \\
+    &= s_0 + s_1 x + s_2 x^2 + \cdots \nonumber \\
     &= \sum_{k=0}^{\infty} s_{k} x^{k}.
-\end{align*}
+    \label{eqn:vector layer activation}
+\end{align}
 
 Suppose that we can represent each entry of $\mathbf{x}$ as a power series of the entries of a vector $\mathbf{z} \in \mathbb{R}^{w}, (w \in \mathbb{Z})$.
 
-\begin{align*}
-    \forall i &= 1, \cdots, d, \\ x_i
-    &= a^{(i)}_{0,0,\cdots,0} + a^{(i)}_{1,0,\cdots,0} z_1 + a^{(i)}_{2,0,\cdots,0} z_1^2 + \cdots \\
-    &+ a^{(i)}_{0,1,\cdots,0} z_2 + a^{(i)}_{1,1,\cdots,0} z_1 z_2 + a^{(i)}_{2,1,\cdots,0} z_1^2 z_2 + \cdots \\
-    &+ a^{(i)}_{0,0,\cdots,1} z_w + a^{(i)}_{1,0,\cdots,1} z_1 z_w + a^{(i)}_{2,0,\cdots,1} z_1^2 z_w + \cdots \\
+\begin{align}
+    \forall i &= 1, \cdots, d, \nonumber \\ x_i
+    &= a^{(i)}_{0,0,\cdots,0} + a^{(i)}_{1,0,\cdots,0} z_1 + a^{(i)}_{2,0,\cdots,0} z_1^2 + \cdots \nonumber \\
+    &+ a^{(i)}_{0,1,\cdots,0} z_2 + a^{(i)}_{1,1,\cdots,0} z_1 z_2 + a^{(i)}_{2,1,\cdots,0} z_1^2 z_2 + \cdots \nonumber \\
+    &+ a^{(i)}_{0,0,\cdots,1} z_w + a^{(i)}_{1,0,\cdots,1} z_1 z_w + a^{(i)}_{2,0,\cdots,1} z_1^2 z_w + \cdots \nonumber \\
     &= \sum_{n_1,n_2,\cdots,n_w}^{\infty,\infty,\cdots,\infty} a^{(i)}_{n_1,n_2,\cdots,n_w} z_1^{n_1} z_2^{n_2} \cdots z_w^{n_w}.
-\end{align*}
+    \label{eqn:vector x series}
+\end{align}
 
 Finally, suppose that we have the relation
 
-\begin{equation*}
-    \mathbf{y} = \circ\sigma(\mathbf{\Theta} \mathbf{x})
-\end{equation*}
+\begin{equation}
+    \mathbf{y} = \mathbf{\sigma}(\mathbf{\Theta} \mathbf{x})
+    \label{eqn:vector layer relation}
+\end{equation}
 
-where $\circ\sigma: \mathbb{R}^{c} \to \mathbb{R}^{c}$ is the $\sigma$ function applied element-wise to a vector.
+where $\sigma$ is being applied element-wise to a vector.\\
 
-\subsection{Objective}
-We want to represent each entry of $\mathbf{y}$ as a power series of the entries of $\mathbf{z}$.
+Similar to the scalar case, this represents a multi-neuron layer of an ANN with input $\mathbf{x}$, weights $\mathbf{\theta}$, output $\mathbf{y}$, and activation $\sigma$. The value of $z$ can be intrepreted as the input to the entire ANN.
 
-\begin{align*}
-    \forall i &= 1, \cdots, c, \\ y_i
-    &= b^{(i)}_{0,0,\cdots,0} + b^{(i)}_{1,0,\cdots,0} z_1 + b^{(i)}_{2,0,\cdots,0} z_1^2 + \cdots \\
-    &+ b^{(i)}_{0,1,\cdots,0} z_2 + b^{(i)}_{1,1,\cdots,0} z_1 z_2 + b^{(i)}_{2,1,\cdots,0} z_1^2 z_2 + \cdots \\
-    &+ b^{(i)}_{0,0,\cdots,1} z_w + b^{(i)}_{1,0,\cdots,1} z_1 z_w + b^{(i)}_{2,0,\cdots,1} z_1^2 z_w + \cdots \\
+\subsubsection{Objective}
+We wish to represent each entry of $\mathbf{y}$ as a power series of the entries of $\mathbf{z}$. That is,
+
+\begin{align}
+    \forall i &= 1, \cdots, c, \nonumber \\ y_i
+    &= b^{(i)}_{0,0,\cdots,0} + b^{(i)}_{1,0,\cdots,0} z_1 + b^{(i)}_{2,0,\cdots,0} z_1^2 + \cdots \nonumber \\
+    &+ b^{(i)}_{0,1,\cdots,0} z_2 + b^{(i)}_{1,1,\cdots,0} z_1 z_2 + b^{(i)}_{2,1,\cdots,0} z_1^2 z_2 + \cdots \nonumber \\
+    &+ b^{(i)}_{0,0,\cdots,1} z_w + b^{(i)}_{1,0,\cdots,1} z_1 z_w + b^{(i)}_{2,0,\cdots,1} z_1^2 z_w + \cdots \nonumber \\
     &= \sum_{n_1,n_2,\cdots,n_w}^{\infty,\infty,\cdots,\infty} b^{(i)}_{n_1,n_2,\cdots,n_w} z_1^{n_1} z_2^{n_2} \cdots z_w^{n_w}.
-\end{align*}
+    \label{eqn:vector y series}
+\end{align}
 
-We will rewrite the expression for $y_i$ to find these coefficients $b^{(i)}_{n_1, n_2, \cdots, n_w}$ for $(n_1, n_2, \cdots, n_w)$ from $(0, 0, \cdots, 0)$ to $(\infty, \infty, \cdots, \infty)$.
+Rewriting Equation (\ref{eqn:vector layer relation}) in terms of Equations (\ref{eqn:vector layer activation}) and (\ref{eqn:vector x series}), we obtain
 
-\begin{align*}
-    \forall i &= 1, \cdots, c, \\ y_i
-    &= \left[\circ\sigma(\mathbf{\Theta} \mathbf{x})\right]_i \\
-    &= \sigma(\left[\mathbf{\Theta} \mathbf{x}\right]_i) \\
-    &= \sigma(\mathbf{\theta}_i \mathbf{x}) \\
-    &= \sum_{k=0}^{\infty} s_k (\mathbf{\theta}_i \mathbf{x})^k \\
-    &= \sum_{k=0}^{\infty} s_k \left(\sum_{j=1}^{d} \theta_{ij} x_{j}\right)^k \\
-    &= \sum_{k=0}^{\infty} s_k \left(\sum_{k_1 + \cdots + k_d = k} \binom{k}{k_1, \cdots, k_d} \prod_{j=1}^{d} (\theta_{ij} x_j)^{k_j} \right) \\
+\begin{align}
+    \forall i &= 1, \cdots, c, \nonumber \\ y_i
+    &= \left[\mathbf{\sigma}(\mathbf{\Theta} \mathbf{x})\right]_i \nonumber \\
+    &= \sigma(\mathbf{\theta}_i \mathbf{x}) \nonumber \\
+    &= \sum_{k=0}^{\infty} s_k (\mathbf{\theta}_i \mathbf{x})^k \nonumber \\
+    &= \sum_{k=0}^{\infty} s_k \left(\sum_{j=1}^{d} \theta_{ij} x_{j}\right)^k \nonumber \\
+    &= \sum_{k=0}^{\infty} s_k \left(\sum_{k_1 + \cdots + k_d = k} \binom{k}{k_1, \cdots, k_d} \prod_{j=1}^{d} (\theta_{ij} x_j)^{k_j} \right) \nonumber \\
     &= \sum_{k=0}^{\infty} s_k \left(\sum_{k_1 + \cdots + k_d = k} \binom{k}{k_1, \cdots, k_d} \prod_{j=1}^{d}\theta_{ij}^{k_j} \left(\sum_{n_1, \cdots, n_w}^{\infty,
-    \cdots, \infty} a^{(j)}_{n_1,\cdots,n_w} z_1^{n_1}  \cdots z_w^{n_w} \right)^{k_j}\right) \\
-    &= \sum_{k=0}^{\infty} s_k \left(\sum_{k_1 + \cdots + k_d = k} \binom{k}{k_1, \cdots, k_d} \prod_{j=1}^{d} \theta_{ij}^{k_j} \left(\sum_{\sum [l] = k_j} \binom{k_j}{[l]} \prod_{n_1, \cdots, n_w}^{\infty, \cdots, \infty} (a^{(j)}_{n_1, \cdots, n_w} z_1^{n_1} \cdots z_w^{n_w})^{l_{n_1, \cdots, n_w}} \right)\right)
-\end{align*}
+    \cdots, \infty} a^{(j)}_{n_1,\cdots,n_w} z_1^{n_1}  \cdots z_w^{n_w} \right)^{k_j}\right) \nonumber \\
+    &= \sum_{k=0}^{\infty} s_k \left(\sum_{k_1 + \cdots + k_d = k} \binom{k}{k_1, \cdots, k_d} \prod_{j=1}^{d} \theta_{ij}^{k_j} \left(\sum_{\lVert \mathbf{L} \rVert_1 = k_j} \binom{k_j}{\mathbf{L}} \prod_{n_1, \cdots, n_w}^{\infty, \cdots, \infty} (a^{(j)}_{n_1, \cdots, n_w} z_1^{n_1} \cdots z_w^{n_w})^{l_{n_1, \cdots, n_w}} \right)\right). \nonumber \\
+    \label{eqn:vector y expansion}
+\end{align}
 
-where
-
-\begin{align*}
-    [l] = l_{\underbrace{0, \cdots, 0}_{\times w}}, \ldots, l_{\underbrace{\infty, \cdots, \infty}_{\times w}}
-\end{align*}
-
-\subsection{Coefficient Extraction}
-
-To extract the coefficient $b^{(i)}_{m_1, \cdots, m_w}$ from the previous equation, we must find terms satisfying index constraints
+where $\mathbf{L}$ is a collection of non-negative integers that are indices such that
 
 \begin{align*}
-    k_1 + k_2 + \cdots + k_d &= k \\
-    l_{0, \cdots, 0} + \cdots + l_{\infty, \cdots, \infty} &= k_j
+    &\mathbf{L} = l_{\underbrace{0, \cdots, 0}_{\times w}}, \ldots, l_{\underbrace{\infty, \cdots, \infty}_{\times w}}, \\
+    &\lVert \mathbf{L} \rVert_1 = l_{0, \cdots, 0} + \cdots + l_{\infty, \cdots, \infty}, \\
+    &\binom{k_j}{\mathbf{L}} = \binom{k_j}{l_{0, \cdots, 0}, \ldots, l_{\infty, \cdots, \infty}}.
 \end{align*}
+
+\subsubsection{Coefficient Extraction}
+
+To find the coefficients $b^{(i)}_{m_1, \cdots, m_w}$ from Equation (\ref{eqn:vector y expansion}), we must find terms satisfying index constraints
+
+\begin{align}
+    k &= \sum_{n=1}^{d} k_n \\
+    k_j &= \lVert \mathbf{L} \rVert_1
+\end{align}
 
 and power constraints
 
-\begin{align*}
-    \sum_{n_1, \cdots, n_w}^{\infty, \cdots, \infty} n_1 l_{n_1, \cdots, n_w} &= m_1 \\
-    \sum_{n_1, \cdots, n_w}^{\infty, \cdots, \infty} n_2 l_{n_1, \cdots, n_w} &= m_2 \\
-    \vdots \qquad &= \;\; \vdots \\
-    \sum_{n_1, \cdots, n_w}^{\infty, \cdots, \infty} n_w l_{n_1, \cdots, n_w} &= m_w.
-\end{align*}
+\begin{align}
+    m_1 &= \sum_{n_1, \cdots, n_w}^{\infty, \cdots, \infty} n_1 l_{n_1, \cdots, n_w} \nonumber \\
+    m_2 &= \sum_{n_1, \cdots, n_w}^{\infty, \cdots, \infty} n_2 l_{n_1, \cdots, n_w} \nonumber \\
+    \vdots \;\; &= \qquad \vdots \nonumber \\
+    m_3 &= \sum_{n_1, \cdots, n_w}^{\infty, \cdots, \infty} n_w l_{n_1, \cdots, n_w}.
+\end{align}
 
-Notice that the power constraints can be simplified slightly since any solution must also satisfy
+Similar to the scalar case, notice that the power constraints can be simplified since any solution must also satisfy
 
-\begin{equation*}
-    l_{n_1, \cdots, n_{p-1}, m_p + 1, n_{p+1}, \cdots, n_w} = l_{n_1, \cdots, n_{p-1}, m_p + 2, n_{p+1}, \cdots, n_w} = \cdots = 0
-\end{equation*}
+\begin{equation}
+    l_{n_1, \cdots, n_{p-1}, m_p + 1, n_{p+1}, \cdots, n_w} = l_{n_1, \cdots, n_{p-1}, m_p + 2, n_{p+1}, \cdots, n_w} = \cdots = 0.
+\end{equation}
 
 resulting in
 
-\begin{align*}
-    \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_1 l_{n_1, \cdots, n_w} &= m_1 \\
-    \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_2 l_{n_1, \cdots, n_w} &= m_2 \\
-    \vdots \qquad &= \;\; \vdots \\
-    \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_w l_{n_1, \cdots, n_w} &= m_w.
-\end{align*}
+\begin{align}
+    m_1 &= \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_1 l_{n_1, \cdots, n_w} \nonumber \\
+    m_2 &= \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_2 l_{n_1, \cdots, n_w} \nonumber \\
+    \vdots \;\; &= \qquad \vdots \nonumber \\
+    m_w &= \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_w l_{n_1, \cdots, n_w}.
+\end{align}
 
-If satisfying all of these constraints, then the value
+If a collection of $k_1, \ldots, k_d$ and $\mathbf{L}$ satisfy all of these constraints, then the value
 
 \begin{equation*}
-    s_k \binom{k}{k_1, \cdots, k_d} \binom{k_j}{[l]} \theta_{ij}^{k_j} (a^{(j)}_{n_1, \cdots, n_w})^{l_{n_1, \cdots, n_w}}
+    s_k \binom{k}{k_1, \cdots, k_d} \binom{k_j}{\mathbf{L}} \theta_{ij}^{k_j} (a^{(j)}_{n_1, \cdots, n_w})^{l_{n_1, \cdots, n_w}}
 \end{equation*}
 
-is added to the sum of $b^{(i)}_{m_1, \cdots, m_w}$. In concise terms we formulate
+may be pulled out to the sum of $b^{(i)}_{m_1, \cdots, m_w}$. In concise terms we have derived
 
-\begin{align*}
-    b^{(i)}_{m_1, \cdots, m_w} = \sum_{k=0}^{\infty} s_k \sum_{k_1 + \cdots + k_d = k} \binom{k}{k_1, \cdots, k_d} \prod_{j=1}^{d} \theta_{ij}^{k_j} \sum_{\substack{l_{0, \cdots, 0} + \cdots + l_{\infty, \cdots, \infty} = k_j \\ \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_1 l_{n_1, \cdots, n_w} = m_1 \\ \vdots \\ \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_w l_{n_1, \cdots, n_w} = m_w}} \binom{k_j}{[l]} (a^{(j)}_{n_1, \cdots, n_w})^{l_{n_1, \cdots, n_w}}
-\end{align*}
+\begin{equation}
+    b^{(i)}_{m_1, \cdots, m_w} = \sum_{k=0}^{\infty} s_k \sum_{k_1 + \cdots + k_d = k} \binom{k}{k_1, \cdots, k_d} \prod_{j=1}^{d} \theta_{ij}^{k_j} \sum_{\substack{l_{0, \cdots, 0} + \cdots + l_{\infty, \cdots, \infty} = k_j \\ \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_1 l_{n_1, \cdots, n_w} = m_1 \\ \vdots \\ \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_w l_{n_1, \cdots, n_w} = m_w}} \binom{k_j}{\mathbf{L}} (a^{(j)}_{n_1, \cdots, n_w})^{l_{n_1, \cdots, n_w}}
+\end{equation}
 
-The only issue is that of finding solutions to the constraints.
+The only issue is that of finding solutions to the index and power constraints.
 
-\subsection{Interpretation}
+\subsubsection{Interpretation}
 
 We can use this method for deriving power series for repeatedly composed functions with linear transformations (i.e. $\mathbf{y} = f(\mathbf{\Theta}_3 f(\mathbf{
-\Theta}_1 f(\mathbf{\Theta}_1 \mathbf{x})))$). We represent our original input variable as $\mathbf{x} = \mathbf{z}$ so that we have coefficients $a_{1, 0, \cdots, 0} = a_{0, 1, \cdots, 0} = \cdots = a_{0, 0, \cdots, 1} = 1$ with all other coefficients zero. Then, we update $\mathbf{a}$ each composition of the function to obtain $\mathbf{b}$ for $\mathbf{y}$. This can be easily applied to neural networks.
+\Theta}_1 f(\mathbf{\Theta}_1 \mathbf{x})))$). We represent our original input variable as $\mathbf{x} = \mathbf{z}$ so that we have coefficients $a_{1, 0, \cdots, 0} = a_{0, 1, \cdots, 0} = \cdots = a_{0, 0, \cdots, 1} = 1$ with all other coefficients zero. Then, we update $\mathbf{a}$ for each composition of the function to obtain $\mathbf{b}$ for $\mathbf{y}$. This can be easily applied to neural networks.\\
 
-\vspace{0.10in}
-\noindent
-In order to make this method computationally feasible, we must truncate the power series at some precision. Say the maximum power we wish on any variable is $K$, then, we simply replace instances of $\sum_{k=0}^{\infty} s_k x^k$ with $\sum_{k=0}^{K} s_k x^k$. This works because our power constraints limit the maximum powers of our variable. Thus, coefficients of order $0, 1, \cdots, K$ will have no error and our approximation will only have truncation error from dropping terms with order $> K$.
+In order to make this method computationally feasible, we must truncate the power series at some precision. Say the maximum power we wish on any variable is $K$, then, we simply replace instances of $\sum_{k=0}^{\infty} s_k x^k$ with $\sum_{k=0}^{K} s_k x^k$. Thus, coefficients of order $0, 1, \cdots, K$ will have no error and our approximation will only have truncation error from dropping terms with order $> K$.
 
-\subsection{Constraint Analysis}
+\subsubsection{Constraint Analysis}
 
-The constraints are of a form of a restricted partition within number theory. There is literature concerning these exact constraints (see https://arxiv.org/pdf/1611.09931.pdf). We can construct an algorithm that operates in $\mathcal{O}(K^w)$ time by looping each indices $l_{0, \cdots, 0}, \cdots, l_{m_1, \cdots, m_w}$ from $0$ to $K$ and checking if they satisfy the constraints. This warrants some future study to see if there are ways to reduce the operation time and find solutions to the system of constraints more quickly.
+The constraints form a system called a restricted partition which is a concept within number theory. Fel has found an explicit solution to the constraints found in the simplified ANN case. We can construct an algorithm that operates in $\mathcal{O}(K^w)$ time by iterating through each of the indices $l_{0, \cdots, 0}, \cdots, l_{m_1, \cdots, m_w}$ from $0$ to $K$ and checking if they satisfy the constraints. This warrants some future study to see if there are ways to reduce the operation time and find solutions to the system of constraints more quickly.
 
+%Gaussian Polynomials and Restricted Partition Functions with Constraints (Leonid G. Fel)
 %End of vector coefficients derivation.%
