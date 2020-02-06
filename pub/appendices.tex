@@ -109,9 +109,11 @@ Central to this approach is the connection ability to represent a constitutive r
 \end{sidewaystable}
 
 %Beginning of scalar coefficients worked examples.%
-\subsection{Worked Coefficients}
+\subsection{Coefficients of the Scalar Polynomial Series}
 
-We can find $b_0$. $i = 0 \implies k_1 = k_2 = \cdots = 0$ so $k_0 = k$. Therefore,
+A result of the coefficient derivation of polynomial series is that we may construct formulae for the coefficients of an arbitrary function by simply solving for the constraints in Equation (\ref{eqn:scalar power series result}). We provide a few instances of worked coefficients here. 
+
+We find $b_0$. $i = 0 \implies k_1 = k_2 = \cdots = 0$ so $k_0 = k$. Therefore,
 
 \begin{align*}
     b_0 
@@ -120,7 +122,7 @@ We can find $b_0$. $i = 0 \implies k_1 = k_2 = \cdots = 0$ so $k_0 = k$. Therefo
     &= \sum_{k=0}^{\infty} s_k \theta^k a_0^k
 \end{align*}
 
-We can also find $b_1$. $i = 1 \implies k_1 = 1, k_2 = k_3 = \cdots = 0$ so $k_0 = k - 1$ and $k_1 = 1$. Therefore,
+We find $b_1$. $i = 1 \implies k_2 = k_3 = \cdots = 0$ so $k_0 = k - 1$ and $k_1 = 1$. Therefore,
 
 \begin{align*}
     b_1
@@ -129,10 +131,10 @@ We can also find $b_1$. $i = 1 \implies k_1 = 1, k_2 = k_3 = \cdots = 0$ so $k_0
     &= \sum_{k=0}^{\infty} k s_k \theta^k a_0^{k-1} a_1
 \end{align*}
 
-We can also find $b_2$, but the formulation is slightly more complicated. 
+We find $b_2$. For this coefficient, there are multiple solutions to the constraints. 
 
 \begin{itemize}
-    \item $i = 2 \implies k_3 = k_4 = k_5 = \cdots = 0$ and
+    \item $i = 2 \implies k_3 = k_4 = k_5 = \cdots = 0$ and either
     \begin{itemize}
         \item $k_2 = 0, k_1 = 2, k_0 = k - 2$ or
         \item $k_2 = 1, k_1 = 0, k_0 = k - 1$
