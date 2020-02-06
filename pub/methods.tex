@@ -41,90 +41,9 @@ and $\boldsymbol\sigma (\bold z)$ serves as the input of the next layer in the n
 We hypothesize that the physics of a process can be extracted by fitting the polynomial expansions of known physical relationships to the polynomial coefficients of a polynomial series expansion of Equation~(\ref{eqn:nn analytical form}). \\
 \\*
 
-%Beginning of scalar coefficients derivation.%
-We can represent the recursive structure of a neural network as a series of transformations on a particular power series. Using this method, we are able to write an algorithm that will compute the coefficients of a power series determined by some neural network up to some order of approximation. We tackle this in two steps to illuminate the properties of this solution. First, we describe the problem in a scalar sense where the interpretation is easy to understand and the solution is comprehensible. Second, we derive a vector approach that would be used in the case of a typical neural network which has more intricate and less obvious details. We describe each of these scenarios purely mathematically so that this derivation may be used for machine learning methods other than neural networks.
-
-\section{Scalar Transformation}
-
-\subsection{Notation}
-Suppose that $x \in \mathbb{R}$ is a scalar, $y \in \mathbb{R}$ is a scalar, $\theta \in \mathbb{R}$ is a scalar, and $\sigma: \mathbb{R} \to \mathbb{R}$ is an analytic function. Since $\sigma$ is analytic, it can be represented as
-
-\begin{align*}
-    \sigma(x)
-    &= s_0 + s_1 x + s_2 x^2 + \cdots \\
-    &= \sum_{k=0}^{\infty} s_{k} x^{k}.
-\end{align*}
-
-Suppose that we can represent $x$ as a power series of another scalar $z$.
-
-\begin{align*}
-    x
-    &= a_0 + a_1 z + a_2 z^2 + \cdots \\
-    &= \sum_{n=0}^{\infty} a_{n} z^{n}.
-\end{align*}
-
-Finally, suppose that we have the relation
-
-\begin{equation*}
-    y = \sigma(\theta x)
-\end{equation*}
-
-\subsection{Objective}
-We want to represent $y$ as a power series of $z$.
-
-\begin{align*}
-    y
-    &= b_0 + b_1 z + b_2 z^2 + \cdots \\
-    &= \sum_{n=0}^{\infty} b_{n} z^{n}
-\end{align*}
-
-We will rewrite the expression for $y$ to find these coefficients $b_i$ for $i = 0, 1, 2, \ldots$
-
-\begin{align*}
-    y
-    &= \sigma(\theta x) \\
-    &= \sum_{k=0}^{\infty} s_k (\theta x)^k \\
-    &= \sum_{k=0}^{\infty} s_k \left(\theta \sum_{n=0}^{\infty} a_{n} z^{n}\right)^{k} \\
-    &= \sum_{k=0}^{\infty} s_k \theta^k \left(\sum_{n=0}^{\infty} a_{n} z^{n}\right)^{k} \\
-    &= \sum_{k=0}^{\infty} s_k \theta^k \left(\sum_{k_0 + k_1 + k_2 + \cdots = k} \binom{k}{k_0, k_1, k_2, \cdots} \prod_{n=0}^{\infty} (a_n z^{n})^{k_n} \right)
-\end{align*}
-
-\subsection{Coefficient Extraction}
-
-To extract the coefficient $b_i$ from the previous equation, we must find terms satisfying 
-
-\begin{align*}
-    i
-    &= 0 k_0 + 1 k_1 + 2 k_2 + \cdots \\
-    &= \sum_{n=0}^{\infty} n k_n
-\end{align*}
-
-and
-
-\begin{align*}
-    k
-    &= k_0 + k_1 + k_2 + \cdots \\
-    &= \sum_{n=0}^{\infty} k_n
-\end{align*}
-
-If satisfying both of these conditions, then the value
-
-\begin{equation*}
-    s_k \theta^k \binom{k}{k_0, k_1, k_2, \cdots} \prod_{n=0}^{\infty} a_n^{k_n}
-\end{equation*}
-
-is added to the sum of $b_i$. In concise terms we formulate
-
-\begin{align*}
-    b_i
-    &= \sum_{k=0}^{\infty} s_k \theta^k \sum_{\substack{k_0 + k_1 + k_2 + \cdots = k \\ 0 k_0 + 1 k_1 + 2 k_2 + \cdots = i}} \binom{k}{k_0, k_1, k_2, \cdots} \prod_{n=0}^{\infty} a_n^{k_n} \\
-    &= \sum_{k=0}^{\infty} s_k \theta^k \sum_{\substack{k_0 + k_1 + k_2 + \cdots + k_i = k \\ 0 k_0 + 1 k_1 + 2 k_2 + \cdots + i k_i = i}} \binom{k}{k_0, k_1, k_2, \cdots, k_i} \prod_{n=0}^{\infty} a_n^{k_n} 
-\end{align*}
-
-Note that when calculating $b_i$, the value of $i$ constrains $k_{i+1} = k_{i+2} = \cdots = 0$. Also, $k_1, k_2 \cdots, k_i$ are finite and $k_0 = k - k_1 - k_2 - \cdots - k_i$.
-%End of scalar coefficients derivation.%
-
 %Beginning of softmax derivation 1/7
+\subsection{Softplus Activation}
+
 For example, consider the Softmax activation function which is given in Equation (???)
 
 \begin{equation}
@@ -150,6 +69,7 @@ Therefore
 Where $\alpha_k = \frac{1}{{\bold Z}k!}$ is the generating function for the Softmax
 %End of softmax derivation 1/7
 
+\subsection{ReLU Activation}
 
 The ReLU (rectified linear units) function is another commonly used activation function and is given below in Equation~(\ref{eqn:ReLU}):
 \begin{equation}
@@ -358,30 +278,31 @@ where $\sum\limits_{k=1}^{\infty}\frac{b_{n}}{\alpha k}$ is the generating funct
 %Continuing with this approach, it can be seen that ...
 %End of old softplus derivation
 
+\subsection{ANN Approximation}
 
 {\color{red}
 The element-wise exponent is used repeatedly in both the constitutive relation and neural network expansions. For the product of two matrices, $A: A \in \mathbb{R}^{m \times n}$ and $B: B \in \mathbb{R}^{n \times q}$, the element-wise exponent results in an expanded basis that explicitly includes the cross terms from ${\bf A}$ and ${\bf B}$.
 
 \begin{subequations}
-\begin{align}
-        \left( AB \right)^{\circ p} &= \he[\left( \densematrix{a}{m}{n} \densematrix{b}{n}{q} \right)]{p} \nonumber \\
-            &= \begin{pmatrix}
-                {\bf a}_{1k}{\bf b}_{k1}  & {\bf a}_{1k}{\bf b}_{k2}    & \cdots    & {\bf a}_{1k}{\bf b}_{kq}   \\
-                {\bf a}_{2k}{\bf b}_{k1}  & {\bf a}_{2k}{\bf b}_{k2}    &           & \vdots \\
-                \vdots                    &                             & \ddots    &          \\
-                {\bf a}_{mk}{\bf b}_{k1}  & \cdots                      &           & {\bf a}_{mk}{\bf b}_{kq}
-            \end{pmatrix}^{\circ p} \nonumber \\
-            &= \begin{pmatrix}
-                ({\bf a}_{1k}{\bf b}_{k1})^{p}  & ({\bf a}_{1k}{\bf b}_{k2})^{p}    & \cdots    & ({\bf a}_{1k}{\bf b}_{kq})^{p}   \\
-                ({\bf a}_{2k}{\bf b}_{k1})^{p}  & ({\bf a}_{2k}{\bf b}_{k2})^{p}    &           & \vdots \\
-                \vdots                          &                                   & \ddots           &          \\
-                ({\bf a}_{mk}{\bf b}_{k1})^{p}  & \cdots                            &           & ({\bf a}_{mk}{\bf b}_{kq})^{p}
-            \end{pmatrix} \label{eqn:hadmard exponent matrix} \\[3ex]
-        ({\bf a}_{ik}{\bf b}_{kj})^{p} &= (a_{i1}b_{1j} + a_{i2}b_{2j} + \cdots + a_{in}b_{nj})^p \nonumber \\
-            &= \sum_{k1 + k2 + \cdots + k_n = p} \binom{p}{k_1, k_2, \ldots, k_n} \prod_{m=1}^n (a_{im}b_{mj})^{k_m} \nonumber \\
-            &= \sum_{\| {\bf k} \|_1 = p} \binom{p}{k_1, k_2, \ldots, k_n} \prod_{m=1}^n (a_{im}b_{mj})^{k_m} \\%
-    \label{eqn:hadamard exponent vector}
-\end{align}
+% \begin{align}
+%         \left( AB \right)^{\circ p} &= \he[\left( \densematrix{a}{m}{n} \densematrix{b}{n}{q} \right)]{p} \nonumber \\
+%             &= \begin{pmatrix}
+%                 {\bf a}_{1k}{\bf b}_{k1}  & {\bf a}_{1k}{\bf b}_{k2}    & \cdots    & {\bf a}_{1k}{\bf b}_{kq}   \\
+%                 {\bf a}_{2k}{\bf b}_{k1}  & {\bf a}_{2k}{\bf b}_{k2}    &           & \vdots \\
+%                 \vdots                    &                             & \ddots    &          \\
+%                 {\bf a}_{mk}{\bf b}_{k1}  & \cdots                      &           & {\bf a}_{mk}{\bf b}_{kq}
+%             \end{pmatrix}^{\circ p} \nonumber \\
+%             &= \begin{pmatrix}
+%                 ({\bf a}_{1k}{\bf b}_{k1})^{p}  & ({\bf a}_{1k}{\bf b}_{k2})^{p}    & \cdots    & ({\bf a}_{1k}{\bf b}_{kq})^{p}   \\
+%                 ({\bf a}_{2k}{\bf b}_{k1})^{p}  & ({\bf a}_{2k}{\bf b}_{k2})^{p}    &           & \vdots \\
+%                 \vdots                          &                                   & \ddots           &          \\
+%                 ({\bf a}_{mk}{\bf b}_{k1})^{p}  & \cdots                            &           & ({\bf a}_{mk}{\bf b}_{kq})^{p}
+%             \end{pmatrix} \label{eqn:hadmard exponent matrix} \\[3ex]
+%         ({\bf a}_{ik}{\bf b}_{kj})^{p} &= (a_{i1}b_{1j} + a_{i2}b_{2j} + \cdots + a_{in}b_{nj})^p \nonumber \\
+%             &= \sum_{k1 + k2 + \cdots + k_n = p} \binom{p}{k_1, k_2, \ldots, k_n} \prod_{m=1}^n (a_{im}b_{mj})^{k_m} \nonumber \\
+%             &= \sum_{\| {\bf k} \|_1 = p} \binom{p}{k_1, k_2, \ldots, k_n} \prod_{m=1}^n (a_{im}b_{mj})^{k_m} \\%
+%     \label{eqn:hadamard exponent vector}
+% \end{align}
 \label{eqn:nondistributive hadamard}
 \end{subequations}
 where summation over a repeated index is assumed. That is, Equation~\ref{eqn:hadamard exponent vector} is the expansion of the element-wise exponent of a vector product, $({\bf a}{\bf b})\he{p} = ({\bf a}{\bf b})^p \ne \he[{\bf a}]{p}\he[{\bf b}]{p}$.
@@ -498,6 +419,113 @@ From Equation~(\ref{eqn:sigmoid zeta expansion}), $a_i  = 0\ \text{for}\ i = 2, 
 	y_f = \boldsymbol\theta_n^T {\bold y}_n
 \end{equation}
 
+%Beginning of scalar coefficients derivation.%
+\subsection{Polynomial Expansion of a Scalar Layer}
+\label{sec:polynomial series scalar}
+
+We can represent the recursive structure of an ANN given by Equation (\ref{eqn:nn analytical form}) as a series of transformations on a particular power series. Using this method, we are able to write an algorithm that will compute the coefficients of a power series determined by some ANN up to an arbitrary order of approximation.\\
+
+For the sake of illustration, we present the next derivation in terms of a simplified ANN with one neuron in each layer. For the treatment of a unsimplified ANN, see Section \ref{sec:polynomial series vector}.
+
+\subsubsection{Notation}
+Suppose that $x \in \mathbb{R}$ is a scalar, $y \in \mathbb{R}$ is a scalar, $\theta \in \mathbb{R}$ is a scalar, and $\sigma: \mathbb{R} \to \mathbb{R}$ is an analytic function. Since $\sigma$ is analytic, it can be represented as
+
+\begin{align}
+    \sigma(x)
+    &= s_0 + s_1 x + s_2 x^2 + \cdots \nonumber \\
+	&= \sum_{k=0}^{\infty} s_{k} x^{k}.
+	\label{eqn:scalar layer activation}
+\end{align}
+
+Suppose that we can represent $x$ as a power series of another scalar $z$.
+
+\begin{align}
+    x
+    &= a_0 + a_1 z + a_2 z^2 + \cdots \nonumber \\
+	&= \sum_{n=0}^{\infty} a_{n} z^{n}.
+	\label{eqn:scalar x series}
+\end{align}
+
+Finally, suppose that we have the relation
+
+\begin{equation}
+	y = \sigma(\theta x).
+	\label{eqn:scalar layer relation}
+\end{equation}
+
+This represents a layer of an ANN with input $x$, weight $\theta$, output $y$, and activation $\sigma$. The value of $z$ can be intrepreted as the input to the entire ANN.
+
+\subsubsection{Objective}
+We wish to represent $y$ as a power series of $z$. That is,
+
+\begin{align}
+    y
+    &= b_0 + b_1 z + b_2 z^2 + \cdots \nonumber \\
+	&= \sum_{n=0}^{\infty} b_{n} z^{n}.
+	\label{eqn:scalar y series}
+\end{align}
+
+We will rewrite the relation for $y$ given by Equation (\ref{eqn:scalar layer relation}) to find the coefficients $b_i$ for $i = 0, 1, 2, \ldots$ for Equation (\ref{eqn: eqn:scalar y series}).
+
+\begin{align}
+    y
+    &= \sigma(\theta x) \nonumber \\
+    &= \sum_{k=0}^{\infty} s_k (\theta x)^k \nonumber \\
+    &= \sum_{k=0}^{\infty} s_k \theta^k \left(\sum_{n=0}^{\infty} a_{n} z^{n}\right)^{k} \nonumber \\
+	&= \sum_{k=0}^{\infty} s_k \theta^k \left(\sum_{k_0 + k_1 + k_2 + \cdots = k} \binom{k}{k_0, k_1, k_2, \cdots} \prod_{n=0}^{\infty} (a_n z^{n})^{k_n} \right)
+	\label{eqn:scalar y expansion}
+\end{align}
+
+Note that we used the multinomial theorem to expand the penultimate term in the equation.
+
+\subsubsection{Coefficient Extraction}
+
+At this point, it is infeasible to attempt to write Equation (\ref{eqn:scalar y expansion}) directly as a power series of $z$. Instead, we will extract the coefficients $b_i$ for $i = 0, 1, 2, \ldots$ by observing constraints on the coefficients.\\
+
+First, as a result of the multinomial theorem, we have a constraint on the inner sum in Equation (\ref{eqn:scalar y expansion}) that is
+
+\begin{equation}
+	k = \sum_{n=0}^{\infty} k_n.
+	\label{eqn:scalar index constraint}
+\end{equation}
+
+This is a constraint on the index of the sum so we shall call this an index constraint.\\
+
+Second, the coefficient $b_i$ is associated with the term $z^i$ so we must form an equality between $i$ and the power on $z$ in Equation (\ref{eqn:scalar y expansion}). To satisfy this equality, we note that
+
+\begin{equation}
+	C z^{0 k_0 + 1 k_1 + 2 k_2 + \cdots} = (a_0 z^0)^{k_0} (a_1 z^1)^{k_1} (a_2 z^2)^{k_2} \cdots = \prod_{n=0}^{\infty} (a_n z^n)^{k_n}
+\end{equation}
+
+where $C$ is some constant. This implies that
+
+\begin{equation}
+    i = \sum_{n=0}^{\infty} n k_n.
+\end{equation}
+
+This is a constraint on the power of the scalar $z$ so we shall call this a power constraint.\\
+
+Notice that the power constraint implies $k_{i + 1} = k_{i + 2} = \cdots = 0$. Therefore, both the index constraint and power constraint can be reduced to a finite series instead of an infinite series.
+
+\begin{equation}
+	k = \sum_{n=0}^{i} k_n, \qquad i = \sum_{n=0}^{i} n k_n
+\end{equation}
+
+If a set of $k_j$ for $j = 0, 1, 2, \ldots$ satisfy both of these constraints, then, the constant coefficients of $z^i$ which are 
+
+\begin{equation*}
+    s_k \theta^k \binom{k}{k_0, k_1, \cdots, k_i} \prod_{n=0}^{\infty} a_n^{k_n}
+\end{equation*}
+
+may be pulled out and added to the sum of $b_i$. In concise terms we have derived that
+
+\begin{equation}
+    b_i = \sum_{k=0}^{\infty} s_k \theta^k \sum_{\substack{k_0 + k_1 + \cdots + k_i = k \\ 0 k_0 + 1 k_1 + \cdots + i k_i = i}} \binom{k}{k_0, k_1, \cdots, k_i} \prod_{n=0}^{\infty} a_n^{k_n}.
+	\label{eqn:scalar power series result}
+\end{equation}
+
+Thus, we have derived a tractable method of computing the coefficients of a power series after a linear and nonlinear transformation.
+%End of scalar coefficients derivation.%
 
 %If no reference, prove that the primal/dual is unique.
 %Weidmann J. (1980) Linear operators and their adjoints. In: Linear Operators in Hilbert Spaces. Graduate Texts in Mathematics, vol 68. Springer, New York, NY

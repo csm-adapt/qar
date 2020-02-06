@@ -117,7 +117,7 @@ We find $b_0$. $i = 0 \implies k_1 = k_2 = \cdots = 0$ so $k_0 = k$. Therefore,
 
 \begin{align}
     b_0 
-    &= \sum_{k=0}^{\infty} s_k \theta^k \sum_{\substack{k_0 + k_1 + k_2 + \cdots = k \\ 0 k_0 + 1 k_1 + 2 k_2 + \cdots = 0}} \binom{k}{k_0, k_1, k_2, \cdots} \prod_{n=0}^{\infty} a_n^{k_n} \nonumber \\
+    &= \sum_{k=0}^{\infty} s_k \theta^k \sum_{\substack{k_0 + k_1 + \cdots = k \\ 0 k_0 + 1 k_1 + \cdots = 0}} \binom{k}{k_0, k_1, \cdots} \prod_{n=0}^{\infty} a_n^{k_n} \nonumber \\
     &= \sum_{k=0}^{\infty} s_k \theta^k \binom{k}{k} a_0^{k} \nonumber \\
     &= \sum_{k=0}^{\infty} s_k \theta^k a_0^k
 \end{align}
@@ -126,7 +126,7 @@ We find $b_1$. $i = 1 \implies k_2 = k_3 = \cdots = 0$ so $k_0 = k - 1$ and $k_1
 
 \begin{align}
     b_1
-    &= \sum_{k=0}^{\infty} s_k \theta^k \sum_{\substack{k_0 + k_1 + k_2 + \cdots = k \\ 0 k_0 + 1 k_1 + 2 k_2 + \cdots = 1}} \binom{k}{k_0, k_1, k_2, \cdots} \prod_{n=0}^{\infty} a_n^{k_n} \nonumber \\
+    &= \sum_{k=0}^{\infty} s_k \theta^k \sum_{\substack{k_0 + k_1 + \cdots = k \\ 0 k_0 + 1 k_1 + \cdots = 1}} \binom{k}{k_0, k_1, \cdots} \prod_{n=0}^{\infty} a_n^{k_n} \nonumber \\
     &= \sum_{k=0}^{\infty} s_k \theta^k \binom{k}{k - 1, 1} a_0^{k - 1} a_1 \nonumber \\
     &= \sum_{k=0}^{\infty} k s_k \theta^k a_0^{k-1} a_1
 \end{align}
@@ -145,7 +145,7 @@ Therefore,
 
 \begin{align}
     b_2
-    &= \sum_{k=0}^{\infty} s_k \theta^k \sum_{\substack{k_0 + k_1 + k_2 + \cdots = k \\ 0 k_0 + 1 k_1 + 2 k_2 + \cdots = 2}} \binom{k}{k_0, k_1, k_2, \cdots} \prod_{n=0}^{\infty} a_n^{k_n} \nonumber \\
+    &= \sum_{k=0}^{\infty} s_k \theta^k \sum_{\substack{k_0 + k_1 + \cdots = k \\ 0 k_0 + 1 k_1 + \cdots = 2}} \binom{k}{k_0, k_1, \cdots} \prod_{n=0}^{\infty} a_n^{k_n} \nonumber \\
     &= \sum_{k=0}^{\infty} s_k \theta^k \left(\binom{k}{k - 2, 2, 0}a_0^{k-2} a_1^{2} + \binom{k}{k - 1, 0, 1}a_0^{k-1} a_2\right) \nonumber \\
     &= \sum_{k=0}^{\infty} s_k \theta^k \left(\frac{k(k-1)}{2} a_0^{k-2}a_1^{2} + k a_0^{k-1}a_2\right)
 \end{align}
