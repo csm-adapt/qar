@@ -136,127 +136,7 @@ This leads to a seven-step process for systematically and incrementally extracti
 %\noindent {\color{red} How does dropout affect this? It doesn't. Dropout simply sets specific $\boldsymbol\theta$ to zero, which is handled seamlessly in the previous treatment.}
 
 
-% ----- POWER SERIES COEFFICIENT DERIVATION ----- %
-We can represent the recursive structure of a neural network as a series of transformations on a particular power series. Using this method, we are able to write an algorithm that will compute the coefficients of a power series determined by some neural network up to some order of approximation. We tackle this in two steps to illuminate the properties of this solution. First, we describe the problem in a scalar sense where the interpretation is easy to understand and the solution is comprehensible. Second, we derive a vector approach that would be used in the case of a typical neural network which has more intricate and less obvious details. We describe each of these scenarios purely mathematically so that this derivation may be used for machine learning methods other than neural networks.
-
-\section{Scalar Transformation}
-
-\subsection{Notation}
-Suppose that $x \in \mathbb{R}$ is a scalar, $y \in \mathbb{R}$ is a scalar, $\theta \in \mathbb{R}$ is a scalar, and $\sigma: \mathbb{R} \to \mathbb{R}$ is an analytic function. Since $\sigma$ is analytic, it can be represented as
-
-\begin{align*}
-    \sigma(x)
-    &= s_0 + s_1 x + s_2 x^2 + \cdots \\
-    &= \sum_{k=0}^{\infty} s_{k} x^{k}.
-\end{align*}
-
-Suppose that we can represent $x$ as a power series of another scalar $z$.
-
-\begin{align*}
-    x
-    &= a_0 + a_1 z + a_2 z^2 + \cdots \\
-    &= \sum_{n=0}^{\infty} a_{n} z^{n}.
-\end{align*}
-
-Finally, suppose that we have the relation
-
-\begin{equation*}
-    y = \sigma(\theta x)
-\end{equation*}
-
-\subsection{Objective}
-We want to represent $y$ as a power series of $z$.
-
-\begin{align*}
-    y
-    &= b_0 + b_1 z + b_2 z^2 + \cdots \\
-    &= \sum_{n=0}^{\infty} b_{n} z^{n}
-\end{align*}
-
-We will rewrite the expression for $y$ to find these coefficients $b_i$ for $i = 0, 1, 2, \ldots$
-
-\begin{align*}
-    y
-    &= \sigma(\theta x) \\
-    &= \sum_{k=0}^{\infty} s_k (\theta x)^k \\
-    &= \sum_{k=0}^{\infty} s_k \left(\theta \sum_{n=0}^{\infty} a_{n} z^{n}\right)^{k} \\
-    &= \sum_{k=0}^{\infty} s_k \theta^k \left(\sum_{n=0}^{\infty} a_{n} z^{n}\right)^{k} \\
-    &= \sum_{k=0}^{\infty} s_k \theta^k \left(\sum_{k_0 + k_1 + k_2 + \cdots = k} \binom{k}{k_0, k_1, k_2, \cdots} \prod_{n=0}^{\infty} (a_n z^{n})^{k_n} \right)
-\end{align*}
-
-\subsection{Coefficient Extraction}
-
-To extract the coefficient $b_i$ from the previous equation, we must find terms satisfying 
-
-\begin{align*}
-    i
-    &= 0 k_0 + 1 k_1 + 2 k_2 + \cdots \\
-    &= \sum_{n=0}^{\infty} n k_n
-\end{align*}
-
-and
-
-\begin{align*}
-    k
-    &= k_0 + k_1 + k_2 + \cdots \\
-    &= \sum_{n=0}^{\infty} k_n
-\end{align*}
-
-If satisfying both of these conditions, then the value
-
-\begin{equation*}
-    s_k \theta^k \binom{k}{k_0, k_1, k_2, \cdots} \prod_{n=0}^{\infty} a_n^{k_n}
-\end{equation*}
-
-is added to the sum of $b_i$. In concise terms we formulate
-
-\begin{align*}
-    b_i
-    &= \sum_{k=0}^{\infty} s_k \theta^k \sum_{\substack{k_0 + k_1 + k_2 + \cdots = k \\ 0 k_0 + 1 k_1 + 2 k_2 + \cdots = i}} \binom{k}{k_0, k_1, k_2, \cdots} \prod_{n=0}^{\infty} a_n^{k_n} \\
-    &= \sum_{k=0}^{\infty} s_k \theta^k \sum_{\substack{k_0 + k_1 + k_2 + \cdots + k_i = k \\ 0 k_0 + 1 k_1 + 2 k_2 + \cdots + i k_i = i}} \binom{k}{k_0, k_1, k_2, \cdots, k_i} \prod_{n=0}^{\infty} a_n^{k_n} 
-\end{align*}
-
-\subsection{Worked Coefficients}
-
-We can find $b_0$. $i = 0 \implies k_1 = k_2 = \cdots = 0$ so $k_0 = k$. Therefore,
-
-\begin{align*}
-    b_0 
-    &= \sum_{k=0}^{\infty} s_k \theta^k \sum_{\substack{k_0 + k_1 + k_2 + \cdots = k \\ 0 k_0 + 1 k_1 + 2 k_2 + \cdots = 0}} \binom{k}{k_0, k_1, k_2, \cdots} \prod_{n=0}^{\infty} a_n^{k_n} \\
-    &= \sum_{k=0}^{\infty} s_k \theta^k \binom{k}{k} a_0^{k} \\
-    &= \sum_{k=0}^{\infty} s_k \theta^k a_0^k
-\end{align*}
-
-We can also find $b_1$. $i = 1 \implies k_1 = 1, k_2 = k_3 = \cdots = 0$ so $k_0 = k - 1$ and $k_1 = 1$. Therefore,
-
-\begin{align*}
-    b_1
-    &= \sum_{k=0}^{\infty} s_k \theta^k \sum_{\substack{k_0 + k_1 + k_2 + \cdots = k \\ 0 k_0 + 1 k_1 + 2 k_2 + \cdots = 1}} \binom{k}{k_0, k_1, k_2, \cdots} \prod_{n=0}^{\infty} a_n^{k_n} \\
-    &= \sum_{k=0}^{\infty} s_k \theta^k \binom{k}{k - 1, 1} a_0^{k - 1} a_1 \\
-    &= \sum_{k=0}^{\infty} k s_k \theta^k a_0^{k-1} a_1
-\end{align*}
-
-We can also find $b_2$, but the formulation is slightly more complicated. 
-
-\begin{itemize}
-    \item $i = 2 \implies k_3 = k_4 = k_5 = \cdots = 0$ and
-    \begin{itemize}
-        \item $k_2 = 0, k_1 = 2, k_0 = k - 2$ or
-        \item $k_2 = 1, k_1 = 0, k_0 = k - 1$
-    \end{itemize}
-\end{itemize}
-
-Therefore,
-
-\begin{align*}
-    b_2
-    &= \sum_{k=0}^{\infty} s_k \theta^k \sum_{\substack{k_0 + k_1 + k_2 + \cdots = k \\ 0 k_0 + 1 k_1 + 2 k_2 + \cdots = 2}} \binom{k}{k_0, k_1, k_2, \cdots} \prod_{n=0}^{\infty} a_n^{k_n} \\
-    &= \sum_{k=0}^{\infty} s_k \theta^k \left(\binom{k}{k - 2, 2, 0}a_0^{k-2} a_1^{2} + \binom{k}{k - 1, 0, 1}a_0^{k-1} a_2\right) \\
-    &= \sum_{k=0}^{\infty} s_k \theta^k \left(\frac{k(k-1)}{2} a_0^{k-2}a_1^{2} + k a_0^{k-1}a_2\right)
-\end{align*}
-
-Note that when calculating $b_i$, the value of $i$ constrains $k_{i+1} = k_{i+2} = \cdots = 0$. Also, $k_1, k_2 \cdots, k_i$ are finite and $k_0 = k - k_1 - k_2 - \cdots - k_i$.
-
+%Beginning of vector coefficients derivation.%
 \section{Vector Transformation}
 \subsection{Notation}
 
@@ -377,3 +257,5 @@ In order to make this method computationally feasible, we must truncate the powe
 \subsection{Constraint Analysis}
 
 The constraints are of a form of a restricted partition within number theory. There is literature concerning these exact constraints (see https://arxiv.org/pdf/1611.09931.pdf). We can construct an algorithm that operates in $\mathcal{O}(K^w)$ time by looping each indices $l_{0, \cdots, 0}, \cdots, l_{m_1, \cdots, m_w}$ from $0$ to $K$ and checking if they satisfy the constraints. This warrants some future study to see if there are ways to reduce the operation time and find solutions to the system of constraints more quickly.
+
+%End of vector coefficients derivation.%

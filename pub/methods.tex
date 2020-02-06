@@ -41,7 +41,88 @@ and $\boldsymbol\sigma (\bold z)$ serves as the input of the next layer in the n
 We hypothesize that the physics of a process can be extracted by fitting the polynomial expansions of known physical relationships to the polynomial coefficients of a polynomial series expansion of Equation~(\ref{eqn:nn analytical form}). \\
 \\*
 
+%Beginning of scalar coefficients derivation.%
+We can represent the recursive structure of a neural network as a series of transformations on a particular power series. Using this method, we are able to write an algorithm that will compute the coefficients of a power series determined by some neural network up to some order of approximation. We tackle this in two steps to illuminate the properties of this solution. First, we describe the problem in a scalar sense where the interpretation is easy to understand and the solution is comprehensible. Second, we derive a vector approach that would be used in the case of a typical neural network which has more intricate and less obvious details. We describe each of these scenarios purely mathematically so that this derivation may be used for machine learning methods other than neural networks.
 
+\section{Scalar Transformation}
+
+\subsection{Notation}
+Suppose that $x \in \mathbb{R}$ is a scalar, $y \in \mathbb{R}$ is a scalar, $\theta \in \mathbb{R}$ is a scalar, and $\sigma: \mathbb{R} \to \mathbb{R}$ is an analytic function. Since $\sigma$ is analytic, it can be represented as
+
+\begin{align*}
+    \sigma(x)
+    &= s_0 + s_1 x + s_2 x^2 + \cdots \\
+    &= \sum_{k=0}^{\infty} s_{k} x^{k}.
+\end{align*}
+
+Suppose that we can represent $x$ as a power series of another scalar $z$.
+
+\begin{align*}
+    x
+    &= a_0 + a_1 z + a_2 z^2 + \cdots \\
+    &= \sum_{n=0}^{\infty} a_{n} z^{n}.
+\end{align*}
+
+Finally, suppose that we have the relation
+
+\begin{equation*}
+    y = \sigma(\theta x)
+\end{equation*}
+
+\subsection{Objective}
+We want to represent $y$ as a power series of $z$.
+
+\begin{align*}
+    y
+    &= b_0 + b_1 z + b_2 z^2 + \cdots \\
+    &= \sum_{n=0}^{\infty} b_{n} z^{n}
+\end{align*}
+
+We will rewrite the expression for $y$ to find these coefficients $b_i$ for $i = 0, 1, 2, \ldots$
+
+\begin{align*}
+    y
+    &= \sigma(\theta x) \\
+    &= \sum_{k=0}^{\infty} s_k (\theta x)^k \\
+    &= \sum_{k=0}^{\infty} s_k \left(\theta \sum_{n=0}^{\infty} a_{n} z^{n}\right)^{k} \\
+    &= \sum_{k=0}^{\infty} s_k \theta^k \left(\sum_{n=0}^{\infty} a_{n} z^{n}\right)^{k} \\
+    &= \sum_{k=0}^{\infty} s_k \theta^k \left(\sum_{k_0 + k_1 + k_2 + \cdots = k} \binom{k}{k_0, k_1, k_2, \cdots} \prod_{n=0}^{\infty} (a_n z^{n})^{k_n} \right)
+\end{align*}
+
+\subsection{Coefficient Extraction}
+
+To extract the coefficient $b_i$ from the previous equation, we must find terms satisfying 
+
+\begin{align*}
+    i
+    &= 0 k_0 + 1 k_1 + 2 k_2 + \cdots \\
+    &= \sum_{n=0}^{\infty} n k_n
+\end{align*}
+
+and
+
+\begin{align*}
+    k
+    &= k_0 + k_1 + k_2 + \cdots \\
+    &= \sum_{n=0}^{\infty} k_n
+\end{align*}
+
+If satisfying both of these conditions, then the value
+
+\begin{equation*}
+    s_k \theta^k \binom{k}{k_0, k_1, k_2, \cdots} \prod_{n=0}^{\infty} a_n^{k_n}
+\end{equation*}
+
+is added to the sum of $b_i$. In concise terms we formulate
+
+\begin{align*}
+    b_i
+    &= \sum_{k=0}^{\infty} s_k \theta^k \sum_{\substack{k_0 + k_1 + k_2 + \cdots = k \\ 0 k_0 + 1 k_1 + 2 k_2 + \cdots = i}} \binom{k}{k_0, k_1, k_2, \cdots} \prod_{n=0}^{\infty} a_n^{k_n} \\
+    &= \sum_{k=0}^{\infty} s_k \theta^k \sum_{\substack{k_0 + k_1 + k_2 + \cdots + k_i = k \\ 0 k_0 + 1 k_1 + 2 k_2 + \cdots + i k_i = i}} \binom{k}{k_0, k_1, k_2, \cdots, k_i} \prod_{n=0}^{\infty} a_n^{k_n} 
+\end{align*}
+
+Note that when calculating $b_i$, the value of $i$ constrains $k_{i+1} = k_{i+2} = \cdots = 0$. Also, $k_1, k_2 \cdots, k_i$ are finite and $k_0 = k - k_1 - k_2 - \cdots - k_i$.
+%End of scalar coefficients derivation.%
 
 %Beginning of softmax derivation 1/7
 For example, consider the Softmax activation function which is given in Equation (???)

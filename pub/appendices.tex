@@ -107,3 +107,44 @@ Central to this approach is the connection ability to represent a constitutive r
 \end{center}
 \label{tab:generating functions of common functions}
 \end{sidewaystable}
+
+%Beginning of scalar coefficients worked examples.%
+\subsection{Worked Coefficients}
+
+We can find $b_0$. $i = 0 \implies k_1 = k_2 = \cdots = 0$ so $k_0 = k$. Therefore,
+
+\begin{align*}
+    b_0 
+    &= \sum_{k=0}^{\infty} s_k \theta^k \sum_{\substack{k_0 + k_1 + k_2 + \cdots = k \\ 0 k_0 + 1 k_1 + 2 k_2 + \cdots = 0}} \binom{k}{k_0, k_1, k_2, \cdots} \prod_{n=0}^{\infty} a_n^{k_n} \\
+    &= \sum_{k=0}^{\infty} s_k \theta^k \binom{k}{k} a_0^{k} \\
+    &= \sum_{k=0}^{\infty} s_k \theta^k a_0^k
+\end{align*}
+
+We can also find $b_1$. $i = 1 \implies k_1 = 1, k_2 = k_3 = \cdots = 0$ so $k_0 = k - 1$ and $k_1 = 1$. Therefore,
+
+\begin{align*}
+    b_1
+    &= \sum_{k=0}^{\infty} s_k \theta^k \sum_{\substack{k_0 + k_1 + k_2 + \cdots = k \\ 0 k_0 + 1 k_1 + 2 k_2 + \cdots = 1}} \binom{k}{k_0, k_1, k_2, \cdots} \prod_{n=0}^{\infty} a_n^{k_n} \\
+    &= \sum_{k=0}^{\infty} s_k \theta^k \binom{k}{k - 1, 1} a_0^{k - 1} a_1 \\
+    &= \sum_{k=0}^{\infty} k s_k \theta^k a_0^{k-1} a_1
+\end{align*}
+
+We can also find $b_2$, but the formulation is slightly more complicated. 
+
+\begin{itemize}
+    \item $i = 2 \implies k_3 = k_4 = k_5 = \cdots = 0$ and
+    \begin{itemize}
+        \item $k_2 = 0, k_1 = 2, k_0 = k - 2$ or
+        \item $k_2 = 1, k_1 = 0, k_0 = k - 1$
+    \end{itemize}
+\end{itemize}
+
+Therefore,
+
+\begin{align*}
+    b_2
+    &= \sum_{k=0}^{\infty} s_k \theta^k \sum_{\substack{k_0 + k_1 + k_2 + \cdots = k \\ 0 k_0 + 1 k_1 + 2 k_2 + \cdots = 2}} \binom{k}{k_0, k_1, k_2, \cdots} \prod_{n=0}^{\infty} a_n^{k_n} \\
+    &= \sum_{k=0}^{\infty} s_k \theta^k \left(\binom{k}{k - 2, 2, 0}a_0^{k-2} a_1^{2} + \binom{k}{k - 1, 0, 1}a_0^{k-1} a_2\right) \\
+    &= \sum_{k=0}^{\infty} s_k \theta^k \left(\frac{k(k-1)}{2} a_0^{k-2}a_1^{2} + k a_0^{k-1}a_2\right)
+\end{align*}
+%End of scalar coefficients worked examples.%
