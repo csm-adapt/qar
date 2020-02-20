@@ -123,13 +123,13 @@ We find $b_0$. $i = 0 \implies k_1 = k_2 = \cdots = 0$ so $k_0 = k$. Therefore,
     &= \sum_{k=0}^{\infty} s_k \theta^k a_0^k
 \end{align}
 
-We find $b_1$. $i = 1 \implies k_2 = k_3 = \cdots = 0$ so $k_0 = k - 1$ and $k_1 = 1$. Therefore,
+We find $b_1$. $i = 1 \implies k_2 = k_3 = \cdots = 0$ so $k_0 = k - 1$ and $k_1 = 1$. Further, $k \geq 1$. Therefore,
 
 \begin{align}
     b_1
     &= \sum_{k=0}^{\infty} s_k \theta^k \sum_{\substack{k_0 + k_1 + \cdots = k \\ 0 k_0 + 1 k_1 + \cdots = 1}} \binom{k}{k_0, k_1, \cdots} \prod_{n=0}^{\infty} a_n^{k_n} \nonumber \\
-    &= \sum_{k=0}^{\infty} s_k \theta^k \binom{k}{k - 1, 1} a_0^{k - 1} a_1 \nonumber \\
-    &= \sum_{k=0}^{\infty} k s_k \theta^k a_0^{k-1} a_1
+    &= \sum_{k=1}^{\infty} s_k \theta^k \binom{k}{k - 1, 1} a_0^{k - 1} a_1 \nonumber \\
+    &= \sum_{k=1}^{\infty} k s_k \theta^k a_0^{k-1} a_1
 \end{align}
 
 We find $b_2$. For this coefficient, there are multiple solutions to the constraints. 
@@ -137,8 +137,8 @@ We find $b_2$. For this coefficient, there are multiple solutions to the constra
 \begin{itemize}
     \item $i = 2 \implies k_3 = k_4 = k_5 = \cdots = 0$ and either
     \begin{itemize}
-        \item $k_2 = 0, k_1 = 2, k_0 = k - 2$ or
-        \item $k_2 = 1, k_1 = 0, k_0 = k - 1$
+        \item $k_2 = 0, k_1 = 2, k_0 = k - 2$ and $k \geq 2$ or
+        \item $k_2 = 1, k_1 = 0, k_0 = k - 1$ and $k \geq 1$
     \end{itemize}
 \end{itemize}
 
@@ -147,7 +147,7 @@ Therefore,
 \begin{align}
     b_2
     &= \sum_{k=0}^{\infty} s_k \theta^k \sum_{\substack{k_0 + k_1 + \cdots = k \\ 0 k_0 + 1 k_1 + \cdots = 2}} \binom{k}{k_0, k_1, \cdots} \prod_{n=0}^{\infty} a_n^{k_n} \nonumber \\
-    &= \sum_{k=0}^{\infty} s_k \theta^k \left(\binom{k}{k - 2, 2, 0}a_0^{k-2} a_1^{2} + \binom{k}{k - 1, 0, 1}a_0^{k-1} a_2\right) \nonumber \\
-    &= \sum_{k=0}^{\infty} s_k \theta^k \left(\frac{k(k-1)}{2} a_0^{k-2}a_1^{2} + k a_0^{k-1}a_2\right)
+    &= \sum_{k=2}^{\infty} s_k \theta^k \left(\binom{k}{k - 2, 2, 0}a_0^{k-2} a_1^{2}\right) + \sum_{k=1}^{\infty} s_k \theta^k \left(\binom{k}{k - 1, 0, 1}a_0^{k-1} a_2\right) \nonumber \\
+    &= s_1 \theta a_2 + \sum_{k=2}^{\infty} s_k \theta^k \left(\frac{k(k-1)}{2} a_0^{k-2}a_1^{2} + k a_0^{k-1}a_2\right)
 \end{align}
 %End of scalar coefficients worked examples.%
