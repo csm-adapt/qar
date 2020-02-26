@@ -278,146 +278,150 @@ where $\sum\limits_{k=1}^{\infty}\frac{b_{n}}{\alpha k}$ is the generating funct
 %Continuing with this approach, it can be seen that ...
 %End of old softplus derivation
 
-\subsection{ANN Approximation}
-
+\subsection{Iterative Determination of ANN Series Expansion Coefficients}
 {\color{red}
-The element-wise exponent is used repeatedly in both the constitutive relation and neural network expansions. For the product of two matrices, $A: A \in \mathbb{R}^{m \times n}$ and $B: B \in \mathbb{R}^{n \times q}$, the element-wise exponent results in an expanded basis that explicitly includes the cross terms from ${\bf A}$ and ${\bf B}$.
+Any series expansion description of a deep neural network, which is necessarily multilayered, requires a explicit generating function for the coefficients of each layer; a generating function that is a function only of the coefficients of the previous layer and the coefficient generating function of the series expansion of the current layer's activation function.
 
-\begin{subequations}
-\begin{align}
-        \left( AB \right)^{\circ p} &= \he[\left( \densematrix{a}{m}{n} \densematrix{b}{n}{q} \right)]{p} \nonumber \\
-            &= \begin{pmatrix}
-                {\bf a}_{1k}{\bf b}_{k1}  & {\bf a}_{1k}{\bf b}_{k2}    & \cdots    & {\bf a}_{1k}{\bf b}_{kq}   \\
-                {\bf a}_{2k}{\bf b}_{k1}  & {\bf a}_{2k}{\bf b}_{k2}    &           & \vdots \\
-                \vdots                    &                             & \ddots    &          \\
-                {\bf a}_{mk}{\bf b}_{k1}  & \cdots                      &           & {\bf a}_{mk}{\bf b}_{kq}
-            \end{pmatrix}^{\circ p} \nonumber \\
-            &= \begin{pmatrix}
-                ({\bf a}_{1k}{\bf b}_{k1})^{p}  & ({\bf a}_{1k}{\bf b}_{k2})^{p}    & \cdots    & ({\bf a}_{1k}{\bf b}_{kq})^{p}   \\
-                ({\bf a}_{2k}{\bf b}_{k1})^{p}  & ({\bf a}_{2k}{\bf b}_{k2})^{p}    &           & \vdots \\
-                \vdots                          &                                   & \ddots           &          \\
-                ({\bf a}_{mk}{\bf b}_{k1})^{p}  & \cdots                            &           & ({\bf a}_{mk}{\bf b}_{kq})^{p}
-            \end{pmatrix} \label{eqn:hadmard exponent matrix} \\[3ex]
-        ({\bf a}_{ik}{\bf b}_{kj})^{p} &= (a_{i1}b_{1j} + a_{i2}b_{2j} + \cdots + a_{in}b_{nj})^p \nonumber \\
-            &= \sum_{k1 + k2 + \cdots + k_n = p} \binom{p}{k_1, k_2, \ldots, k_n} \prod_{m=1}^n (a_{im}b_{mj})^{k_m} \nonumber \\
-            &= \sum_{\| {\bf k} \|_1 = p} \binom{p}{k_1, k_2, \ldots, k_n} \prod_{m=1}^n (a_{im}b_{mj})^{k_m} \\%
-    \label{eqn:hadamard exponent vector}
-\end{align}
-\label{eqn:nondistributive hadamard}
-\end{subequations}
-where summation over a repeated index is assumed. That is, Equation~\ref{eqn:hadamard exponent vector} is the expansion of the element-wise exponent of a vector product, $({\bf a}{\bf b})\he{p} = ({\bf a}{\bf b})^p \ne \he[{\bf a}]{p}\he[{\bf b}]{p}$.
-}
+A derivation for the polynomial expansion coefficient generating function for vector-valued function (layer 1 to layer 2) is presented below, which is an extension of a scalar expansion, provided in \ref{appendix}.}
 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-The analytical form, combining Equations~(\ref{eqn:nn analytical form}) and (\ref{eqn:sigmoid zeta expansion}), the estimated output of a two-layer NN can be written as an expansion:
-
-\begin{eqnarray}
-	{\bold y}_1 & = & \sum_{k=0}^\infty a_k (\boldsymbol\theta_1^T {\bold x})\he{k} \nonumber \\
-	{\bold y}_2 & = & \sum_{k=0}^\infty b_k (\boldsymbol\theta_2^T {\bold y}_1)\he{k} \nonumber \\
-		& = & b_0 {\bold 1} + \nonumber\\
-		&   & + b_1 (\tilde a_0 +%
-					(\tilde a_1 + %
-						(\tilde a_2 + %
-							(\tilde a_3 + %
-								(\ldots) \tilde {\bold x} )%
-							\tilde {\bold x} )%
-						\tilde {\bold x} )%
-					\tilde {\bold x}) \nonumber \\
-		&   & + b_2 (\tilde a_0 +%
-					(\tilde a_1 + %
-						(\tilde a_2 + %
-							(\tilde a_3 + %
-								(\ldots) \tilde {\bold x} )%
-							\tilde {\bold x} )%
-						\tilde {\bold x} )%
-					\tilde {\bold x})^2 \nonumber \\
-		&   & \vdots \nonumber \\
-		&   & + b_k (\tilde a_0 +%
-					(\tilde a_1 + %
-						(\tilde a_2 + %
-							(\tilde a_3 + %
-								(\ldots) \tilde {\bold x} )%
-							\tilde {\bold x} )%
-						\tilde {\bold x} )%
-					\tilde {\bold x})^k \nonumber \\
-		&   & \vdots
-\end{eqnarray}
-\noindent where $\tilde a_i = \boldsymbol\theta_2^T a_i$ and $\tilde{\bold x} = \boldsymbol\theta_1^T {\bold x}$. All $\boldsymbol\theta_i$, ${\bold x}$, and ${\bold y}$ are augmented to include the bias, ${\bold b}_i$, that is,
-\begin{eqnarray}
-	{\bold x}&:& {\bold x} \leftarrow \begin{pmatrix}
-								1 \\
-								{\bold x}
-							\end{pmatrix} = \begin{pmatrix}
-											1 \\
-											x_0 \\
-											x_1 \\
-											\vdots \\
-											x_n
-										\end{pmatrix}\\
-	{\bold y}&:& {\bold y} \leftarrow \begin{pmatrix}
-								1 \\
-								{\bold y}
-							\end{pmatrix} \\
-	\boldsymbol\theta_i&:& \boldsymbol\theta_i \leftarrow \begin{pmatrix} {\bold b}_i & \boldsymbol\theta_i \end{pmatrix}
-\end{eqnarray}
-
-The element-wise exponent operator, ${\bf x}\he{m} = (x_1^m\ x_2^m\ \cdots\ x_n^m)^T$, raises each element of a vector or matrix to the specified power, $m$.
-
-From Equation~(\ref{eqn:sigmoid zeta expansion}), $a_i  = 0\ \text{for}\ i = 2, 4, 6, \ldots$, and therefore,
-\begin{align}
-	{\bold y}_1 =& \sum_{k=0}^\infty a_k (\boldsymbol\theta_1^T {\bold x})\he{k} \nonumber \\
-	{\bold y}_2 =& \sum_{k=0}^\infty b_k (\boldsymbol\theta_2^T {\bold y}_1)\he{k} \nonumber \\
-		=& b_0 {\bold 1} + \nonumber\\
-		 &+ b_1 (\tilde a_0 +%
-					(\tilde a_1 + %
-						(\tilde a_3 + %
-							(\tilde a_5 + %
-								(\ldots) \tilde {\bold x}\he{2} )%
-							\tilde {\bold x}\he{2} )%
-						\tilde {\bold x}\he{2} )%
-					\tilde {\bold x}) \nonumber \\
-		&+ b_2 (\tilde a_0 +%
-					(\tilde a_1 + %
-						(\tilde a_3 + %
-							(\tilde a_5 + %
-								(\ldots) \tilde {\bold x}\he{2} )%
-							\tilde {\bold x}\he{2} )%
-						\tilde {\bold x}\he{2} )%
-					\tilde {\bold x})\he{2} \nonumber \\
-		& \vdots \nonumber \\
-		& + b_k (\tilde a_0 +%
-					(\tilde a_1 + %
-						(\tilde a_3 + %
-							(\tilde a_5 + %
-								(\ldots) \tilde {\bold x}\he{2} )%
-							\tilde {\bold x}\he{2} )%
-						\tilde {\bold x}\he{2} )%
-					\tilde {\bold x})\he{k} \nonumber \\
-		& \vdots \nonumber \\
-	{\bold y}_2 = & \sum_{N=0}^\infty \sum_{k=0}^{N} \sum_{l=0}^{k} \sum_{m=0}^{l} \ldots %
-		b_N %
-		\binom{N}{k,l,m,\ldots} %
-		\tilde a_0^k \tilde a_1^l \tilde a_3^m \ldots %
-		\tilde {\bold x}\he{(N-k\ldots)} %
-		({\tilde {\bold x}^2})\he{(N-k-l\ldots)} %
-		({\tilde {\bold x}^2})\he{(N-k-l-m\ldots)} \nonumber \\
-	 =& \sum_{N=0}^\infty \sum_{k=0}^{N} \sum_{l=0}^{k} \sum_{m=0}^{l} \ldots %
-		b_N %
-		\binom{N}{k,l,m,\ldots} %
-		\tilde a_0^k \tilde a_1^l \tilde a_3^m \ldots %
-		\tilde {\bold x}\he{(l+m+n+\ldots)} %
-		({\tilde {\bold x}\he{2}})\he{(m+n+\ldots)} %
-		({\tilde {\bold x}\he{2}})\he{(n+\ldots)}
-	\label{eqn:ANN power series coefficient generating function}
-\end{align}
-\noindent where $k+l+m+n+\ldots = N$. Collecting coefficients and terms of power $k$,
-\begin{equation*}
-	{\bold y_2} =  \sum_{k=0}^\infty c_k \tilde{\bold x}\he{k}
-\end{equation*}
-\noindent that, having the same form as Equation~(\ref{eqn:sigmoid zeta expansion}) creates a sequential process for determining the coefficients of the power series expansion of each layer in an ANN. Importantly, the output layer in a ANN regression is a single node with a linear activation, so the final layer, $y_f$, working from the last hidden layer, ${\bold y}_n$, is simply,
-\begin{equation}
-	y_f = \boldsymbol\theta_n^T {\bold y}_n
-\end{equation}
+% {\color{red}
+% The element-wise exponent is used repeatedly in both the constitutive relation and neural network expansions. For the product of two matrices, $A: A \in \mathbb{R}^{m \times n}$ and $B: B \in \mathbb{R}^{n \times q}$, the element-wise exponent results in an expanded basis that explicitly includes the cross terms from ${\bf A}$ and ${\bf B}$.
+%
+% \begin{subequations}
+% \begin{align}
+%         \left( AB \right)^{\circ p} &= \he[\left( \densematrix{a}{m}{n} \densematrix{b}{n}{q} \right)]{p} \nonumber \\
+%             &= \begin{pmatrix}
+%                 {\bf a}_{1k}{\bf b}_{k1}  & {\bf a}_{1k}{\bf b}_{k2}    & \cdots    & {\bf a}_{1k}{\bf b}_{kq}   \\
+%                 {\bf a}_{2k}{\bf b}_{k1}  & {\bf a}_{2k}{\bf b}_{k2}    &           & \vdots \\
+%                 \vdots                    &                             & \ddots    &          \\
+%                 {\bf a}_{mk}{\bf b}_{k1}  & \cdots                      &           & {\bf a}_{mk}{\bf b}_{kq}
+%             \end{pmatrix}^{\circ p} \nonumber \\
+%             &= \begin{pmatrix}
+%                 ({\bf a}_{1k}{\bf b}_{k1})^{p}  & ({\bf a}_{1k}{\bf b}_{k2})^{p}    & \cdots    & ({\bf a}_{1k}{\bf b}_{kq})^{p}   \\
+%                 ({\bf a}_{2k}{\bf b}_{k1})^{p}  & ({\bf a}_{2k}{\bf b}_{k2})^{p}    &           & \vdots \\
+%                 \vdots                          &                                   & \ddots           &          \\
+%                 ({\bf a}_{mk}{\bf b}_{k1})^{p}  & \cdots                            &           & ({\bf a}_{mk}{\bf b}_{kq})^{p}
+%             \end{pmatrix} \label{eqn:hadmard exponent matrix} \\[3ex]
+%         ({\bf a}_{ik}{\bf b}_{kj})^{p} &= (a_{i1}b_{1j} + a_{i2}b_{2j} + \cdots + a_{in}b_{nj})^p \nonumber \\
+%             &= \sum_{k1 + k2 + \cdots + k_n = p} \binom{p}{k_1, k_2, \ldots, k_n} \prod_{m=1}^n (a_{im}b_{mj})^{k_m} \nonumber \\
+%             &= \sum_{\| {\bf k} \|_1 = p} \binom{p}{k_1, k_2, \ldots, k_n} \prod_{m=1}^n (a_{im}b_{mj})^{k_m} \\%
+%     \label{eqn:hadamard exponent vector}
+% \end{align}
+% \label{eqn:nondistributive hadamard}
+% \end{subequations}
+% where summation over a repeated index is assumed. That is, Equation~\ref{eqn:hadamard exponent vector} is the expansion of the element-wise exponent of a vector product, $({\bf a}{\bf b})\he{p} = ({\bf a}{\bf b})^p \ne \he[{\bf a}]{p}\he[{\bf b}]{p}$.
+% }
+%
+% % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The analytical form, combining Equations~(\ref{eqn:nn analytical form}) and (\ref{eqn:sigmoid zeta expansion}), the estimated output of a two-layer NN can be written as an expansion:
+%
+% \begin{eqnarray}
+% 	{\bold y}_1 & = & \sum_{k=0}^\infty a_k (\boldsymbol\theta_1^T {\bold x})\he{k} \nonumber \\
+% 	{\bold y}_2 & = & \sum_{k=0}^\infty b_k (\boldsymbol\theta_2^T {\bold y}_1)\he{k} \nonumber \\
+% 		& = & b_0 {\bold 1} + \nonumber\\
+% 		&   & + b_1 (\tilde a_0 +%
+% 					(\tilde a_1 + %
+% 						(\tilde a_2 + %
+% 							(\tilde a_3 + %
+% 								(\ldots) \tilde {\bold x} )%
+% 							\tilde {\bold x} )%
+% 						\tilde {\bold x} )%
+% 					\tilde {\bold x}) \nonumber \\
+% 		&   & + b_2 (\tilde a_0 +%
+% 					(\tilde a_1 + %
+% 						(\tilde a_2 + %
+% 							(\tilde a_3 + %
+% 								(\ldots) \tilde {\bold x} )%
+% 							\tilde {\bold x} )%
+% 						\tilde {\bold x} )%
+% 					\tilde {\bold x})^2 \nonumber \\
+% 		&   & \vdots \nonumber \\
+% 		&   & + b_k (\tilde a_0 +%
+% 					(\tilde a_1 + %
+% 						(\tilde a_2 + %
+% 							(\tilde a_3 + %
+% 								(\ldots) \tilde {\bold x} )%
+% 							\tilde {\bold x} )%
+% 						\tilde {\bold x} )%
+% 					\tilde {\bold x})^k \nonumber \\
+% 		&   & \vdots
+% \end{eqnarray}
+% \noindent where $\tilde a_i = \boldsymbol\theta_2^T a_i$ and $\tilde{\bold x} = \boldsymbol\theta_1^T {\bold x}$. All $\boldsymbol\theta_i$, ${\bold x}$, and ${\bold y}$ are augmented to include the bias, ${\bold b}_i$, that is,
+% \begin{eqnarray}
+% 	{\bold x}&:& {\bold x} \leftarrow \begin{pmatrix}
+% 								1 \\
+% 								{\bold x}
+% 							\end{pmatrix} = \begin{pmatrix}
+% 											1 \\
+% 											x_0 \\
+% 											x_1 \\
+% 											\vdots \\
+% 											x_n
+% 										\end{pmatrix}\\
+% 	{\bold y}&:& {\bold y} \leftarrow \begin{pmatrix}
+% 								1 \\
+% 								{\bold y}
+% 							\end{pmatrix} \\
+% 	\boldsymbol\theta_i&:& \boldsymbol\theta_i \leftarrow \begin{pmatrix} {\bold b}_i & \boldsymbol\theta_i \end{pmatrix}
+% \end{eqnarray}
+%
+% The element-wise exponent operator, ${\bf x}\he{m} = (x_1^m\ x_2^m\ \cdots\ x_n^m)^T$, raises each element of a vector or matrix to the specified power, $m$.
+%
+% From Equation~(\ref{eqn:sigmoid zeta expansion}), $a_i  = 0\ \text{for}\ i = 2, 4, 6, \ldots$, and therefore,
+% \begin{align}
+% 	{\bold y}_1 =& \sum_{k=0}^\infty a_k (\boldsymbol\theta_1^T {\bold x})\he{k} \nonumber \\
+% 	{\bold y}_2 =& \sum_{k=0}^\infty b_k (\boldsymbol\theta_2^T {\bold y}_1)\he{k} \nonumber \\
+% 		=& b_0 {\bold 1} + \nonumber\\
+% 		 &+ b_1 (\tilde a_0 +%
+% 					(\tilde a_1 + %
+% 						(\tilde a_3 + %
+% 							(\tilde a_5 + %
+% 								(\ldots) \tilde {\bold x}\he{2} )%
+% 							\tilde {\bold x}\he{2} )%
+% 						\tilde {\bold x}\he{2} )%
+% 					\tilde {\bold x}) \nonumber \\
+% 		&+ b_2 (\tilde a_0 +%
+% 					(\tilde a_1 + %
+% 						(\tilde a_3 + %
+% 							(\tilde a_5 + %
+% 								(\ldots) \tilde {\bold x}\he{2} )%
+% 							\tilde {\bold x}\he{2} )%
+% 						\tilde {\bold x}\he{2} )%
+% 					\tilde {\bold x})\he{2} \nonumber \\
+% 		& \vdots \nonumber \\
+% 		& + b_k (\tilde a_0 +%
+% 					(\tilde a_1 + %
+% 						(\tilde a_3 + %
+% 							(\tilde a_5 + %
+% 								(\ldots) \tilde {\bold x}\he{2} )%
+% 							\tilde {\bold x}\he{2} )%
+% 						\tilde {\bold x}\he{2} )%
+% 					\tilde {\bold x})\he{k} \nonumber \\
+% 		& \vdots \nonumber \\
+% 	{\bold y}_2 = & \sum_{N=0}^\infty \sum_{k=0}^{N} \sum_{l=0}^{k} \sum_{m=0}^{l} \ldots %
+% 		b_N %
+% 		\binom{N}{k,l,m,\ldots} %
+% 		\tilde a_0^k \tilde a_1^l \tilde a_3^m \ldots %
+% 		\tilde {\bold x}\he{(N-k\ldots)} %
+% 		({\tilde {\bold x}^2})\he{(N-k-l\ldots)} %
+% 		({\tilde {\bold x}^2})\he{(N-k-l-m\ldots)} \nonumber \\
+% 	 =& \sum_{N=0}^\infty \sum_{k=0}^{N} \sum_{l=0}^{k} \sum_{m=0}^{l} \ldots %
+% 		b_N %
+% 		\binom{N}{k,l,m,\ldots} %
+% 		\tilde a_0^k \tilde a_1^l \tilde a_3^m \ldots %
+% 		\tilde {\bold x}\he{(l+m+n+\ldots)} %
+% 		({\tilde {\bold x}\he{2}})\he{(m+n+\ldots)} %
+% 		({\tilde {\bold x}\he{2}})\he{(n+\ldots)}
+% 	\label{eqn:ANN power series coefficient generating function}
+% \end{align}
+% \noindent where $k+l+m+n+\ldots = N$. Collecting coefficients and terms of power $k$,
+% \begin{equation*}
+% 	{\bold y_2} =  \sum_{k=0}^\infty c_k \tilde{\bold x}\he{k}
+% \end{equation*}
+% \noindent that, having the same form as Equation~(\ref{eqn:sigmoid zeta expansion}) creates a sequential process for determining the coefficients of the power series expansion of each layer in an ANN. Importantly, the output layer in a ANN regression is a single node with a linear activation, so the final layer, $y_f$, working from the last hidden layer, ${\bold y}_n$, is simply,
+% \begin{equation}
+% 	y_f = \boldsymbol\theta_n^T {\bold y}_n
+% \end{equation}
 
 %Beginning of scalar coefficients derivation.%
 \subsection{Polynomial Expansion of a Scalar Layer}
@@ -511,7 +515,7 @@ Notice that the power constraint implies $k_{i + 1} = k_{i + 2} = \cdots = 0$. T
 	k = \sum_{n=0}^{i} k_n, \qquad i = \sum_{n=0}^{i} n k_n
 \end{equation}
 
-If a collection of $k_j$ for $j = 0, 1, 2, \ldots$ satisfy both of these constraints, then, the constant coefficients of $z^i$ which are 
+If a collection of $k_j$ for $j = 0, 1, 2, \ldots$ satisfy both of these constraints, then, the constant coefficients of $z^i$ which are
 
 \begin{equation*}
     s_k \theta^k \binom{k}{k_0, k_1, \cdots, k_i} \prod_{n=0}^{\infty} a_n^{k_n}
