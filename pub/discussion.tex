@@ -27,6 +27,18 @@ Many non-trivial problems in materials science, and in science more broadly, are
 % The goal is to iteratively improve on this constitutive model, one term at a time, and monitor the effect on the residuals between the predicted yield, $\hat{\sigma_y}$ and the actual yield $\sigma_y$.
 The goal of this approach is to identify the coefficients of a hypothesized constitutive relationship, coefficients that capture the specific physics of a process, through a least-squares fit between the covector space of a neural network series expansion, $\boldsymbol{\alpha}(\boldsymbol{\theta})$, which is a function of the model parameters, and the covector space of the constitutive relationship, $\boldsymbol{\beta}(C_k)$, which is a function of the physical constants of the model.
 
+It may be useful to introduce a schematic that not only frames the hypothesis, but also graphically registers key details of the methods section of this paper.  Such a figure is presented in Figure~\ref{fig:nn-2}
+
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=0.4\textwidth]{fig/Schematic-02}
+\caption{Schematic of the logic of the approach. The schematic could easily be expanded to show additional details and complexity on both the ANN/ML pathway and the potential physics pathway, including, for example, data selectors, physical dependencies. Similarly, the permutation of multiple architectures and postulated physics could be graphically represented, which would better represent the practical use of this approach.}
+\label{fig:nn-2}
+\end{center}
+\end{figure}
+
+
 % Find \alpha_k for neural network (NN) expansion
 % Find \beta_k for constitutive relationship (CR) expansion
 % Solve for C_k through fit (least-squares for now) of \alpha_k to \beta_k
