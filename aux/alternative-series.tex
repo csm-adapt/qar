@@ -1,0 +1,214 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{mathtools}
+
+\setlength{\parindent}{0pt}
+
+\title{On the Composition of Fourier and Power Series}
+\date{\today}
+
+\begin{document}
+    \maketitle
+
+    \section{Power Variable under Transformation of a Fourier Function}
+
+    \subsection{Notation}
+    Let $x \in \mathbb{R}$ be a scalar. Let $y \in \mathbb{R}$ be a scalar. Let $\sigma \in \mathcal{C}(\mathbb{R})$ be an Fourier function.\\
+    
+    Then, $\sigma$ can be represented as
+    \begin{equation}
+        \sigma(x) = \sum_{n \in \mathbb{Z}} s_n e^{2\pi inx}
+        \label{eqn1:sigma-fourier}
+    \end{equation}
+    
+    Suppose that $x$ and $y$ share the relation
+    \begin{equation}
+        y = \sigma(x).
+        \label{eqn1:xy-relation}
+    \end{equation}
+    
+    Suppose that $x$ can be represented as a Fourier series of $z$, another scalar.
+    \begin{equation}
+        x = \sum_{k=0}^{\infty} a_k z^k
+        \label{eqn1:x-power}
+    \end{equation}
+    
+    Suppose that wish to find a similar Fourier representation for $y$ in terms of $z$.
+    \begin{equation}
+        y = \sum_{k=0}^{\infty} b_k z^k
+        \label{eqn1:y-power}
+    \end{equation}
+    
+    \subsection{Expansion}
+    We expand the relation given in Equation (\ref{eqn1:xy-relation}) by using Equations (\ref{eqn1:sigma-fourier}) and (\ref{eqn1:x-power}).
+    
+    \begin{align}
+        y &= \sigma(x) \nonumber \\
+          &= \sum_{n\in\mathbb{Z}} s_n e^{2\pi inx} \nonumber \\
+          &= \sum_{n\in\mathbb{Z}} s_n e^{2\pi in\sum_{k=0}^{\infty} a_k z^k} \nonumber \\
+          &= \sum_{n\in\mathbb{Z}} s_n \sum_{q=0}^{\infty} \frac{\left(2\pi in\sum_{k=0}^{\infty} a_k z^k\right)^q}{q!} \nonumber \\
+          &= \sum_{n\in\mathbb{Z}} s_n \sum_{q=0}^{\infty} \frac{(2\pi in)^q}{q!} \left(\sum_{k=0}^{\infty}a_k z^k\right)^q \nonumber \\
+          &= \sum_{n\in\mathbb{Z}} s_n \sum_{q=0}^{\infty} \frac{(2\pi in)^q}{q!} \left(\sum_{q_0 + q_1 + \cdots = q} \binom{q}{q_0, q_1, \ldots} \prod_{k=0}^{\infty} \left(a_k z^k\right)^{q_k} \right) \nonumber \\
+          &= \sum_{n\in\mathbb{Z}} s_n \sum_{q=0}^{\infty} \frac{(2\pi in)^q}{q!} \left(\sum_{q_0 + q_1 + \cdots = q} \binom{q}{q_0, q_1, \ldots} \prod_{k=0}^{\infty} a_k^{q_k} z^{q_k k} \right)
+          \label{eqn1:xy-expansion}
+    \end{align}
+    
+    \subsection{Coefficient Extraction}
+    
+    In order to find the coefficients $b_i$ for Equation (\ref{eqn1:y-power}), we must extract the index and power constraints from Equation (\ref{eqn1:xy-expansion}).\\
+    
+    The index constraint is
+    
+    \begin{equation}
+        q = \sum_{m=0}^{\infty} q_m.
+    \end{equation}
+    
+    The power constraint is
+    
+    \begin{equation}
+        i = \sum_{m=0}^{\infty} m q_m.
+    \end{equation}
+    
+    Therefore, the expression for the coefficient $g_i$ is
+    
+    \begin{equation}
+        b_i = \sum_{n=0}^{\infty} s_n \sum_{q}^{\infty} \frac{(2\pi in)^q}{q!} \sum_{\substack{q_0 + q_1 + \cdots q_i = q \\ 0q_0 + 1q_1 + \cdots iq_i = i}} \binom{q}{q_0, q_1, \ldots, q_i} \prod_{k=0}^{\infty} a_k^{q_k}.
+    \end{equation}
+
+    \section{Fourier Variable under Transformation of an Power Function}
+
+    \subsection{Notation}
+    Let $x \in \mathbb{R}$ be a scalar. Let $y \in \mathbb{R}$ be a scalar. Let $\sigma \in \mathcal{C}(\mathbb{R})$ be a function with a power representation.\\
+
+    Then, $\sigma$ can be represented as
+    \begin{equation}
+        \sigma(x) = \sum_{n=0}^{\infty} s_n x^n.
+        \label{eqn2:sigma-analytic}
+    \end{equation}
+
+    Suppose that $x$ and $y$ share the relation
+    \begin{equation}
+        y = \sigma(x).
+        \label{eqn2:xy-relation}
+    \end{equation}
+
+    Suppose that $x$ can be represented as a Fourier series of $z$, another scalar.
+    \begin{equation}
+        x = \sum_{k \in \mathbb{Z}} f_k e^{2\pi i k z}
+        \label{eqn2:x-fourier}
+    \end{equation}
+
+    Suppose that wish to find a similar Fourier representation for $y$ in terms of $z$.
+    \begin{equation}
+        y = \sum_{k \in \mathbb{Z}} g_k e^{2\pi i k z}
+        \label{eqn2:y-fourier}
+    \end{equation}
+
+    \subsection{Expansion}
+    We expand the relation given in Equation (\ref{eqn2:xy-relation}) by using Equations (\ref{eqn2:sigma-analytic}) and (\ref{eqn2:x-fourier}).
+
+    \begin{align}
+        y &= \sigma(x) \nonumber \\
+        &= \sum_{n=0}^{\infty} s_n x^n \nonumber \\
+        &= \sum_{n=0}^{\infty} s_n \left(\sum_{k \in \mathbb{Z}} f_k e^{2\pi i k z}\right)^n \nonumber \\
+        &= \sum_{n=0}^{\infty} s_n \left(\sum_{\cdots k_{-1} + k_{0} + k_{1} + \cdots = n} \binom{n}{\ldots, k_{-1}, k_{0}, k_{1}, \ldots} \prod_{t \in \mathbb{Z}} \left(f_t e^{2\pi i t z}\right)^{k_t} \right) \nonumber \\
+        &= \sum_{n=0}^{\infty} s_n \left(\sum_{\cdots k_{-1} + k_{0} + k_{1} + \cdots = n} \binom{n}{\ldots, k_{-1}, k_{0}, k_{1}, \ldots} \prod_{t \in \mathbb{Z}} f_t^{k_t} e^{2\pi i t k_t z} \right)
+        \label{eqn2:xy-expansion}
+    \end{align}
+
+    \subsection{Coefficient Extraction}
+
+    In order to find the coefficients $g_i$ for Equation (\ref{eqn2:y-fourier}), we must recognize an index constraint and a power constraint on the term $e^{2\pi i t k_t z}$ from Equation (\ref{eqn2:xy-expansion}).\\
+
+    The index constraint is
+
+    \begin{equation}
+        n = \sum_{m \in \mathbb{Z}} k_m.
+    \end{equation}
+
+    The power constraint is
+
+    \begin{equation}
+        i = \sum_{t \in \mathbb{Z}} tk_t
+    \end{equation}
+
+    Therefore, the expression for the coefficient $g_i$ is
+
+    \begin{equation}
+        g_i = \sum_{n=0}^{\infty} s_n \left(\sum_{\substack{n = \sum_{m \in \mathbb{Z}} k_m \\ i=\sum_{t \in \mathbb{Z}} tk_t}} \binom{n}{\ldots, k_{-1}, k_{0}, k_{1}, \dots} \prod_{t \in \mathbb{Z}}f_t^{k_t} \right).
+    \end{equation}
+
+    This cannot be simplified as in the variable power series case since $i = \sum_{t \in \mathbb{Z}} tk_t$ cannot be reduced. All modes must be considered.
+
+    \section{Fourier Variable under Transformation of an Fourier Function}
+
+    \subsection{Notation}
+    Let $x \in \mathbb{R}$ be a scalar. Let $y \in \mathbb{R}$ be a scalar. Let $\sigma \in \mathcal{C}(\mathbb{R})$ be a function with a Fourier representation.\\
+
+    Then, $\sigma$ can be represented as
+    \begin{equation}
+        \sigma(x) = \sum_{n \in \mathbb{Z}} s_n e^{2 \pi i n x}.
+        \label{eqn3:sigma-fourier}
+    \end{equation}
+
+    Suppose that $x$ and $y$ share the relation
+    \begin{equation}
+        y = \sigma(x).
+        \label{eqn3:xy-relation}
+    \end{equation}
+
+    Suppose that $x$ can be represented as a Fourier series of $z$, another scalar.
+    \begin{equation}
+        x = \sum_{k \in \mathbb{Z}} f_k e^{2\pi i k z}
+        \label{eqn3:x-fourier}
+    \end{equation}
+
+    Suppose that wish to find a similar Fourier representation for $y$ in terms of $z$.
+    \begin{equation}
+        y = \sum_{k \in \mathbb{Z}} g_k e^{2\pi i k z}
+        \label{eqn3:y-fourier}
+    \end{equation}
+
+    \subsection{Expansion}
+    We expand the relation given in Equation (\ref{eqn3:xy-relation}) by using Equations (\ref{eqn3:sigma-fourier}) and (\ref{eqn3:x-fourier}).
+
+    \begin{align}
+        y &= \sigma(x) \nonumber \\
+        &= \sum_{n \in \mathbb{Z}} s_n e^{2 \pi i n x} \nonumber \\
+        &= \sum_{n \in \mathbb{Z}} s_n e^{2 \pi i n \left(\sum_{k \in \mathbb{Z}} f_k e^{2\pi i k z}\right)} \nonumber \\
+        &= \sum_{n \in \mathbb{Z}} s_n \sum_{q=0}^{\infty} \frac{\left(2 \pi i n \left[\sum_{k \in \mathbb{Z}} f_k e^{2\pi i k z}\right]\right)^q}{q!} \nonumber \\
+        &= \sum_{n \in \mathbb{Z}} s_n \sum_{q=0}^{\infty} \frac{\left(2\pi in\right)^q}{q!} \left(\sum_{k \in \mathbb{Z}} f_k e^{2\pi ikz} \right)^q \nonumber \\
+        &= \sum_{n \in \mathbb{Z}} s_n \sum_{q=0}^{\infty} \frac{(2\pi i n)^q}{q!} \sum_{\cdots + q_{-1} + q_{0} + q_{1} + \cdots = q} \binom{q}{\ldots, q_{-1}, q_{0}, q_{1}, \ldots} \prod_{m \in \mathbb{Z}} (f_m e^{2\pi imz})^{q_m} \nonumber \\
+        &= \sum_{n \in \mathbb{Z}} s_n \sum_{q=0}^{\infty} \frac{(2\pi i n)^q}{q!} \sum_{\cdots + q_{-1} + q_{0} + q_{1} + \cdots = q} \binom{q}{\ldots, q_{-1}, q_{0}, q_{1}, \ldots} \prod_{m \in \mathbb{Z}} f_m^{q_m} e^{2\pi q_m imz}
+        \label{eqn3:xy-expansion}
+    \end{align}
+
+    \subsection{Coefficient Extraction}
+
+    In order to find the coefficients $g_i$ for Equation (\ref{eqn3:y-fourier}), we must recognize an index constraint and a power constraint on the term $e^{2\pi q_m imz}$ from Equation (\ref{eqn3:xy-expansion}).\\
+
+    The index constraint is
+
+    \begin{equation}
+        q = \sum_{m \in \mathbb{Z}} q_m.
+    \end{equation}
+
+    The power constraint is
+
+    \begin{equation}
+        i = \sum_{t \in \mathbb{Z}} m q_m
+    \end{equation}
+
+    Therefore, the expression for the coefficient $g_i$ is
+
+    \begin{equation}
+        g_i = \sum_{n=0}^{\infty} s_n \sum_{q=0}^{\infty} \frac{(2\pi in)^q}{q!} \left(\sum_{\substack{q = \sum_{m \in \mathbb{Z}} q_m \\ i=\sum_{m \in \mathbb{Z}} m q_m}} \binom{n}{\ldots, q_{-1}, q_{0}, q_{1}, \dots} \prod_{m \in \mathbb{Z}}f_t^{q_m} \right).
+    \end{equation}
+
+    This cannot be simplified as in the variable power series case since $i = \sum_{m \in \mathbb{Z}} m q_m$ cannot be reduced. All modes must be considered.
+
+\end{document}
