@@ -1,0 +1,23 @@
+\documentclass[10pt]{article}
+\usepackage[usenames]{color} %used for font color
+\usepackage{amssymb} %maths
+\usepackage{amsmath} %maths
+\usepackage[utf8]{inputenc} %useful to type directly diacritic characters
+\usepackage{mathtools}
+
+
+\newcommand{\sign}{\ensuremath{\rm sign}}
+\begin{document}
+\begin{align*}\ln \frac{x^n}{n!} \\
+\sign(x)^n n \ln |x| - \ln n! &\sim \sign(x)^n n \ln x - \left( \frac{1}{2}\ln(2 \pi n) + n \ln n - n \right) \\
+  &\sim \sign(x)^n n \ln x - \left( \frac{1}{2}\ln(2 \pi) + \frac{1}{2}\ln n + n \ln n - n \right) \\
+  &\sim \sign(x)^n n \ln x - \left( \frac{1}{2}\ln(2 \pi) + \frac{1}{2}\ln n + n \ln n - n \right) \\
+  &\sim \sign(x)^n n \ln x - \frac{1}{2}\ln(2 \pi) - \left( n + \frac{1}{2} \right)\ln n + n \\
+%
+\sum_k a_k x^k &= \sum_k \exp\left( \ln a_k + \sign(x)^k k \ln |x| \right) \\
+%
+b_i &= \sum_{k=0}^{\infty} \sum_{\substack{k_0 + k_1 + \cdots + k_i = k \\ 0k_0 + 1k_1 + \cdots + i k_i = i}} s_k \theta^k \binom{k}{k_0, k_1, \ldots, k_i} \prod_{n=0}^{\infty} a_n^{k_n} \\
+\ln b_i &= \ln\left( \sum_{k=0}^{\infty} \sum_{\substack{k_0 + k_1 + \cdots + k_i = k \\ 0k_0 + 1k_1 + \cdots + i k_i = i}} s_k \theta^k \binom{k}{k_0, k_1, \ldots, k_i} \prod_{n=0}^{\infty} a_n^{k_n} \right) \\
+  &= \ln\left( s_{\rm max} \left( \theta^k \right)_{\rm max} \binom{k}{k_0, k_1, \ldots, k_i}_{\rm max} \prod_{n=0}^\infty \left( a_n^{k_n} \right)_{\rm max} \right) + \\
+  &\phantom{=} + \ln\left( \sum_{k=0}^{\infty} \sum_{\substack{k_0 + k_1 + \cdots + k_i = k \\ 0k_0 + 1k_1 + \cdots + i k_i = i}} \frac{s_k}{s_{\rm max}} \frac{\theta^k}{\left( \theta^k \right)_{\rm max}} \frac{\binom{k}{k_0, k_1, \ldots, k_i}}{\binom{k}{k_0, k_1, \ldots, k_i}_{\rm max}} \prod_{n=0}^{\infty} \frac{a_n^{k_n}}{\left( a_n^{k_n} \right)_{\rm max}} \right)\end{align*}
+\end{document}
