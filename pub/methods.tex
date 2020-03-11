@@ -423,113 +423,142 @@ A derivation for the polynomial expansion coefficient generating function for ve
 % 	y_f = \boldsymbol\theta_n^T {\bold y}_n
 % \end{equation}
 
-%Beginning of scalar coefficients derivation.%
-\subsection{Polynomial Expansion of a Scalar Layer}
-\label{sec:polynomial series scalar}
+%Beginning of vector coefficients derivation.%
+\subsection{Polynomial Expansion of a Vector Layer}
+\label{sec:polynomial series vector}
 
 We can represent the recursive structure of an ANN given by Equation (\ref{eqn:nn analytical form}) as a series of transformations on a particular power series. Using this method, we are able to write an algorithm that will compute the coefficients of a power series determined by some ANN up to an arbitrary order of approximation.\\
 
-For the sake of illustration, we present the next derivation in terms of a simplified ANN with one neuron in each layer. For the treatment of a unsimplified ANN, see Section \ref{sec:polynomial series vector}.
+Here, we give a derivation of the generalized method applicable to any feed-forward ANN.
+We present a special case of this derivation where each layer of the ANN has a single neuron in Section \ref{sec:polynomial series scalar}.
 
 \subsubsection{Notation}
-Suppose that $x \in \mathbb{R}$ is a scalar, $y \in \mathbb{R}$ is a scalar, $\theta \in \mathbb{R}$ is a scalar, and $\sigma: \mathbb{R} \to \mathbb{R}$ is an analytic function. Since $\sigma$ is analytic, it can be represented as
+
+Suppose that $\mathbf{x} \in \mathbb{R}^d, (d \in \mathbb{Z})$ is a vector, $\mathbf{y} \in \mathbb{R}^c, (c \in \mathbb{Z})$ is a vector, $\mathbf{\Theta} \in \mathbb{R}^{c \times d}$ is a matrix, and $\sigma: \mathbb{R} \to \mathbb{R}$ is an analytic function. Since $\sigma$ is analytic, it can be represented as
 
 \begin{align}
     \sigma(x)
     &= s_0 + s_1 x + s_2 x^2 + \cdots \nonumber \\
-	&= \sum_{k=0}^{\infty} s_{k} x^{k}.
-	\label{eqn:scalar layer activation}
+    &= \sum_{k=0}^{\infty} s_{k} x^{k}.
+    \label{eqn:vector layer activation}
 \end{align}
 
-Suppose that we can represent $x$ as a power series of another scalar $z$.
+Suppose that we can represent each entry of $\mathbf{x}$ as a power series of the entries of a vector $\mathbf{z} \in \mathbb{R}^{w}, (w \in \mathbb{Z})$.
 
 \begin{align}
-    x
-    &= a_0 + a_1 z + a_2 z^2 + \cdots \nonumber \\
-	&= \sum_{n=0}^{\infty} a_{n} z^{n}.
-	\label{eqn:scalar x series}
+    \forall i &= 1, \cdots, d, \nonumber \\ x_i
+    &= a^{(i)}_{0,0,\cdots,0} + a^{(i)}_{1,0,\cdots,0} z_1 + a^{(i)}_{2,0,\cdots,0} z_1^2 + \cdots \nonumber \\
+    &+ a^{(i)}_{0,1,\cdots,0} z_2 + a^{(i)}_{1,1,\cdots,0} z_1 z_2 + a^{(i)}_{2,1,\cdots,0} z_1^2 z_2 + \cdots \nonumber \\
+    &+ a^{(i)}_{0,0,\cdots,1} z_w + a^{(i)}_{1,0,\cdots,1} z_1 z_w + a^{(i)}_{2,0,\cdots,1} z_1^2 z_w + \cdots \nonumber \\
+    &= \sum_{n_1,n_2,\cdots,n_w}^{\infty,\infty,\cdots,\infty} a^{(i)}_{n_1,n_2,\cdots,n_w} z_1^{n_1} z_2^{n_2} \cdots z_w^{n_w}.
+    \label{eqn:vector x series}
 \end{align}
 
 Finally, suppose that we have the relation
 
 \begin{equation}
-	y = \sigma(\theta x).
-	\label{eqn:scalar layer relation}
+    \mathbf{y} = \mathbf{\sigma}(\mathbf{\Theta} \mathbf{x})
+    \label{eqn:vector layer relation}
 \end{equation}
 
-This represents a single-neuron layer of an ANN with input $x$, weight $\theta$, output $y$, and activation $\sigma$. The value of $z$ can be intrepreted as the input to the entire ANN.
+where $\sigma$ is being applied element-wise to a vector.\\
+
+Similar to the scalar case, this represents a multi-neuron layer of an ANN with input $\mathbf{x}$, weights $\mathbf{\theta}$, output $\mathbf{y}$, and activation $\sigma$. The value of $z$ can be intrepreted as the input to the entire ANN.
 
 \subsubsection{Objective}
-We wish to represent $y$ as a power series of $z$. That is,
+We wish to represent each entry of $\mathbf{y}$ as a power series of the entries of $\mathbf{z}$. That is,
 
 \begin{align}
-    y
-    &= b_0 + b_1 z + b_2 z^2 + \cdots \nonumber \\
-	&= \sum_{n=0}^{\infty} b_{n} z^{n}.
-	\label{eqn:scalar y series}
+    \forall i &= 1, \cdots, c, \nonumber \\ y_i
+    &= b^{(i)}_{0,0,\cdots,0} + b^{(i)}_{1,0,\cdots,0} z_1 + b^{(i)}_{2,0,\cdots,0} z_1^2 + \cdots \nonumber \\
+    &+ b^{(i)}_{0,1,\cdots,0} z_2 + b^{(i)}_{1,1,\cdots,0} z_1 z_2 + b^{(i)}_{2,1,\cdots,0} z_1^2 z_2 + \cdots \nonumber \\
+    &+ b^{(i)}_{0,0,\cdots,1} z_w + b^{(i)}_{1,0,\cdots,1} z_1 z_w + b^{(i)}_{2,0,\cdots,1} z_1^2 z_w + \cdots \nonumber \\
+    &= \sum_{n_1,n_2,\cdots,n_w}^{\infty,\infty,\cdots,\infty} b^{(i)}_{n_1,n_2,\cdots,n_w} z_1^{n_1} z_2^{n_2} \cdots z_w^{n_w}.
+    \label{eqn:vector y series}
 \end{align}
 
-We will rewrite the relation for $y$ given by Equation (\ref{eqn:scalar layer relation}) to find the coefficients $b_i$ for $i = 0, 1, 2, \ldots$ for Equation (\ref{eqn: eqn:scalar y series}).
+Rewriting Equation (\ref{eqn:vector layer relation}) in terms of Equations (\ref{eqn:vector layer activation}) and (\ref{eqn:vector x series}), we obtain
 
 \begin{align}
-    y
-    &= \sigma(\theta x) \nonumber \\
-    &= \sum_{k=0}^{\infty} s_k (\theta x)^k \nonumber \\
-    &= \sum_{k=0}^{\infty} s_k \theta^k \left(\sum_{n=0}^{\infty} a_{n} z^{n}\right)^{k} \nonumber \\
-	&= \sum_{k=0}^{\infty} s_k \theta^k \left(\sum_{k_0 + k_1 + k_2 + \cdots = k} \binom{k}{k_0, k_1, k_2, \cdots} \prod_{n=0}^{\infty} (a_n z^{n})^{k_n} \right)
-	\label{eqn:scalar y expansion}
+    \forall i &= 1, \cdots, c, \nonumber \\ y_i
+    &= \left[\mathbf{\sigma}(\mathbf{\Theta} \mathbf{x})\right]_i \nonumber \\
+    &= \sigma(\mathbf{\theta}_i \mathbf{x}) \nonumber \\
+    &= \sum_{k=0}^{\infty} s_k (\mathbf{\theta}_i \mathbf{x})^k \nonumber \\
+    &= \sum_{k=0}^{\infty} s_k \left(\sum_{j=1}^{d} \theta_{ij} x_{j}\right)^k \nonumber \\
+    &= \sum_{k=0}^{\infty} s_k \left(\sum_{k_1 + \cdots + k_d = k} \binom{k}{k_1, \cdots, k_d} \prod_{j=1}^{d} (\theta_{ij} x_j)^{k_j} \right) \nonumber \\
+    &= \sum_{k=0}^{\infty} s_k \left(\sum_{k_1 + \cdots + k_d = k} \binom{k}{k_1, \cdots, k_d} \prod_{j=1}^{d}\theta_{ij}^{k_j} \left(\sum_{n_1, \cdots, n_w}^{\infty,
+    \cdots, \infty} a^{(j)}_{n_1,\cdots,n_w} z_1^{n_1}  \cdots z_w^{n_w} \right)^{k_j}\right) \nonumber \\
+    &= \sum_{k=0}^{\infty} s_k \left(\sum_{k_1 + \cdots + k_d = k} \binom{k}{k_1, \cdots, k_d} \prod_{j=1}^{d} \theta_{ij}^{k_j} \left(\sum_{\lVert \mathbf{L} \rVert_1 = k_j} \binom{k_j}{\mathbf{L}} \prod_{n_1, \cdots, n_w}^{\infty, \cdots, \infty} (a^{(j)}_{n_1, \cdots, n_w} z_1^{n_1} \cdots z_w^{n_w})^{l_{n_1, \cdots, n_w}} \right)\right). \nonumber \\
+    \label{eqn:vector y expansion}
 \end{align}
 
-Note that we used the multinomial theorem to expand the penultimate term in the equation.
+where $\mathbf{L}$ is a collection of non-negative integers that are indices such that
+
+\begin{align*}
+    &\mathbf{L} = l_{\underbrace{0, \cdots, 0}_{\times w}}, \ldots, l_{\underbrace{\infty, \cdots, \infty}_{\times w}}, \\
+    &\lVert \mathbf{L} \rVert_1 = l_{0, \cdots, 0} + \cdots + l_{\infty, \cdots, \infty}, \\
+    &\binom{k_j}{\mathbf{L}} = \binom{k_j}{l_{0, \cdots, 0}, \ldots, l_{\infty, \cdots, \infty}}.
+\end{align*}
 
 \subsubsection{Coefficient Extraction}
 
-At this point, it is infeasible to attempt to write Equation (\ref{eqn:scalar y expansion}) directly as a power series of $z$. Instead, we will extract the coefficients $b_i$ for $i = 0, 1, 2, \ldots$ by observing constraints on the coefficients.\\
+To find the coefficients $b^{(i)}_{m_1, \cdots, m_w}$ from Equation (\ref{eqn:vector y expansion}), we must find terms satisfying index constraints
 
-First, as a result of the multinomial theorem, we have a constraint on the inner sum in Equation (\ref{eqn:scalar y expansion}) that is
+\begin{align}
+    k &= \sum_{n=1}^{d} k_n \\
+    k_j &= \lVert \mathbf{L} \rVert_1
+\end{align}
 
-\begin{equation}
-	k = \sum_{n=0}^{\infty} k_n
-	\label{eqn:scalar index constraint}
-\end{equation}
+and power constraints
 
-where each $k_n$ must be a non-negative integer. This is a constraint on the index of the sum so we shall call this an index constraint.\\
+\begin{align}
+    m_1 &= \sum_{n_1, \cdots, n_w}^{\infty, \cdots, \infty} n_1 l_{n_1, \cdots, n_w} \nonumber \\
+    m_2 &= \sum_{n_1, \cdots, n_w}^{\infty, \cdots, \infty} n_2 l_{n_1, \cdots, n_w} \nonumber \\
+    \vdots \;\; &= \qquad \vdots \nonumber \\
+    m_3 &= \sum_{n_1, \cdots, n_w}^{\infty, \cdots, \infty} n_w l_{n_1, \cdots, n_w}.
+\end{align}
 
-Second, the coefficient $b_i$ is associated with the term $z^i$ so we must form an equality between $i$ and the power on $z$ in Equation (\ref{eqn:scalar y expansion}). To satisfy this equality, we note that
-
-\begin{equation}
-	C z^{0 k_0 + 1 k_1 + 2 k_2 + \cdots} = (a_0 z^0)^{k_0} (a_1 z^1)^{k_1} (a_2 z^2)^{k_2} \cdots = \prod_{n=0}^{\infty} (a_n z^n)^{k_n}
-\end{equation}
-
-where $C$ is some constant. This implies that
-
-\begin{equation}
-    i = \sum_{n=0}^{\infty} n k_n.
-\end{equation}
-
-This is a constraint on the power of the scalar $z$ so we shall call this a power constraint.\\
-
-Notice that the power constraint implies $k_{i + 1} = k_{i + 2} = \cdots = 0$. Therefore, both the index constraint and power constraint can be reduced to a finite series instead of an infinite series.
+Similar to the scalar case, notice that the power constraints can be simplified since any solution must also satisfy
 
 \begin{equation}
-	k = \sum_{n=0}^{i} k_n, \qquad i = \sum_{n=0}^{i} n k_n
+    l_{n_1, \cdots, n_{p-1}, m_p + 1, n_{p+1}, \cdots, n_w} = l_{n_1, \cdots, n_{p-1}, m_p + 2, n_{p+1}, \cdots, n_w} = \cdots = 0.
 \end{equation}
 
-If a collection of $k_j$ for $j = 0, 1, 2, \ldots$ satisfy both of these constraints, then, the constant coefficients of $z^i$ which are
+resulting in
+
+\begin{align}
+    m_1 &= \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_1 l_{n_1, \cdots, n_w} \nonumber \\
+    m_2 &= \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_2 l_{n_1, \cdots, n_w} \nonumber \\
+    \vdots \;\; &= \qquad \vdots \nonumber \\
+    m_w &= \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_w l_{n_1, \cdots, n_w}.
+\end{align}
+
+If a collection of $k_1, \ldots, k_d$ and $\mathbf{L}$ satisfy all of these constraints, then the value
 
 \begin{equation*}
-    s_k \theta^k \binom{k}{k_0, k_1, \cdots, k_i} \prod_{n=0}^{\infty} a_n^{k_n}
+    s_k \binom{k}{k_1, \cdots, k_d} \binom{k_j}{\mathbf{L}} \theta_{ij}^{k_j} (a^{(j)}_{n_1, \cdots, n_w})^{l_{n_1, \cdots, n_w}}
 \end{equation*}
 
-may be pulled out and added to the sum of $b_i$. In concise terms we have derived that
+may be pulled out to the sum of $b^{(i)}_{m_1, \cdots, m_w}$. In concise terms we have derived
 
 \begin{equation}
-    b_i = \sum_{k=0}^{\infty} s_k \theta^k \sum_{\substack{k_0 + k_1 + \cdots + k_i = k \\ 0 k_0 + 1 k_1 + \cdots + i k_i = i}} \binom{k}{k_0, k_1, \cdots, k_i} \prod_{n=0}^{\infty} a_n^{k_n}.
-	\label{eqn:scalar power series result}
+    b^{(i)}_{m_1, \cdots, m_w} = \sum_{k=0}^{\infty} s_k \sum_{k_1 + \cdots + k_d = k} \binom{k}{k_1, \cdots, k_d} \prod_{j=1}^{d} \theta_{ij}^{k_j} \sum_{\substack{l_{0, \cdots, 0} + \cdots + l_{\infty, \cdots, \infty} = k_j \\ \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_1 l_{n_1, \cdots, n_w} = m_1 \\ \vdots \\ \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_w l_{n_1, \cdots, n_w} = m_w}} \binom{k_j}{\mathbf{L}} (a^{(j)}_{n_1, \cdots, n_w})^{l_{n_1, \cdots, n_w}}
 \end{equation}
 
-Thus, we have derived a tractable method of computing the coefficients of a power series after a linear and nonlinear transformation. We have included some worked examples of these coefficients in Appendix \ref{sec:worked scalar coeffs}.
-%End of scalar coefficients derivation.%
+The only issue is that of finding solutions to the index and power constraints.
+
+\subsubsection{Interpretation}
+
+We can use this method for deriving power series for repeatedly composed functions with linear transformations (i.e. $\mathbf{y} = f(\mathbf{\Theta}_3 f(\mathbf{
+\Theta}_1 f(\mathbf{\Theta}_1 \mathbf{x})))$). We represent our original input variable as $\mathbf{x} = \mathbf{z}$ so that we have coefficients $a_{1, 0, \cdots, 0} = a_{0, 1, \cdots, 0} = \cdots = a_{0, 0, \cdots, 1} = 1$ with all other coefficients zero. Then, we update $\mathbf{a}$ for each composition of the function to obtain $\mathbf{b}$ for $\mathbf{y}$. This can be easily applied to neural networks.\\
+
+In order to make this method computationally feasible, we must truncate the power series at some precision. Say the maximum power we wish on any variable is $K$, then, we simply replace instances of $\sum_{k=0}^{\infty} s_k x^k$ with $\sum_{k=0}^{K} s_k x^k$. Thus, coefficients of order $0, 1, \cdots, K$ will have no error and our approximation will only have truncation error from dropping terms with order $> K$.
+
+\subsubsection{Constraint Analysis}
+
+The constraints form a system called a restricted partition which is a concept within number theory. Fel [REF] has found an explicit solution to the constraints found in the simplified ANN case. We can construct an algorithm that operates in $\mathcal{O}(K^w)$ time by iterating through each of the indices $l_{0, \cdots, 0}, \cdots, l_{m_1, \cdots, m_w}$ from $0$ to $K$ and checking if they satisfy the constraints. This warrants some future study to see if there are ways to reduce the operation time and find solutions to the system of constraints more quickly.
+
+%End of vector coefficients derivation.%
 
 %If no reference, prove that the primal/dual is unique.
 %Weidmann J. (1980) Linear operators and their adjoints. In: Linear Operators in Hilbert Spaces. Graduate Texts in Mathematics, vol 68. Springer, New York, NY
