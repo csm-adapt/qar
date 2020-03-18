@@ -9,6 +9,7 @@
 \usepackage{mathtools}
 
 \newtheorem{theorem}{Theorem}
+\newtheorem{corollary}[theorem]{Corollary}
 
 \setlength{\parindent}{0pt}
 
@@ -161,6 +162,15 @@
     \end{proof}
 
     Therefore, not only are the coefficients increasing, but higher-order coefficients grow more quickly than lower-order coefficients.
+
+    \begin{corollary}
+        For $k > 1$, the radius of convergence of the power series of $sin^{(k)}(x)$ is $\rho = 1$ about $x = 0$.
+    \end{corollary}
+    \begin{proof}
+        [PROOF NOT COMPLETE HERE]
+    \end{proof}
+
+    Thus, for $k > 1$, the power series of $sin^{(k)}(x)$ has a finite radius of convergence contrary to the infinite radius of convergece of the power series of $sin(x)$.
 
     \begin{theorem}
         The numbers $\left\{5! \cdot s_{5}^{(k)}\right\}_{k=0}^{\infty}$ form the sequence of dodecagonal numbers.
