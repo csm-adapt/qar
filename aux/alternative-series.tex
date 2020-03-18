@@ -4,7 +4,11 @@
 \usepackage[margin=1in]{geometry}
 \usepackage{amsfonts}
 \usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{booktabs}
 \usepackage{mathtools}
+
+\newtheorem{theorem}{Theorem}
 
 \setlength{\parindent}{0pt}
 
@@ -77,7 +81,93 @@
     
     \begin{equation}
         b_i = \sum_{n=0}^{\infty} s_n \sum_{q}^{\infty} \frac{(2\pi in)^q}{q!} \sum_{\substack{q_0 + q_1 + \cdots q_i = q \\ 0q_0 + 1q_1 + \cdots iq_i = i}} \binom{q}{q_0, q_1, \ldots, q_i} \prod_{k=0}^{\infty} a_k^{q_k}.
+        \label{eqn1:icoeff}
     \end{equation}
+
+    \subsection{Analysis of Sine Transformation}
+
+    We can let the transformation $\sigma(x) = \sin(x)$. We then have
+
+    \begin{equation}
+        \sigma(x) = \sin(x) = \frac{i}{2} e^{-ix} - \frac{i}{2} e^{ix}
+    \end{equation}
+
+    so that $s_{-1} = i / 2$, $s_{1} = -i / 2$, and $s_{k} = 0$ for $k \neq \pm 1$. Inserting these coefficients into Equation (\ref{eqn1:icoeff}), we get
+
+    \begin{align}
+        b_j
+        &= \sum_{n \in \{-1, 1\}}^{\infty} s_n \sum_{q=0}^{\infty} \frac{(2\pi in)^q}{q!} \sum_{\substack{q_0 + q_1 + \cdots q_j = q \\ 0q_0 + 1q_1 + \cdots jq_j = j}} \binom{q}{q_0, q_1, \ldots, q_j} \prod_{k=0}^{\infty} a_k^{q_k} \nonumber \\
+        &= \frac{i}{2} \left[ \sum_{q=0}^{\infty} \frac{(-1)^q(2\pi i)^q}{q!} \sum_{\substack{q_0 + q_1 + \cdots q_i = q \\ 0q_0 + 1q_1 + \cdots jq_j = j}} \binom{q}{q_0, q_1, \ldots, q_j} \prod_{k=0}^{\infty} a_k^{q_k}\right] - \frac{i}{2} \left[ \sum_{q=0}^{\infty} \frac{(2\pi i)^q}{q!} \sum_{\substack{q_0 + q_1 + \cdots q_j = q \\ 0q_0 + 1q_1 + \cdots jq_j = j}} \binom{q}{q_0, q_1, \ldots, q_j} \prod_{k=0}^{\infty} a_k^{q_k}\right] \nonumber \\
+        &= \frac{i}{2} \sum_{q=0}^{\infty} \left[\frac{(2\pi i)^q}{q!}\left((-1)^q - 1\right) \sum_{\substack{q_0 + q_1 + \cdots q_j = q \\ 0q_0 + 1q_1 + \cdots jq_j = j}} \binom{q}{q_0, q_1, \ldots, q_j} \prod_{k=0}^{\infty} a_k^{q_k}\right] \nonumber \\
+        &= -i \sum_{q=0}^{\infty} \left[\frac{(2\pi i)^{2q + 1}}{(2q+1)!} \sum_{\substack{q_0 + q_1 + \cdots q_j = 2q + 1 \\ 0q_0 + 1q_1 + \cdots jq_j = j}} \binom{2q + 1}{q_0, q_1, \ldots, q_j} \prod_{k=0}^{\infty} a_k^{q_k}\right] \nonumber \\
+        &= \sum_{q=0}^{\infty} \left[\frac{(-1)^{q}(2\pi)^{2q + 1}}{(2q+1)!} \sum_{\substack{q_0 + q_1 + \cdots q_j = 2q + 1 \\ 0q_0 + 1q_1 + \cdots jq_j = j}} \binom{2q + 1}{q_0, q_1, \ldots, q_j} \prod_{k=0}^{\infty} a_k^{q_k}\right]
+    \end{align}
+
+    This can also be found using a similar expansion as in Equation (\ref{eqn:xy-expansion}) with $y = sin(x)$. We will use this expansion to prove the following theorem about the instability of the Taylor expansion of the iterated sine function.
+
+    \begin{theorem}
+        Let $\sin^{(k)}(x)$ be the iterated sine function. That is $\sin^{(1)}(x) = \sin(x)$, $\sin^{(2)}(x) = \sin(\sin(x))$, $\sin^{(3)}(x) = \sin(\sin(\sin(x)))$, etc. Then, each iterated sine function $\sin^{(k)}(x)$ has a Maclaurin Series representation
+        
+        \begin{equation}
+            \sin^{(k)}(x) = s_0^{(k)} + s_1^{(k)} x + s_2^{(k)} x^2 + \cdots
+        \end{equation}
+        
+        and $\left|s_i^{(m)}\right| \geq \left|s_i^{(n)}\right|$ if $m \geq n$ for all $i \in \mathbb{N}$.
+    \end{theorem}
+    \begin{proof}
+        We will prove this theorem by strong induction on $m$.\\
+        
+        First, we will start with $m = 1$. Then, either $n = 0$ or $n = 1$.
+        
+        \begin{enumerate}
+            \item When $n = 0$, $\sin^{(n)}(x) = id(x)$ is the identity of $x$ which has $s_1^{(0)} = 1$ and $s_i^{(0)} = 0$ for $i \neq 1$. The Maclaurin Series expansion of $\sin(x)$ has $s_{2n}^{(1)} = 0$ and $s_{2n+1}^{(1)} = \frac{(-1)^n}{(2n+1)!}$. Since, $s_{1}^{(1)} = \frac{(-1)^0}{1!} = 1$, then $\left|s_{i}^{(1)}\right| \geq \left|s_{i}^{(0)}\right|,\ \forall i \in \mathbb{N}$. 
+            
+            \item When $n = 1 = m$, we trivially obtain $\left|s_{i}^{(m)}\right| \geq \left|s_{i}^{(n)}\right|,\ \forall i \in \mathbb{N}$.
+        \end{enumerate}
+        
+        Second, we will prove that the theorem holds for $m = k$ under the assumption that the theorem holds for $m < k$ for $k > 1$. In this case, either $n < m$ or $n = m$.
+        
+        \begin{enumerate}
+            \item When $n < m$, then, by assumption, we have $\left|s_{i}^{(m-1)}\right| \geq \left|s_{i}^{(n)}\right|,\ \forall i \in \mathbb{N}$ and we need only show that $\left|s_{i}^{(m)}\right| \geq \left|s_{i}^{(m-1)}\right|,\ \forall i \in \mathbb{N}$. [PROOF NOT COMPLETE HERE]
+            
+            \item When $n = m$, we trivially obtain $\left|s_{i}^{(m)}\right| \geq \left|s_{i}^{(n)}\right|,\ \forall i \in \mathbb{N}$.
+        \end{enumerate}
+        
+        Thus, we have $\left|s_i^{(m)}\right| \geq \left|s_i^{(n)}\right|$ if $m \geq n$ for all $i \in \mathbb{N}$ so the theorem is proven.
+    \end{proof}
+
+    For instance, $sin^{(k)}$ has the following first $10$ coefficients for $k = 0, 1, \ldots, 7$.
+
+    \begin{table}[h]
+    \centering
+    \begin{tabular}{@{}l|cccccccccc@{}}
+    $k$ & $c_{0}^{(k)}$ & $c_{1}^{(k)}$ & $c_{2}^{(k)}$ & $c_{3}^{(k)}$ & $c_{4}^{(k)}$ & $c_{5}^{(k)}$ & $c_{6}^{(k)}$ & $c_{7}^{(k)}$ & $c_{8}^{(k)}$ & $c_{9}^{(k)}$ \\ \midrule
+    $0$ & $0$ & $1$ & $0$ & $0$    & $0$ & $0$       & $0$ & $0$           & $0$ & $0$              \\
+    $1$ & $0$ & $1$ & $0$ & $-1/6$ & $0$ & $1/120$   & $0$ & $-1/5040$     & $0$ & $1/362880$       \\
+    $2$ & $0$ & $1$ & $0$ & $-2/6$ & $0$ & $12/120$  & $0$ & $-128/5040$   & $0$ & $1872/362880$    \\
+    $3$ & $0$ & $1$ & $0$ & $-3/6$ & $0$ & $33/120$  & $0$ & $-731/5040$   & $0$ & $25857/362880$   \\
+    $4$ & $0$ & $1$ & $0$ & $-4/6$ & $0$ & $64/120$  & $0$ & $-2160/5040$  & $0$ & $121600/362880$  \\
+    $5$ & $0$ & $1$ & $0$ & $-5/6$ & $0$ & $105/120$ & $0$ & $-4765/5040$  & $0$ & $368145/362880$  \\
+    $6$ & $0$ & $1$ & $0$ & $-6/6$ & $0$ & $156/120$ & $0$ & $-8896/5040$  & $0$ & $873936/362880$  \\
+    $7$ & $0$ & $1$ & $0$ & $-7/6$ & $0$ & $217/120$ & $0$ & $-14903/5040$ & $0$ & $1776817/362880$ \\
+    \end{tabular}
+    \end{table}
+
+    \begin{theorem}
+        The sequence of values $s_{2n+1}^{(k)}$ as a function of $k$ is a polynomial of degree $n$.
+    \end{theorem}
+    \begin{proof}
+        [PROOF NOT COMPLETE HERE]
+    \end{proof}
+
+    Therefore, not only are the coefficients increasing, but higher-order coefficients grow more quickly than lower-order coefficients.
+
+    \begin{theorem}
+        The numbers $\left\{5! \cdot s_{5}^{(k)}\right\}_{k=0}^{\infty}$ form the sequence of dodecagonal numbers.
+    \end{theorem}
+    \begin{proof}
+        [PROOF NOT COMPLETE HERE]
+    \end{proof}
 
     \section{Fourier Variable under Transformation of an Power Function}
 
