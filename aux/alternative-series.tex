@@ -129,7 +129,29 @@
         Second, we will prove that the theorem holds for $m = k$ under the assumption that the theorem holds for $m < k$ for $k > 1$. In this case, either $n < m$ or $n = m$.
         
         \begin{enumerate}
-            \item When $n < m$, then, by assumption, we have $\left|s_{i}^{(m-1)}\right| \geq \left|s_{i}^{(n)}\right|,\ \forall i \in \mathbb{N}$ and we need only show that $\left|s_{i}^{(m)}\right| \geq \left|s_{i}^{(m-1)}\right|,\ \forall i \in \mathbb{N}$. [PROOF NOT COMPLETE HERE]
+            \item When $n < m$, then, by assumption, we have $\left|s_{i}^{(m-1)}\right| \geq \left|s_{i}^{(n)}\right|,\ \forall i \in \mathbb{N}$ and we need only show that $\left|s_{i}^{(m)}\right| \geq \left|s_{i}^{(m-1)}\right|,\ \forall i \in \mathbb{N}$. We start by supposing that
+            
+            \begin{equation}
+                x(z) = sin^{(m-1)}(z) = s_0^{(m-1)} + s_1^{(m-1)} z + s_2^{(m-1)} z^2 + \cdots.
+            \end{equation}
+            
+            We also suppose
+            
+            \begin{equation}
+                \sigma(z) = sin(z) = \sum_{n=0}^{\infty} \frac{(-1)^n x^{2n+1}}{(2n+1)!}.
+            \end{equation}
+            
+            Finally, we wish to find $s_0^{(m)}, s_1^{(m)} \ldots$ to satisfy
+
+            \begin{equation}
+                y(z) = sin^{(m)}(z) = s_0^{(m)} + s_1^{(m)} z + s_2^{(m)} z^2 + \cdots.
+            \end{equation}
+
+            From our previous results, we know that
+
+            \begin{equation}
+                s_i^{(m)} = \sum_{k=0}^{\infty} \frac{(-1)^k}{(2k+1)!} \left[\sum_{\substack{k_0 + k_1 + \cdots + k_i = k \\ 0k_0 + 1k_1 + \cdots ik_i = k}} \binom{k}{k_0, k_1, \cdots, k_i} \prod_{j=0}^{i} \left(s_j^{(m-1)}\right)^{k_j}\right].
+            \end{equation}
             
             \item When $n = m$, we trivially obtain $\left|s_{i}^{(m)}\right| \geq \left|s_{i}^{(n)}\right|,\ \forall i \in \mathbb{N}$.
         \end{enumerate}
@@ -164,20 +186,13 @@
     Therefore, not only are the coefficients increasing, but higher-order coefficients grow more quickly than lower-order coefficients.
 
     \begin{corollary}
-        Conjecture: For $k > 1$, the radius of convergence of the power series of $\sin^{(k)}(x)$ is $\rho = \pi^{-^{k}2}$ about $x = 0$.
+        Conjecture: For $k > 1$, the radius of convergence of the power series of $\sin^{(k)}(x)$ is $\rho = \pi^{-^{k-1}2}$ about $x = 0$.
     \end{corollary}
     \begin{proof}
         [PROOF NOT COMPLETE HERE]
     \end{proof}
 
     Thus, for $k > 1$, the power series of $\sin^{(k)}(x)$ has a finite radius of convergence contrary to the infinite radius of convergece of the power series of $\sin(x)$.
-
-    \begin{theorem}
-        The numbers $\left\{5! \cdot s_{5}^{(k)}\right\}_{k=0}^{\infty}$ form the sequence of dodecagonal numbers.
-    \end{theorem}
-    \begin{proof}
-        [PROOF NOT COMPLETE HERE]
-    \end{proof}
 
     \section{Fourier Variable under Transformation of an Power Function}
 
