@@ -9,203 +9,9 @@ Fully dense neural network (NN) architectures, such as the one shown in Figure~\
 \end{center}
 \end{figure}
 
-The resulting network,
-\begin{equation}
-	f(x) = \sigma(\boldsymbol\theta_n \sigma(\boldsymbol\theta_{n-1} \sigma(\ldots \boldsymbol\theta_2 \sigma(\boldsymbol\theta_1{\bold x}))))
-	\label{eqn:nn analytical form}
-\end{equation}
-is an arbitrary function generator, but at present, the network weights $\boldsymbol\theta_i$ can not map back to analytic forms that capture and describe the underlying physics. There are, however, many such mappings through polynomial series expansions,
-\begin{equation}
-	f(x) = \sum_{n=0}^\infty a_n x^n
-\end{equation}
+A typical neural network, as given in (insert neural network reference), is nothing more than an arbitrary function generator, but at present, the network weights can not map back to analytic forms that capture and describe the underlying physics. There are, however, many such mappings through polynomial series expansions (possible reference to other polynomial series expansion applications?). We hypothesize that the physics of a process can be extracted by fitting the polynomial expansions of known physical relationships to the polynomial coefficients of a polynomial series expansion of Equation~(\ref{eqn:nn analytical form}). \\
 
-The variable $\bold x$ in Equation~(\ref{eqn:nn analytical form}) represents a column vector containing $\boldsymbol n$ input elements, and thus, the output from each node is multplied by the respective weight before the application of the subsequent activation function, e.g.
-\begin{equation}
-	\bold z =
-	\theta^{(1)} \begin{bmatrix}
-				x_{1} \\
-				x_{2} \\
-				\vdots \\
-				x_{n}
-			\end{bmatrix}
-	\Rightarrow \begin{bmatrix}
-					\theta_{11} x_{1} + \theta_{12} x_{2} + \ldots \theta_{1n} x_{n} \\
-					\theta_{21} x_{1} + \theta_{22} x_{2} + \ldots \theta_{2n} x_{n} \\
-					\vdots \\
-					\theta_{m1} x_{1} + \theta_{m2} x_{2} + \ldots \theta_{mn} x_{n} \\
-				\end{bmatrix}
-\end{equation}
-
-and $\boldsymbol\sigma (\bold z)$ serves as the input of the next layer in the network, where $\bold z = (\boldsymbol\theta^{(1)} \bold x)$. \\*
-
-We hypothesize that the physics of a process can be extracted by fitting the polynomial expansions of known physical relationships to the polynomial coefficients of a polynomial series expansion of Equation~(\ref{eqn:nn analytical form}). \\
-\\*
-
-%Beginning of softmax derivation 1/7
-\subsection{Softplus Activation}
-
-For example, consider the Softmax activation function which is given in Equation (???)
-
-\begin{equation}
-	\sigma(\bold z)_i =
-	\frac{e^{z_i}}{\sum\limits_{j=1}^k e^{z_j}}
-\end{equation}
-
-The goal is to obtain a activation generating function for the chosen activation function in the neural network.
-
-The partion function, $\bold Z$, is defined below as
-\begin{equation}
-	\bold Z = \sum\limits_{j=1}^k e^{z_j}
-\end{equation}
-The series representation for the exponential is given by the following
-\begin{equation}
-	e^{z_{i}} = \sum_{k=0}^{\infty}\frac{1}{k!} z_{i}^{k}
-\end{equation}
-Therefore
-\begin{equation}
-	\sigma(\bold z)_i =
-	\sum\limits_{k=0}^{\infty} \alpha_{k}z_{i}^{k}
-\end{equation}
-Where $\alpha_k = \frac{1}{{\bold Z}k!}$ is the generating function for the Softmax
-%End of softmax derivation 1/7
-
-\subsection{ReLU Activation}
-
-The ReLU (rectified linear units) function is another commonly used activation function and is given below in Equation~(\ref{eqn:ReLU}):
-\begin{equation}
-	f(x) =
-	\begin{cases}
-		x, & \text{if}\ x > 0 \\
-		0, & \text{otherwise}
-	\end{cases}
-	\label{eqn:ReLU}
-\end{equation}
-
-The generating function for the ReLU is given in Equation~(\ref{eqn: ReLU generating function}) and it is dependent on both the input variables and the network weights.
-\begin{equation}
-	\alpha_n =
-		\begin{cases}
-			1 & \bold z > 0 \\
-			0 & \text{otherwise}
-		\end{cases}
-	\label{eqn: ReLU generating function}
-\end{equation}
-
-Similarly, the linear generating function is given in Equation~(\ref{eqn: linear generating function}) but it is only dependent upon $\bold n$.
-\begin{equation}
-	\alpha_n =
-		\begin{cases}
-			1 & \bold n = 1 \\
-			0 & \text{otherwise}
-		\end{cases}
-	\label{eqn: linear generating function}
-\end{equation}
-
-Although ReLU (rectified linear units) have become a more common activation function, its discontinuity at $x = 0$ requires an infinite series to fully capture the behavior at this transition.
-
-However, the softplus function,
-
-%Beginning of new Softplus Derivation 1/7
-%The Softplus activation function is similar to the ReLU activation function, but unlike the ReLU, the first derivative of the Softplus is continuous. As will be discussed later, the Softplus can be modified such that it can be forced to converge to the ReLU.
-\begin{align*}
-	f(x) & = log(1+e^x)\\
-	& = \frac{1}{\alpha}log(1+e^{\alpha x}), \quad \alpha > 0 \\
-	& = \frac{1}{\alpha}log(z), \quad z = 1 + e^{\alpha x} \\
-	& = \frac{1}{\alpha}\sum\limits_{k=1}^\infty
-	\frac{1}{k}\left(\frac{z-1}{z}\right)^k \\
-	& = \frac{1}{\alpha}\sum\limits_{k=1}^\infty
-	\frac{1}{k}(z-1)^{k} z^{-k} \\
-	& = \frac{1}{\alpha}\sum\limits_{k=1}^\infty
-	\frac{1}{k} e^{\alpha x k} (1 + e^{\alpha x})^{k} \\
-	& = \frac{1}{\alpha}\sum\limits_{k=1}^\infty
-	\frac{1}{k} \left(\sum\limits_{m=0}^\infty
-	\frac{\alpha^{m} x^{m}}{m!}\right)^k \left(1 + \sum\limits_{n=0}^{k} \frac{\alpha^{n} x^{n}}{n!}\right)^{-k}
-\end{align*}
-
-From Gradshteyn and Ryzhik - 0.314 Power series raised to powers.
-\begin{equation}
-	\left(\sum\limits_{k=0}^{\infty}a_{k}x^{k}\right)^{n} = \sum\limits_{k=0}^{\infty}c_{k}x^{k} \\
-	\label{eqn:power series raised to powers}
-\end{equation}
-where
-\begin{align*}
-	c_{0} = a_{0}^{n}, \quad c_{m} = \frac{1}{ma_{0}}\sum\limits_{k=0}^{\infty}c_{k}x^{k}
-\end{align*}
-
-And therefore it can be seen that
-
-\begin{align*}
-	c_{0} = \frac{\alpha^{0}}{0!}=1, \quad c_{l} = \frac{1}{l}\sum\limits_{j=1}^{l}(jk-l+j)\frac{\alpha^{l}}{l!}c_{l-j}
-\end{align*}
-
-\begin{align*}
-	& = \frac{1}{\alpha}\sum\limits_{k=1}^{\infty}\frac{1}{k}\sum\limits_{m=0}^{\infty}c_{m}x^{m}\left( 1+\sum\limits_{n=0}^{\infty}\frac{\alpha^{n}x^{n}}{n!}\right)^{-k} \\
-\end{align*}
-
-From Gradshteyn and Ryzhik - 1.1 Power of Binomials, 1.111 Power Series
-\begin{equation}
-	(a+x)^n = \sum\limits_{k=0}^{n}{n \choose k}x^k a^{n-k}
-\end{equation}
-
-And similarly
-
-\begin{align*}
-	& = \frac{1}{\alpha}\sum\limits_{k=1}^{\infty}\frac{1}{k}\sum\limits_{m=0}^{\infty}c_mx^m
-	\left[ \sum\limits_{i=0}^{k}{k \choose i} \left( \sum\limits_{n=0}^{\infty}\frac{\alpha^nx^n}{n!} \right)^{i} \right]^{-1}
-\end{align*}
-
-Once again the substitution for a power series raised to a power is applied.
-
-\begin{align*}
-	d_{0} = 1, \quad d_{l}=\frac{1}{l}\sum\limits_{j=1}^{l}(ji-l+j)\frac{\alpha^{l}}{l!}d_{l-j}
-\end{align*}
-
-\begin{align*}
-	& = \frac{1}{\alpha}\sum\limits_{k=1}^{\infty}\frac{1}{k}\left[ \frac{\sum\limits_{m=0}^{\infty}c_{m}x^{m}}{\sum\limits_{i=0}^{k}\frac{1}{{k \choose i}}\sum\limits_{n=0}^{\infty}d_{n}x^{n}} \right]
-\end{align*}
-
-After some rearranging of term, the result is given below.
-
-\begin{align*}
-	& = \frac{1}{\alpha}\sum\limits_{k=1}^{\infty}\frac{1}{k}\left[ \frac{\sum\limits_{m=0}^{\infty}c_{m}x^{m}}{\sum\limits_{n=0}^{\infty}\sum\limits_{i=0}^{k}\frac{1}{{k \choose i}}d_{n}x^{n}} \right] \\
-\end{align*}
-
-And therefore the following is obtained.
-\begin{align*}
-	& = \frac{1}{\alpha}\sum\limits_{k=1}^{\infty}\frac{1}{k}\left[ \frac{\sum\limits_{m=0}^{\infty}c_{m}x^{m}}{\sum\limits_{n=0}^{\infty}d_{n}'x^{n}} \right]
-\end{align*}
-
-Where
-\begin{align*}
- 	d_{n}' & = \sum\limits_{i=0}^{k}\frac{1}{{k \choose i}}d_{n}
-\end{align*}
-
-From Gradshteyn and Ryzhik - 0.313 Division of power series.
-
-\begin{equation}
-	\frac{\sum\limits_{k=0}^{\infty}b_k x^k}{\sum\limits_{k=0}^{\infty}a_k x^k}
-	= \frac{1}{a_0}\sum\limits_{k=0}^{\infty}c_kx^k
-\end{equation}
-
-where
-
-\begin{equation}
-	c_n + \frac{1}{a_0}\sum\limits_{k=1}^n c_{n-k}a_k - b_n = 0
-\end{equation}
-
-And therefore
-
-\begin{align*}
-	b_{m} = \sum\limits_{j=1}^{m}c_{m}-b_{m-j}d_{j}
-\end{align*}
-
-\begin{align*}
-	& = \frac{1}{\alpha}\sum\limits_{k=1}^{\infty}\frac{1}{k}\sum\limits_{n=0}^{\infty}b_{n}x^{n} \\
-	& = \sum\limits_{n=0}^{\infty}\sum\limits_{k=1}^{\infty}\frac{b_{n}}{\alpha k}x^{n}=\frac{1}{\alpha}log(1+e^{\alpha x})
-\end{align*}
-
-where $\sum\limits_{k=1}^{\infty}\frac{b_{n}}{\alpha k}$ is the generating function for the softplus
-%End of new softplus derivation 1/7
+The goal is to obtain an activation generating function for the chosen activation function in the neural network. There exists many potential options for choosing an activation function such as softplus, softmax, ReLU (rectified linear units), and logistic sigmoid. The details of the derivations for the generating functions of the common activation functions can be found in the appendix. The generating function for the ReLU is dependent on both the input variables and the network weights. Although ReLU (rectified linear units) have become a more common activation function, its discontinuity at $x = 0$ requires an infinite series to fully capture the behavior at this transition. {\color{red}Note: add more pros and cons about each of the common activation functions if necessary}
 
 %\begin{equation}
 %	f(x) = log(1+e^x)
@@ -427,10 +233,12 @@ A derivation for the polynomial expansion coefficient generating function for ve
 \subsection{Polynomial Expansion of a Vector Layer}
 \label{sec:polynomial series vector}
 
-We can represent the recursive structure of an ANN given by Equation (\ref{eqn:nn analytical form}) as a series of transformations on a particular power series. Using this method, we are able to write an algorithm that will compute the coefficients of a power series determined by some ANN up to an arbitrary order of approximation.\\
+We can represent the recursive structure of an ANN as a series of transformations on a particular power series. Using this method, we are able to write an algorithm that will compute the coefficients of a power series determined by some ANN up to an arbitrary order of approximation.\\
 
 Here, we give a derivation of the generalized method applicable to any feed-forward ANN.
 We present a special case of this derivation where each layer of the ANN has a single neuron in Section \ref{sec:polynomial series scalar}.
+
+{\color{red} For the sake of illustration, we present the next derivation in terms of a simplified ANN with one neuron in each layer. For the treatment of a unsimplified ANN, see Appendix.}
 
 \subsubsection{Notation}
 
@@ -466,6 +274,7 @@ where $\sigma$ is being applied element-wise to a vector.\\
 Similar to the scalar case, this represents a multi-neuron layer of an ANN with input $\mathbf{x}$, weights $\mathbf{\theta}$, output $\mathbf{y}$, and activation $\sigma$. The value of $z$ can be intrepreted as the input to the entire ANN.
 
 \subsubsection{Objective}
+
 We wish to represent each entry of $\mathbf{y}$ as a power series of the entries of $\mathbf{z}$. That is,
 
 \begin{align}
@@ -478,6 +287,8 @@ We wish to represent each entry of $\mathbf{y}$ as a power series of the entries
 \end{align}
 
 Rewriting Equation (\ref{eqn:vector layer relation}) in terms of Equations (\ref{eqn:vector layer activation}) and (\ref{eqn:vector x series}), we obtain
+
+{\color{red} Similarly, $y$ can also be represented as a power series with $b_i$ for $i = 0, 1, 2, \ldots$ as the coefficient using the same approach. We will rewrite the relation for $y$ given by Equation (\ref{eqn:scalar layer relation}) to find the coefficients $b_i$ for $i = 0, 1, 2, \ldots$ for Equation (\ref{eqn: eqn:scalar y series}).}
 
 \begin{align}
     \forall i &= 1, \cdots, c, \nonumber \\ y_i
@@ -541,6 +352,12 @@ If a collection of $k_1, \ldots, k_d$ and $\mathbf{L}$ satisfy all of these cons
 
 may be pulled out to the sum of $b^{(i)}_{m_1, \cdots, m_w}$. In concise terms we have derived
 
+{\color{red} At this point, it is infeasible to attempt to write Equation (\ref{eqn:scalar y expansion}) directly as a power series. Instead, we will extract the coefficients $b_i$ for $i = 0, 1, 2, \ldots$ by observing constraints on the coefficients.\\
+
+First, as a result of the multinomial theorem, we have a constraint on the inner sum in Equation (\ref{eqn:scalar y expansion}), which is constraint on the index of the sum so we shall call this an index constraint.\\
+
+Second, the coefficient $b_i$ is associated with the term $z^i$ so we must form an equality between $i$ and the power on $z$ in Equation (\ref{eqn:scalar y expansion}). To satisfy this equality, a constant is required. This is a constraint on the power of the scalar $z$ so we shall call this a power constraint. This constraint implies $k_{i + 1} = k_{i + 2} = \cdots = 0$. Therefore, both the index constraint and power constraint can be reduced to a finite series instead of an infinite series.}
+
 \begin{equation}
     b^{(i)}_{m_1, \cdots, m_w} = \sum_{k=0}^{\infty} s_k \sum_{k_1 + \cdots + k_d = k} \binom{k}{k_1, \cdots, k_d} \prod_{j=1}^{d} \theta_{ij}^{k_j} \sum_{\substack{l_{0, \cdots, 0} + \cdots + l_{\infty, \cdots, \infty} = k_j \\ \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_1 l_{n_1, \cdots, n_w} = m_1 \\ \vdots \\ \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_w l_{n_1, \cdots, n_w} = m_w}} \binom{k_j}{\mathbf{L}} (a^{(j)}_{n_1, \cdots, n_w})^{l_{n_1, \cdots, n_w}}
 \end{equation}
@@ -551,6 +368,7 @@ The only issue is that of finding solutions to the index and power constraints.
 
 We can use this method for deriving power series for repeatedly composed functions with linear transformations (i.e. $\mathbf{y} = f(\mathbf{\Theta}_3 f(\mathbf{
 \Theta}_1 f(\mathbf{\Theta}_1 \mathbf{x})))$). We represent our original input variable as $\mathbf{x} = \mathbf{z}$ so that we have coefficients $a_{1, 0, \cdots, 0} = a_{0, 1, \cdots, 0} = \cdots = a_{0, 0, \cdots, 1} = 1$ with all other coefficients zero. Then, we update $\mathbf{a}$ for each composition of the function to obtain $\mathbf{b}$ for $\mathbf{y}$. This can be easily applied to neural networks.\\
+If a collection of $k_j$ for $j = 0, 1, 2, \ldots$ satisfy both of these constraints, then, the constant coefficients of $z^i$ may be pulled out and added to the sum of $b_i$. In concise terms we have derived that
 
 In order to make this method computationally feasible, we must truncate the power series at some precision. Say the maximum power we wish on any variable is $K$, then, we simply replace instances of $\sum_{k=0}^{\infty} s_k x^k$ with $\sum_{k=0}^{K} s_k x^k$. Thus, coefficients of order $0, 1, \cdots, K$ will have no error and our approximation will only have truncation error from dropping terms with order $> K$.
 
