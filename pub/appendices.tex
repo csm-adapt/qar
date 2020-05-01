@@ -1,5 +1,128 @@
 \section{Appendix}\label{sec:appendix}
 
+
+% Begin vector layer expansion moved by Andrew and Maria on May 1st. %
+Suppose that $\mathbf{x} \in \mathbb{R}^d, (d \in \mathbb{Z})$ is a vector, $\mathbf{y} \in \mathbb{R}^c, (c \in \mathbb{Z})$ is a vector, $\mathbf{\Theta} \in \mathbb{R}^{c \times d}$ is a matrix, and $\sigma: \mathbb{R} \to \mathbb{R}$ is an analytic function. Since $\sigma$ is analytic, it can be represented as
+
+\begin{align}
+    \sigma(x)
+    &= s_0 + s_1 x + s_2 x^2 + \cdots \nonumber \\
+    &= \sum_{k=0}^{\infty} s_{k} x^{k}.
+    \label{eqn:vector layer activation}
+\end{align}
+
+Suppose that we can represent each entry of $\mathbf{x}$ as a power series of the entries of a vector $\mathbf{z} \in \mathbb{R}^{w}, (w \in \mathbb{Z})$.
+
+\begin{align}
+    \forall i &= 1, \cdots, d, \nonumber \\ x_i
+    &= a^{(i)}_{0,0,\cdots,0} + a^{(i)}_{1,0,\cdots,0} z_1 + a^{(i)}_{2,0,\cdots,0} z_1^2 + \cdots \nonumber \\
+    &+ a^{(i)}_{0,1,\cdots,0} z_2 + a^{(i)}_{1,1,\cdots,0} z_1 z_2 + a^{(i)}_{2,1,\cdots,0} z_1^2 z_2 + \cdots \nonumber \\
+    &+ a^{(i)}_{0,0,\cdots,1} z_w + a^{(i)}_{1,0,\cdots,1} z_1 z_w + a^{(i)}_{2,0,\cdots,1} z_1^2 z_w + \cdots \nonumber \\
+    &= \sum_{n_1,n_2,\cdots,n_w}^{\infty,\infty,\cdots,\infty} a^{(i)}_{n_1,n_2,\cdots,n_w} z_1^{n_1} z_2^{n_2} \cdots z_w^{n_w}.
+    \label{eqn:vector x series}
+\end{align}
+
+Finally, suppose that we have the relation
+
+\begin{equation}
+    \mathbf{y} = \mathbf{\sigma}(\mathbf{\Theta} \mathbf{x})
+    \label{eqn:vector layer relation}
+\end{equation}
+
+where $\sigma$ is being applied element-wise to a vector.\\
+
+Similar to the scalar case, this represents a multi-neuron layer of an ANN with input $\mathbf{x}$, weights $\mathbf{\theta}$, output $\mathbf{y}$, and activation $\sigma$. The value of $z$ can be interpreted as the input to the entire ANN.
+
+\subsubsection{Objective}
+
+We wish to represent each entry of $\mathbf{y}$ as a power series of the entries of $\mathbf{z}$. That is,
+
+\begin{align}
+    \forall i &= 1, \cdots, c, \nonumber \\ y_i
+    &= b^{(i)}_{0,0,\cdots,0} + b^{(i)}_{1,0,\cdots,0} z_1 + b^{(i)}_{2,0,\cdots,0} z_1^2 + \cdots \nonumber \\
+    &+ b^{(i)}_{0,1,\cdots,0} z_2 + b^{(i)}_{1,1,\cdots,0} z_1 z_2 + b^{(i)}_{2,1,\cdots,0} z_1^2 z_2 + \cdots \nonumber \\
+    &+ b^{(i)}_{0,0,\cdots,1} z_w + b^{(i)}_{1,0,\cdots,1} z_1 z_w + b^{(i)}_{2,0,\cdots,1} z_1^2 z_w + \cdots \nonumber \\
+    &= \sum_{n_1,n_2,\cdots,n_w}^{\infty,\infty,\cdots,\infty} b^{(i)}_{n_1,n_2,\cdots,n_w} z_1^{n_1} z_2^{n_2} \cdots z_w^{n_w}.
+    \label{eqn:vector y series}
+\end{align}
+
+Rewriting Equation (\ref{eqn:vector layer relation}) in terms of Equations (\ref{eqn:vector layer activation}) and (\ref{eqn:vector x series}), we obtain
+
+\begin{align}
+    \forall i &= 1, \cdots, c, \nonumber \\ y_i
+    &= \left[\mathbf{\sigma}(\mathbf{\Theta} \mathbf{x})\right]_i \nonumber \\
+    &= \sigma(\mathbf{\theta}_i \mathbf{x}) \nonumber \\
+    &= \sum_{k=0}^{\infty} s_k (\mathbf{\theta}_i \mathbf{x})^k \nonumber \\
+    &= \sum_{k=0}^{\infty} s_k \left(\sum_{j=1}^{d} \theta_{ij} x_{j}\right)^k \nonumber \\
+    &= \sum_{k=0}^{\infty} s_k \left(\sum_{k_1 + \cdots + k_d = k} \binom{k}{k_1, \cdots, k_d} \prod_{j=1}^{d} (\theta_{ij} x_j)^{k_j} \right) \nonumber \\
+    &= \sum_{k=0}^{\infty} s_k \left(\sum_{k_1 + \cdots + k_d = k} \binom{k}{k_1, \cdots, k_d} \prod_{j=1}^{d}\theta_{ij}^{k_j} \left(\sum_{n_1, \cdots, n_w}^{\infty,
+    \cdots, \infty} a^{(j)}_{n_1,\cdots,n_w} z_1^{n_1}  \cdots z_w^{n_w} \right)^{k_j}\right) \nonumber \\
+    &= \sum_{k=0}^{\infty} s_k \left(\sum_{k_1 + \cdots + k_d = k} \binom{k}{k_1, \cdots, k_d} \prod_{j=1}^{d} \theta_{ij}^{k_j} \left(\sum_{\lVert \mathbf{L} \rVert_1 = k_j} \binom{k_j}{\mathbf{L}} \prod_{n_1, \cdots, n_w}^{\infty, \cdots, \infty} (a^{(j)}_{n_1, \cdots, n_w} z_1^{n_1} \cdots z_w^{n_w})^{l_{n_1, \cdots, n_w}} \right)\right). \nonumber \\
+    \label{eqn:vector y expansion}
+\end{align}
+
+where $\mathbf{L}$ is a collection of non-negative integers that are indices such that
+
+\begin{align*}
+    &\mathbf{L} = l_{\underbrace{0, \cdots, 0}_{\times w}}, \ldots, l_{\underbrace{\infty, \cdots, \infty}_{\times w}}, \\
+    &\lVert \mathbf{L} \rVert_1 = l_{0, \cdots, 0} + \cdots + l_{\infty, \cdots, \infty}, \\
+    &\binom{k_j}{\mathbf{L}} = \binom{k_j}{l_{0, \cdots, 0}, \ldots, l_{\infty, \cdots, \infty}}.
+\end{align*}
+
+\subsubsection{Coefficient Extraction}
+
+To find the coefficients $b^{(i)}_{m_1, \cdots, m_w}$ from Equation (\ref{eqn:vector y expansion}), we must find terms satisfying index constraints
+
+\begin{align}
+    k &= \sum_{n=1}^{d} k_n \\
+    k_j &= \lVert \mathbf{L} \rVert_1
+\end{align}
+
+and power constraints
+
+\begin{align}
+    m_1 &= \sum_{n_1, \cdots, n_w}^{\infty, \cdots, \infty} n_1 l_{n_1, \cdots, n_w} \nonumber \\
+    m_2 &= \sum_{n_1, \cdots, n_w}^{\infty, \cdots, \infty} n_2 l_{n_1, \cdots, n_w} \nonumber \\
+    \vdots \;\; &= \qquad \vdots \nonumber \\
+    m_3 &= \sum_{n_1, \cdots, n_w}^{\infty, \cdots, \infty} n_w l_{n_1, \cdots, n_w}.
+\end{align}
+
+Similar to the scalar case, notice that the power constraints can be simplified since any solution must also satisfy
+
+\begin{equation}
+    l_{n_1, \cdots, n_{p-1}, m_p + 1, n_{p+1}, \cdots, n_w} = l_{n_1, \cdots, n_{p-1}, m_p + 2, n_{p+1}, \cdots, n_w} = \cdots = 0.
+\end{equation}
+
+resulting in
+
+\begin{align}
+    m_1 &= \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_1 l_{n_1, \cdots, n_w} \nonumber \\
+    m_2 &= \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_2 l_{n_1, \cdots, n_w} \nonumber \\
+    \vdots \;\; &= \qquad \vdots \nonumber \\
+    m_w &= \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_w l_{n_1, \cdots, n_w}.
+\end{align}
+
+If a collection of $k_1, \ldots, k_d$ and $\mathbf{L}$ satisfy all of these constraints, then the value
+
+\begin{equation*}
+    s_k \binom{k}{k_1, \cdots, k_d} \binom{k_j}{\mathbf{L}} \theta_{ij}^{k_j} (a^{(j)}_{n_1, \cdots, n_w})^{l_{n_1, \cdots, n_w}}
+\end{equation*}
+
+may be pulled out to the sum of $b^{(i)}_{m_1, \cdots, m_w}$. In concise terms we have derived
+
+{\color{red} At this point, it is infeasible to attempt to write Equation (\ref{eqn:scalar y expansion}) directly as a power series. Instead, we will extract the coefficients $b_i$ for $i = 0, 1, 2, \ldots$ by observing constraints on the coefficients.\\
+
+First, as a result of the multinomial theorem, we have a constraint on the inner sum in Equation (\ref{eqn:scalar y expansion}), which is constraint on the index of the sum so we shall call this an index constraint.\\
+
+Second, the coefficient $b_i$ is associated with the term $z^i$ so we must form an equality between $i$ and the power on $z$ in Equation (\ref{eqn:scalar y expansion}). To satisfy this equality, a constant is required. This is a constraint on the power of the scalar $z$ so we shall call this a power constraint. This constraint implies $k_{i + 1} = k_{i + 2} = \cdots = 0$. Therefore, both the index constraint and power constraint can be reduced to a finite series instead of an infinite series.}
+
+\begin{equation}
+    b^{(i)}_{m_1, \cdots, m_w} = \sum_{k=0}^{\infty} s_k \sum_{k_1 + \cdots + k_d = k} \binom{k}{k_1, \cdots, k_d} \prod_{j=1}^{d} \theta_{ij}^{k_j} \sum_{\substack{l_{0, \cdots, 0} + \cdots + l_{\infty, \cdots, \infty} = k_j \\ \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_1 l_{n_1, \cdots, n_w} = m_1 \\ \vdots \\ \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_w l_{n_1, \cdots, n_w} = m_w}} \binom{k_j}{\mathbf{L}} (a^{(j)}_{n_1, \cdots, n_w})^{l_{n_1, \cdots, n_w}}
+\end{equation}
+
+The only issue is that of finding solutions to the index and power constraints.
+% End vector layer expansion moved by Andrew and Maria on May 1st. %
+
 %Beginning of content moved to appendix from main body by Andrew and Maria on April 29th.%
 
 %Beginning of softmax derivation %

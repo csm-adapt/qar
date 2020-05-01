@@ -9,9 +9,9 @@ Fully dense neural network (NN) architectures, such as the one shown in Figure~\
 \end{center}
 \end{figure}
 
-A typical neural network, as given in (insert neural network reference), is nothing more than an arbitrary function generator, but at present, the network weights can not map back to analytic forms that capture and describe the underlying physics. There are, however, many such mappings through polynomial series expansions (possible reference to other polynomial series expansion applications?). We hypothesize that the physics of a process can be extracted by fitting the polynomial expansions of known physical relationships to the polynomial coefficients of a polynomial series expansion of Equation~(\ref{eqn:nn analytical form}). \\
+A typical neural network, as given in (insert neural network reference), is nothing more than an arbitrary function generator, but at present, the network weights can not map back to analytic forms that capture and describe the underlying physics. There are, however, many such mappings through polynomial series expansions (possible reference to other polynomial series expansion applications?). We hypothesize that the physics of a process can be extracted by fitting the polynomial expansions of known physical relationships to the polynomial coefficients of a polynomial series expansion. \\
 
-The goal is to obtain an activation generating function for the chosen activation function in the neural network. There exists many potential options for choosing an activation function such as softplus, softmax, ReLU (rectified linear units), and logistic sigmoid. The details of the derivations for the generating functions of the common activation functions can be found in the appendix. The generating function for the ReLU is dependent on both the input variables and the network weights. Although ReLU (rectified linear units) have become a more common activation function, its discontinuity at $x = 0$ requires an infinite series to fully capture the behavior at this transition. {\color{red}Note: add more pros and cons about each of the common activation functions if necessary}
+The first step is to obtain an activation generating function for the chosen activation function in the neural network. There exists many potential options for choosing an activation function such as softplus, softmax, ReLU (rectified linear units), and logistic sigmoid. The details of the derivations for the generating functions of these common activation functions can be found in the Appendix. The generating function for the ReLU is dependent on both the input variables and the network weights. Although ReLU (rectified linear units) have become a more common activation function, its discontinuity at $x = 0$ requires an infinite series to fully capture the behavior at this transition. {\color{red}Note: add more pros and cons about each of the common activation functions if necessary}
 
 %\begin{equation}
 %	f(x) = log(1+e^x)
@@ -251,7 +251,7 @@ Suppose that $\mathbf{x} \in \mathbb{R}^d, (d \in \mathbb{Z})$ is a vector, $\ma
     \label{eqn:vector layer activation}
 \end{align}
 
-Suppose that we can represent each entry of $\mathbf{x}$ as a power series of the entries of a vector $\mathbf{z} \in \mathbb{R}^{w}, (w \in \mathbb{Z})$.
+Suppose that we can represent each entry of $\mathbf{x}$ as a power series of the entries of a vector $\mathbf{z} \in \mathbb{R}^{w}, (w \in \mathbb{Z})$, where the coefficients are $a^{(i)}_{m_1, \cdots, m_w}$.
 
 \begin{align}
     \forall i &= 1, \cdots, d, \nonumber \\ x_i
@@ -271,24 +271,11 @@ Finally, suppose that we have the relation
 
 where $\sigma$ is being applied element-wise to a vector.\\
 
-Similar to the scalar case, this represents a multi-neuron layer of an ANN with input $\mathbf{x}$, weights $\mathbf{\theta}$, output $\mathbf{y}$, and activation $\sigma$. The value of $z$ can be intrepreted as the input to the entire ANN.
+Similar to the scalar case, this represents a multi-neuron layer of an ANN with input $\mathbf{x}$, weights $\mathbf{\theta}$, output $\mathbf{y}$, and activation $\sigma$. The value of $z$ can be interpreted as the input to the entire ANN.
 
 \subsubsection{Objective}
 
-We wish to represent each entry of $\mathbf{y}$ as a power series of the entries of $\mathbf{z}$. That is,
-
-\begin{align}
-    \forall i &= 1, \cdots, c, \nonumber \\ y_i
-    &= b^{(i)}_{0,0,\cdots,0} + b^{(i)}_{1,0,\cdots,0} z_1 + b^{(i)}_{2,0,\cdots,0} z_1^2 + \cdots \nonumber \\
-    &+ b^{(i)}_{0,1,\cdots,0} z_2 + b^{(i)}_{1,1,\cdots,0} z_1 z_2 + b^{(i)}_{2,1,\cdots,0} z_1^2 z_2 + \cdots \nonumber \\
-    &+ b^{(i)}_{0,0,\cdots,1} z_w + b^{(i)}_{1,0,\cdots,1} z_1 z_w + b^{(i)}_{2,0,\cdots,1} z_1^2 z_w + \cdots \nonumber \\
-    &= \sum_{n_1,n_2,\cdots,n_w}^{\infty,\infty,\cdots,\infty} b^{(i)}_{n_1,n_2,\cdots,n_w} z_1^{n_1} z_2^{n_2} \cdots z_w^{n_w}.
-    \label{eqn:vector y series}
-\end{align}
-
-Rewriting Equation (\ref{eqn:vector layer relation}) in terms of Equations (\ref{eqn:vector layer activation}) and (\ref{eqn:vector x series}), we obtain
-
-{\color{red} Similarly, $y$ can also be represented as a power series with $b_i$ for $i = 0, 1, 2, \ldots$ as the coefficient using the same approach. We will rewrite the relation for $y$ given by Equation (\ref{eqn:scalar layer relation}) to find the coefficients $b_i$ for $i = 0, 1, 2, \ldots$ for Equation (\ref{eqn: eqn:scalar y series}).}
+Simarly, just as each entry of $\mathbf{x}$ can be represented as a power series, the same can be done for $\mathbf{y}$, where the coefficients are $b^{(i)}_{m_1, \cdots, m_w}$. Rewriting Equation (\ref{eqn:vector layer relation}) in terms of Equations (\ref{eqn:vector layer activation}) and (\ref{eqn:vector x series}), we obtain
 
 \begin{align}
     \forall i &= 1, \cdots, c, \nonumber \\ y_i
@@ -313,50 +300,13 @@ where $\mathbf{L}$ is a collection of non-negative integers that are indices suc
 
 \subsubsection{Coefficient Extraction}
 
-To find the coefficients $b^{(i)}_{m_1, \cdots, m_w}$ from Equation (\ref{eqn:vector y expansion}), we must find terms satisfying index constraints
-
-\begin{align}
-    k &= \sum_{n=1}^{d} k_n \\
-    k_j &= \lVert \mathbf{L} \rVert_1
-\end{align}
-
-and power constraints
-
-\begin{align}
-    m_1 &= \sum_{n_1, \cdots, n_w}^{\infty, \cdots, \infty} n_1 l_{n_1, \cdots, n_w} \nonumber \\
-    m_2 &= \sum_{n_1, \cdots, n_w}^{\infty, \cdots, \infty} n_2 l_{n_1, \cdots, n_w} \nonumber \\
-    \vdots \;\; &= \qquad \vdots \nonumber \\
-    m_3 &= \sum_{n_1, \cdots, n_w}^{\infty, \cdots, \infty} n_w l_{n_1, \cdots, n_w}.
-\end{align}
-
-Similar to the scalar case, notice that the power constraints can be simplified since any solution must also satisfy
-
-\begin{equation}
-    l_{n_1, \cdots, n_{p-1}, m_p + 1, n_{p+1}, \cdots, n_w} = l_{n_1, \cdots, n_{p-1}, m_p + 2, n_{p+1}, \cdots, n_w} = \cdots = 0.
-\end{equation}
-
-resulting in
-
-\begin{align}
-    m_1 &= \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_1 l_{n_1, \cdots, n_w} \nonumber \\
-    m_2 &= \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_2 l_{n_1, \cdots, n_w} \nonumber \\
-    \vdots \;\; &= \qquad \vdots \nonumber \\
-    m_w &= \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_w l_{n_1, \cdots, n_w}.
-\end{align}
-
-If a collection of $k_1, \ldots, k_d$ and $\mathbf{L}$ satisfy all of these constraints, then the value
+To find the coefficients $b^{(i)}_{m_1, \cdots, m_w}$ from Equation (\ref{eqn:vector y expansion}), we must find terms satisfying index constraints and power constraints. Similar to a scalar layer expansion, the power constraints can be simplified as given in the Appendix. If a collection of $k_1, \ldots, k_d$ and $\mathbf{L}$ satisfy all of these constraints, then the value
 
 \begin{equation*}
     s_k \binom{k}{k_1, \cdots, k_d} \binom{k_j}{\mathbf{L}} \theta_{ij}^{k_j} (a^{(j)}_{n_1, \cdots, n_w})^{l_{n_1, \cdots, n_w}}
 \end{equation*}
 
 may be pulled out to the sum of $b^{(i)}_{m_1, \cdots, m_w}$. In concise terms we have derived
-
-{\color{red} At this point, it is infeasible to attempt to write Equation (\ref{eqn:scalar y expansion}) directly as a power series. Instead, we will extract the coefficients $b_i$ for $i = 0, 1, 2, \ldots$ by observing constraints on the coefficients.\\
-
-First, as a result of the multinomial theorem, we have a constraint on the inner sum in Equation (\ref{eqn:scalar y expansion}), which is constraint on the index of the sum so we shall call this an index constraint.\\
-
-Second, the coefficient $b_i$ is associated with the term $z^i$ so we must form an equality between $i$ and the power on $z$ in Equation (\ref{eqn:scalar y expansion}). To satisfy this equality, a constant is required. This is a constraint on the power of the scalar $z$ so we shall call this a power constraint. This constraint implies $k_{i + 1} = k_{i + 2} = \cdots = 0$. Therefore, both the index constraint and power constraint can be reduced to a finite series instead of an infinite series.}
 
 \begin{equation}
     b^{(i)}_{m_1, \cdots, m_w} = \sum_{k=0}^{\infty} s_k \sum_{k_1 + \cdots + k_d = k} \binom{k}{k_1, \cdots, k_d} \prod_{j=1}^{d} \theta_{ij}^{k_j} \sum_{\substack{l_{0, \cdots, 0} + \cdots + l_{\infty, \cdots, \infty} = k_j \\ \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_1 l_{n_1, \cdots, n_w} = m_1 \\ \vdots \\ \sum_{n_1, \cdots, n_w}^{m_1, \cdots, m_w} n_w l_{n_1, \cdots, n_w} = m_w}} \binom{k_j}{\mathbf{L}} (a^{(j)}_{n_1, \cdots, n_w})^{l_{n_1, \cdots, n_w}}
