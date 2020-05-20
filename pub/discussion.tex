@@ -25,9 +25,9 @@ Many non-trivial problems in materials science, and in science more broadly, are
 % \\[2ex]
 
 % The goal is to iteratively improve on this constitutive model, one term at a time, and monitor the effect on the residuals between the predicted yield, $\hat{\sigma_y}$ and the actual yield $\sigma_y$.
-The goal of this approach is to identify the coefficients of a hypothesized constitutive relationship, coefficients that capture the specific physics of a process, through a least-squares fit between the covector space of a neural network series expansion, $\boldsymbol{\alpha}(\boldsymbol{\theta})$, which is a function of the model parameters, and the covector space of the constitutive relationship, $\boldsymbol{\beta}(C_k)$, which is a function of the physical constants of the model.
+The goal of this approach is to identify the coefficients of a hypothesized constitutive relationship, coefficients that capture the specific physics of a process (through a least-squares fit between the covector space of a neural network series expansion, $\boldsymbol{\alpha}(\boldsymbol{\theta})$, which is a function of the model parameters) and the covector space of the constitutive relationship, $\boldsymbol{\beta}(C_k)$, which is a function of the physical constants of the model.
 
-It may be useful to introduce a schematic that not only frames the hypothesis, but also graphically registers key details of the methods section of this paper.  Such a figure is presented in Figure~\ref{fig:nn-2}
+It may be useful to introduce a schematic that not only frames the hypothesis, but also graphically registers key details of the methods section of this paper (Figure~\ref{fig:nn-2}).
 
 
 \begin{figure}[htbp]
@@ -42,84 +42,34 @@ It may be useful to introduce a schematic that not only frames the hypothesis, b
 % Find \alpha_k for neural network (NN) expansion
 % Find \beta_k for constitutive relationship (CR) expansion
 % Solve for C_k through fit (least-squares for now) of \alpha_k to \beta_k
-Having fit the model parameters, $\boldsymbol{\theta}$, on a vector space spanned by the column vectors of ${\bf x}$, the coefficients (the covector basis) of the neural network expansion, $\boldsymbol{\alpha}(\boldsymbol{\theta})$, capture the functional relationship between the input space and the response space, both affine and non-linear contributions, introduced through those parameters, $\boldsymbol{\theta}$, and the coefficient generating functions for the activation, e.g. Equations~\ref{eqn:ReLU generating function} (Rectified Linear Unit, ReLU) and \ref{eqn:softmax generating function} (softmax), respectively.
+Having fit the model parameters, $\boldsymbol{\theta}$, on a vector space spanned by the column vectors of ${\bf x}$, the coefficients (the covector basis) of the neural network expansion, $\boldsymbol{\alpha}(\boldsymbol{\theta})$, capture the functional relationship between the input space and the response space, both affine and non-linear contributions, introduced through those parameters, $\boldsymbol{\theta}$, and the coefficient generating functions for the activation, e.g. Equations~\ref{eqn:ReLU generating function} (Rectified Linear Unit, ReLU) and \ref{eqn:softmax generating function} (softmax), respectively (see Appendix).
 
 Naturally, the activation generating functions must match the activation function chosen in the neural network model architecture. Equation~\ref{eqn:ReLU generating function} is derived for ReLU activation, the most common hidden layer activation. (Generating functions for other activations are provided in the appendix.) In addition to the hidden layers, activation functions must also be chosen for the output layer. The two most common output activations are linear (Eq.~\ref{eqn:linear generating function}) and softmax (Eq.~\ref{eqn:softmax generating function}) for regression and classification, respectively.
-
-% ReLU activation depends on the data, others do not.
-ReLU activation,
-\[
-    \sigma(z) = \begin{cases}
-            z   & \mbox{if } z > 0, \\
-            0   & \mbox{otherwise}
-        \end{cases}
-\]
-is discontinuous in the first derivative at $z_i = 0$. Therefore, the coefficient generating function of this activation must either be either a function of the input data, ${\bf z}$ or a small modification must be made to the softplus,
-\begin{equation}
-    \sigma(z; \alpha) = \frac{1}{\alpha} \ln\left( 1 + e^{\alpha x} \right).
-    \label{eqn:modified softmax}
-\end{equation}
-In the limit as $\alpha$ approaches infinity, this converges to the ReLU. Practically, though, $\alpha$ can be assigned a large value and the coefficient generating function no longer depends on the input data, see Equation~\ref{eqn:modified softplus generating function} in {\color{red} the appendix}. However, because of the high computational cost of expressing the coefficients using the modified softplus, and the relative low cost of forward evaluation of the trained neural network in order to apply Equation~\ref{eqn:ReLU generating function}, expressing the coefficient generating function of ReLU in terms of the input data, as in Equation~\ref{eqn:ReLU generating function}, rather than the training-data-agnostic approach in Equation~\ref{eqn:modified softplus generating function} would seem more practical.
 
 % possible because \alpha and \beta both span the same subspace.
 \begin{condition}
     Both the neural network and the constitutive relationship must depend on the same independent variables.
 \end{condition}
+{\color{red} We only have one condition ???}
 That is, they must be described on the same basis vectors. The fit between the coefficients of the neural network expansion--$\boldsymbol{\alpha}$, the covector space of the neural network's basis vectors--and the coefficients of the series expansion of the constitutive relationship (its covector space, $\boldsymbol{\beta}$) is only possible because both span the same subspace and share a common description of the solution within that subspace, that is, the covector spaces are colinear. That is, suppose that $A$ maps between a vector space and its covector space. If $A: A(X) = X^*$ and $A: A(Y) = Y^*$, then $X^* = Y^*$ if and only if $X = Y$.
 
-If ${\bf x} = ([c], d)$ are the concentration of a solute and grain size, respectively, then the constitutive relationship expansion would be,
-\begin{align}
-    \sigma_y &= \sigma_f  + C [c]^{2/3} + \frac{k}{\sqrt{d}} \nonumber \\
-        &= \sigma_f + \underbrace{\sum_{k=0}^{\infty} a_k [c]^k}_{\text{solute}} + \underbrace{\sum_{k=0}^{\infty} b_k d^k}_{\text{Hall-Petch}} \nonumber \\
-        &= \sigma_f + \sum_{k=0}^{\infty} a_k \he[\left( {\bf S}_\text{solute}{\bf x} \right)]{k} + \sum_{k=0}^{\infty} b_k \he[\left( {\bf S}_\text{Hall-Petch} {\bf x} \right)]{k}
-    \label{eqn:simplified strengthening}
-\end{align}
-where
-\begin{conditions}
-    \sigma_f & Matrix flow stress. \\
-    a_k & Coefficient generating function for $x^{2/3}$. \\
-    b_k & Coefficient generating function for $x^{-1/2}$. \\
-    {\bf S}_\text{solute} & Selection vector/matrix for choosing the solute concentration from the input vector. \\
-    {\bf S}_\text{Hall-Petch} & Selection vector/matrix for choosing the grain size from the input vector.
-\end{conditions}
-(Coefficient generating functions can be found in Table~\ref{tab:generating functions of common functions}.) Combining Equations~\ref{eqn:simplified strengthening} and \ref{eqn:hadamard exponent vector},
-\begin{multline*}
-    \sigma_y = \sigma_f + \sum_{k=0}^\infty a_k \left[ \sum_{l_1=0}^k \binom{k}{l_1, l_2} \prod_{m=1}^2 (({\bf S}_\text{solute})_m {\bf x}_m)^{l_m} \right] \\
-        + \sum_{k=0}^\infty b_k \left[ \sum_{l_1=0}^k \binom{k}{l_1, l_2} \prod_{m=1}^2 (({\bf S}_\text{Hall-Petch})_m {\bf x}_m)^{l_m} \right],\ l_2 = k - l_1
-\end{multline*}
-which further simplifies to
-\begin{multline*}
-    \sigma_y = \sigma_f + \sum_{k=0}^\infty \sum_{l_1=0}^k a_k \binom{k}{l_1, l_2} \prod_{m=1}^2 ({\bf S}_\text{solute})_m^{l_m} \prod_{m=1}^2{\bf x}_m^{l_m} \\
-        + \sum_{k=0}^\infty \sum_{l_1=0}^k b_k \binom{k}{l_1, l_2} \prod_{m=1}^2 ({\bf S}_\text{Hall-Petch})_m^{l_m} \prod_{m=1}^2{\bf x}_m^{l_m}
-\end{multline*}
-such that the term $\prod_{m=1}^2{\bf x}_m^{l_m}$ serves as the common basis set over which the summation occurs, so that now, having a common basis, this simplifies to,
+One example of the proposed method is performed for yield strength, which is known to depend on intrinsic flow stress, as well as solute and grain size contributions, where the mapping of the polynomial expansions for both the neural network and potential physics :
+
 \begin{equation}
     \sigma_y = \sigma_f + \sum_{k=0}^\infty \sum_{l_1=0}^k \binom{k}{l_1, l_2} \left( a_k \prod_{m=1}^2 ({\bf S}_\text{solute})_m^{l_m} + b_k \prod_{m=1}^2 ({\bf S}_\text{Hall-Petch})_m^{l_m} \right) \prod_{m=1}^2{\bf x}_m^{l_m}
 \end{equation}
 
-It should be noted here that this common basis is a function of the length (dimension) of the input vector and of the order of the expansion. Therefore, two series will share the same basis vector and the same covector space if and only if they are taken to the same order. In addition, because there is no guarantee that the input vector space directions are orthogonal, there is no guarantee that the cross-term interactions will vanish and, therefore, must be included explicitly. This expansion includes all cross-terms and, through the element-wise exponentiation, also explicitly captures all combinations of powers of all cross-terms. Equation~\ref{eqn:ANN power series coefficient generating function} shows that the polynomial series expansion for the first layer of a neural network,
-\[
-    y^{(1)} = \sum_k \alpha^{(1)}_k \he[\left( \boldsymbol{\theta}^{(1)} {\bf x} \right)]{k},
-\]
-similarly relies on the element-wise exponential, $(\bullet)\he{n}$, as does the expansion of all layers. Unlike scalar exponentiation, element-wise exponentiation does not distribute, as seen in Equation~\ref{eqn:nondistributive hadamard}, and because element-wise exponentiation does not distribute, this equation explicitly captures all possible (second, $x_i^m x_j^n$; third, $x_i^m x_j^n x_k^p$; fourth, $x_i^m x_j^n x_k^p x_l^r$; etc.) cross-interactions of each term in $(\boldsymbol{\theta}{\bf x})$ at all polynomial orders. This is equivalent, then, to expanding over the basis set that includes all cross-interactions in the input vector space for both the constitutive relation and neural network polynomial expansions.
-
-% data pre-processing
-Data preprocessing is an important step in training a neural network to avoid implicit bias. Commonly, data is whitened, also known as scaling or standardization, ${\bf z}_s^{(k)}: {\bf z}_s^{(k)} = \frac{{\bf z}^{(k)} - \overline{{\bf z}^{(k)}}}{\sigma}$, where $\overline{{\bf z}^{(k)}}$ is the arithmetic mean and $\sigma$ the standard deviation of data in layer, $k$. However, a model trained on such scaled data would no longer share the vector space of the constitutive relationship. To ensure that both the neural network and constitutive relation expansions share a common vector space, and thus a common covector space, this whitening procedure must be integrated into the construction of the neural network architecture.
-
-Procedurally, the neural network expansion proceeds as described in Section~\ref{methods}. The input to each layer, which is the output from the previous layer, is subjected first to an affine transformation, then to an activation function. The activation function is completely described though its polynomial expansion and the corresponding coefficient generating function. Using this same structure, then, data whitening can be applied to any layer, including the input layer, as an identity tranform ($\boldsymbol{\theta} = {\bf I}_d$, where $d$ is the dimension of the source layer) followed by the whitening expansion whose coefficient generating function is simply,
-\begin{equation}
-    \alpha_k({\bf z}) = \begin{cases}
-        -\overline{\bf z}/\sigma    & \mbox{if } k = 0, \\
-        1/\sigma                    & \mbox{if } k = 1, \\
-        0                           & \mbox{otherwise}
-    \end{cases}
-\end{equation}
 where
 \begin{conditions}
-    \overline{\bf z}    & The mean of the data into the standarization layer. \\
-    \sigma              & The standard deviation of the data into the standardization layer.
+    \sigma_f & matrix flow stress \\
+    a_k & coefficient generating function for $x^{2/3}$ \\
+    b_k & coefficient generating function for $x^{-1/2}$ \\
+    {\bf S}_\text{solute} & selection vector/matrix for choosing the solute concentration from the input vector \\
+    {\bf S}_\text{Hall-Petch} & selection vector/matrix for choosing the grain size from the input vector \\
+    {\bf x} = ([c], d) & concentration of a solute and grain size, respectively
 \end{conditions}
-By introducing such a whitening layer, data standardization can be included at any point in the neural network architecture.
+
+It should be noted here that this common basis is a function of the length (dimension) of the input vector and of the order of the expansion. Therefore, two series will share the same basis vector and the same covector space if and only if they are taken to the same order. In addition, because there is no guarantee that the input vector space directions are orthogonal, there is no guarantee that the cross-term interactions will vanish and, therefore, must be included explicitly. This expansion includes all cross-terms and, through the element-wise exponentiation, also explicitly captures all combinations of powers of all cross-terms.
 
 % dimensional sufficiency
 {\color{red} TBW. This must answer the question: how do we know if we've measured the right things--not the number of measurements, but that we have enough information? How do we know that the solution has converged? Example: A model is to be fit to the number of cakes produced by a bakery. If we are given weights of flour and sugar and number of eggs, our model can accurately tell us the \emph{volume} of cakes produced, but not the number. If this bakery makes cupcakes, but the model is trained across a spectrum of bakers, such as purveyors of wedding cakes and catering companies who work with large sheet cakes, then our dimensions (flour, sugar, eggs) are insufficient to fit the number of cakes produced. If, however, we also include number of orders and revenue, some information about the \emph{quanta} of cakes is baked into those two additional dimensions (sorry, I couldn't help myself). Therefore, a model based only on (flour, sugar, eggs) is dimensionally insufficient, but a model based on (flour, sugar, eggs, order size, revenue) is dimensionally sufficient.
@@ -137,118 +87,11 @@ This leads to a seven-step process for systematically and incrementally extracti
 \begin{enumerate}
 	\item Collect data--features and targets--for which relationships are expected to exist.
 	\item Design and train a fully dense multi-layer perceptron network (ANN).
-	\item Build a power series expansion from the architecture of this ANN, using Equations~(\ref{eqn:sigmoid zeta expansion}) and (\ref{eqn:ANN power series coefficient generating function}) to populate the coefficients using the trained weights from the neural network.
+	\item Build a power series expansion from the architecture of this ANN to populate the coefficients using the trained weights from the neural network.
 	\item Hypothesize a constitutive relationship between the feature space and the target space. \label{item:hypothesis}
-	\item Recast the terms in the hypothesis function from \#\ref{item:hypothesis} as power series expansions, creating power series coefficient generating functions that are functions of the constitutive model fitting parameters. An example of this process is provided below, and a table of select power series expansions relevant to materials research are provided in Table~(\ref{table:power series expansions}). \label{item:coefficients}
+	\item Recast the terms in the hypothesis function from \#\ref{item:hypothesis} as power series expansions, creating power series coefficient generating functions that are functions of the constitutive model fitting parameters. An example of this process is provided below, and a table of select power series expansions relevant to materials research are provided in the Appendix.
 	\item Perform an optimization, \emph{e.g.} least squares, fit to find the fitting parameters from \#\ref{item:coefficients}
 	\item Calculate the residuals of the ANN power series expansion coefficient vector, and from this residual vector, the error in the model. If the accuracy is sufficient for the application, stop; otherwise, expand the constitutive relationship from step \#\ref{item:hypothesis} and repeat.
 \end{enumerate}
 
-
-%\noindent {\color{red} How does dropout affect this? It doesn't. Dropout simply sets specific $\boldsymbol\theta$ to zero, which is handled seamlessly in the previous treatment.}
-
-%Beginning of scalar coefficients derivation.%
-\subsection{Polynomial Expansion of a Scalar Layer}
-\label{sec:polynomial series scalar}
-
-This derivation will be a simplification of the derivation given in Section \ref{sec:polynomial series vector} where each layer of the ANN may have only a single neurons.
-
-\subsubsection{Notation}
-Suppose that $x \in \mathbb{R}$ is a scalar, $y \in \mathbb{R}$ is a scalar, $\theta \in \mathbb{R}$ is a scalar, and $\sigma: \mathbb{R} \to \mathbb{R}$ is an analytic function. Since $\sigma$ is analytic, it can be represented as
-
-\begin{align}
-    \sigma(x)
-    &= s_0 + s_1 x + s_2 x^2 + \cdots \nonumber \\
-	&= \sum_{k=0}^{\infty} s_{k} x^{k}.
-	\label{eqn:scalar layer activation}
-\end{align}
-
-Suppose that we can represent $x$ as a power series of another scalar $z$.
-
-\begin{align}
-    x
-    &= a_0 + a_1 z + a_2 z^2 + \cdots \nonumber \\
-	&= \sum_{n=0}^{\infty} a_{n} z^{n}.
-	\label{eqn:scalar x series}
-\end{align}
-
-Finally, suppose that we have the relation
-
-\begin{equation}
-	y = \sigma(\theta x).
-	\label{eqn:scalar layer relation}
-\end{equation}
-
-This represents a single-neuron layer of an ANN with input $x$, weight $\theta$, output $y$, and activation $\sigma$. The value of $z$ can be intrepreted as the input to the entire ANN.
-
-\subsubsection{Objective}
-We wish to represent $y$ as a power series of $z$. That is,
-
-\begin{align}
-    y
-    &= b_0 + b_1 z + b_2 z^2 + \cdots \nonumber \\
-	&= \sum_{n=0}^{\infty} b_{n} z^{n}.
-	\label{eqn:scalar y series}
-\end{align}
-
-We will rewrite the relation for $y$ given by Equation (\ref{eqn:scalar layer relation}) to find the coefficients $b_i$ for $i = 0, 1, 2, \ldots$ for Equation (\ref{eqn: eqn:scalar y series}).
-
-\begin{align}
-    y
-    &= \sigma(\theta x) \nonumber \\
-    &= \sum_{k=0}^{\infty} s_k (\theta x)^k \nonumber \\
-    &= \sum_{k=0}^{\infty} s_k \theta^k \left(\sum_{n=0}^{\infty} a_{n} z^{n}\right)^{k} \nonumber \\
-	&= \sum_{k=0}^{\infty} s_k \theta^k \left(\sum_{k_0 + k_1 + k_2 + \cdots = k} \binom{k}{k_0, k_1, k_2, \cdots} \prod_{n=0}^{\infty} (a_n z^{n})^{k_n} \right)
-	\label{eqn:scalar y expansion}
-\end{align}
-
-Note that we used the multinomial theorem to expand the penultimate term in the equation.
-
-\subsubsection{Coefficient Extraction}
-
-At this point, it is infeasible to attempt to write Equation (\ref{eqn:scalar y expansion}) directly as a power series of $z$. Instead, we will extract the coefficients $b_i$ for $i = 0, 1, 2, \ldots$ by observing constraints on the coefficients.\\
-
-First, as a result of the multinomial theorem, we have a constraint on the inner sum in Equation (\ref{eqn:scalar y expansion}) that is
-
-\begin{equation}
-	k = \sum_{n=0}^{\infty} k_n
-	\label{eqn:scalar index constraint}
-\end{equation}
-
-where each $k_n$ must be a non-negative integer. This is a constraint on the index of the sum so we shall call this an index constraint.\\
-
-Second, the coefficient $b_i$ is associated with the term $z^i$ so we must form an equality between $i$ and the power on $z$ in Equation (\ref{eqn:scalar y expansion}). To satisfy this equality, we note that
-
-\begin{equation}
-	C z^{0 k_0 + 1 k_1 + 2 k_2 + \cdots} = (a_0 z^0)^{k_0} (a_1 z^1)^{k_1} (a_2 z^2)^{k_2} \cdots = \prod_{n=0}^{\infty} (a_n z^n)^{k_n}
-\end{equation}
-
-where $C$ is some constant. This implies that
-
-\begin{equation}
-    i = \sum_{n=0}^{\infty} n k_n.
-\end{equation}
-
-This is a constraint on the power of the scalar $z$ so we shall call this a power constraint.\\
-
-Notice that the power constraint implies $k_{i + 1} = k_{i + 2} = \cdots = 0$. Therefore, both the index constraint and power constraint can be reduced to a finite series instead of an infinite series.
-
-\begin{equation}
-	k = \sum_{n=0}^{i} k_n, \qquad i = \sum_{n=0}^{i} n k_n
-\end{equation}
-
-If a collection of $k_j$ for $j = 0, 1, 2, \ldots$ satisfy both of these constraints, then, the constant coefficients of $z^i$ which are
-
-\begin{equation*}
-    s_k \theta^k \binom{k}{k_0, k_1, \cdots, k_i} \prod_{n=0}^{\infty} a_n^{k_n}
-\end{equation*}
-
-may be pulled out and added to the sum of $b_i$. In concise terms we have derived that
-
-\begin{equation}
-    b_i = \sum_{k=0}^{\infty} s_k \theta^k \sum_{\substack{k_0 + k_1 + \cdots + k_i = k \\ 0 k_0 + 1 k_1 + \cdots + i k_i = i}} \binom{k}{k_0, k_1, \cdots, k_i} \prod_{n=0}^{\infty} a_n^{k_n}.
-	\label{eqn:scalar power series result}
-\end{equation}
-
-Thus, we have derived a tractable method of computing the coefficients of a power series after a linear and nonlinear transformation. We have included some worked examples of these coefficients in Appendix \ref{sec:worked scalar coeffs}.
-%End of scalar coefficients derivation.%
+The initial effort was made using the polynomial series exansions to obtain a power series coefficient generating function. However, a finite radius of convergence results in a divergence in the loss function making this approach unstable. The authors are looking to leverage the infinite radius of convergence of the Fourier Series and others to expand the neural network. The current plan is to progress from the neural network to the Fourier Series expansion, which could potentially be converted to a polynomial series making it easier to map directly to the constiutive relationships. Some constiutive relationships, such as 2 and 3-point correlation functions might better fit the Fourier Series anyway. 
