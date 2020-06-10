@@ -1,0 +1,30 @@
+* Discussion about Matt
+** AFOSR Fellowship
+*** Money follows him.
+* DOE call
+  Missed this call (due May 1).
+* NAVY Global X Challenge
+** Primed by an International Partner
+*** Gunther Eggler (Bochum, Germany)
+*** Ma Qian (RMIT, Australia)
+*** Aaron (GT)
+*** Pete (ISU)
+** 12 months worth of work
+** Funding level: $750k
+** Topic Areas
+*** Tailored material an manufacturing
+**** AM system with information fed in autonomously
+**** Replicator 
+     Informed from:
+     - X-ray CT,
+     - White light scanner,
+     - XRD
+**** Machine learning component?
+***** Existing database?
+***** Process optimization for this printer
+***** Autonomous agency
+****** Link between AM, characterization, etc. for autonomous design.
+**** Example: wing spar
+***** Assess that the spar is Al
+***** Try to match the microstructure
+      This microstructure has never been seen before.
