@@ -2,7 +2,6 @@
 # Ignore for LaTeX/PDF
 # #############################
 .DS_Store
-*.pdf
 *.log
 *.aux
 *.gz
