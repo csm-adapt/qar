@@ -1,0 +1,168 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{booktabs}
+\usepackage{mathtools}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\title{On the Truncation Error of Fourier Series}
+\date{\today}
+
+\begin{document}
+
+\setlength{\parindent}{0pt}
+\maketitle
+
+\section{Notation}
+
+\subsection{Fourier Series}
+
+We will consider the notion of a generalized Fourier series with wave period $L$. We will write the Fourier expansion of a function $f$ in its exponential form,
+\begin{equation}
+    f(x) = \sum_{n=-\infty}^{\infty} c_n e^{\frac{2\pi}{L}inx}
+\end{equation}
+where $c_{n} \in \mathbb{C}$ are determined by the series expansion of a function using the following expression.
+\begin{equation}
+    c_n = \frac{1}{L} \int_{0}^{L} f(x) e^{-\frac{2\pi}{L}inx} dx
+\end{equation}
+
+In practical settings, we cannot compute the entirety of a Fourier series. Instead, we compute the truncated Fourier series which does not contain all infinitely many terms. The truncated Fourier series of degree $N$ is denoted as
+\begin{equation}
+    \hat{f}_N(x) = \sum_{n=-N}^{N} \hat{c}_n e^{\frac{2\pi}{L}inx}
+\end{equation}
+where $\hat{c}_n$ are the same coefficients as $c_n$ if included in the truncation. That is
+\begin{equation}
+    \hat{c}_n =
+    \begin{cases}
+        c_n, &|n| \leq N, \\
+        0, &|n| > N
+    \end{cases}
+\end{equation}
+
+\subsection{Function Norms}
+
+We use function norms to measure the magnitude of a function over a compact support. In general, the $L_p$ norm of an integrable function $f$ is defined by:
+\begin{equation}
+    \lVert f \rVert_p = \left[\int_{0}^{L} |f(x)|^p dx \right]^{\frac{1}{p}}
+\end{equation}
+
+Specifically, we will be using the following function norms throughout this text:
+\begin{align}
+    \lVert f \rVert_1 &= \int_{0}^{L} |f(x)|\ dx \\
+    \lVert f \rVert_2 &= \sqrt{\int_{0}^{L} |f(x)|^2\ dx}
+\end{align}
+
+\section{Error Equality via Integration}
+
+We would like to determine the accuracy of a truncated Fourier series function compared to its exact function. To do this, we find the $L^2$ norm of the difference between the two functions.
+
+\begin{lemma}[Parseval's Identity]
+    Suppose that $f$ is a square integrable function ($\int_{0}^{L} |f(x)|^2\ dx$ exists) whose Fourier series converges uniformly to $f$. Then,
+    \begin{equation}
+        \lVert f \rVert_2^2 = \int_{0}^{L} |f(x)|^2\ dx = L \sum_{n=-\infty}^{\infty} |c_n|^2
+    \end{equation}
+\end{lemma}
+
+\begin{corollary}
+    Suppose that $f$ is a square integrable function whose Fourier series converges uniformly to $f$. Then,
+    \begin{equation*}
+        \lVert f - \hat{f}_N \rVert_2^2 = \lVert f \rVert_2^2 - \lVert \hat{f}_N \rVert_2^2
+    \end{equation*}
+\end{corollary}
+\begin{proof}
+    Using Parseval's Identity, we can rewrite the LHS of our equation.
+    \begin{align}
+        \lVert f - \hat{f}_N \rVert_2^2
+        &= L \sum_{n=-\infty}^{\infty} |c_n - \hat{c}_n|^2 \\
+        &= L \sum_{n=-\infty}^{\infty} (c_n^2 - 2c_n \hat{c}_n + \hat{c}_n^2) \\
+        &= L \sum_{n=-\infty}^{\infty} c_n^2 + L \sum_{n=-\infty}^{\infty} \hat{c}_n^2 - 2L \sum_{n=-\infty}^{\infty} c_n \hat{c}_n \\
+        &= \lVert f \rVert_2^2 + \lVert \hat{f}_N \rVert_2^2 - 2L \sum_{n=-\infty}^{\infty} c_n \hat{c}_n
+    \end{align}
+    We now analyze this final summation term. By substituting the exact expression for $\hat{c}_n$, we find
+    \begin{align}
+        L \sum_{n=-\infty}^{\infty} c_n \hat{c}_n
+        &= L \sum_{n=-\infty}^{\infty} \begin{cases}c_n^2,& |n| \leq N,\\ 0,& |n| > N\end{cases} \\
+        &= L \sum_{n=-N}^{N} c_n^2 = L \sum_{n=-N}^{N} \hat{c}_n^2 = L \sum_{n=-\infty}^{\infty} \hat{c}_n^2 \\
+        &= \lVert \hat{f}_N \rVert_2^2.
+    \end{align}
+    Therefore, plugging this result back in, we obtain the RHS of the equation.
+    \begin{equation}
+        \lVert f - \hat{f}_N \rVert_2^2 = \lVert f \rVert_2^2 + \lVert \hat{f}_N \rVert_2^2 - 2 \lVert \hat{f}_N \rVert_2^2 = \lVert f \rVert_2^2 - \lVert \hat{f}_N \rVert_2^2.
+    \end{equation}
+    This completes the proof.
+\end{proof}
+
+Thus, if we know both $f$ and $f_N$, we can compute the error:
+\begin{equation*}
+    \int_{0}^{L} |(f - \hat{f}_N)(x)|^2\ dx = \int_{0}^{L} |f(x)|^2\ dx - \int_{0}^{L} |\hat{f}_N(x)|^2\ dx
+\end{equation*}
+
+\section{Error Bound via Continuity}
+
+Often, we wish to know the degree of terms $N$ we need to calculate of the truncated Fourier series $\hat{f}_N$ before computing it. For this purpose, we form an inequality on $N$ to achieve some level of accuracy $\varepsilon$.
+
+\begin{lemma}
+    Let $f$ be a function that has $p$ continuous derivatives ($f \in \mathcal{C}^p$). Then, in the Fourier series of $f$,
+    \begin{equation}
+        |c_n| \leq \frac{\lVert f^{(p)} \rVert_1}{|n|^p}
+    \end{equation}
+\end{lemma}
+
+
+\begin{corollary}
+    Let $f$ be a function that has $p$ continuous derivatives. Suppose that we wish to bound the truncation error $\lVert f - \hat{f}_N \rVert_2^2 \leq \varepsilon$. Then, the following condition suffices:
+    
+    \begin{equation}
+        N \geq \sqrt[2p-1]{\frac{2\lVert f^{(p)} \rVert_1^2}{(2p - 1)\varepsilon}}
+    \end{equation}
+    
+    The following proof was based on the Giardina and Chirlian proof of a similar result for functions of bounded variation.
+\end{corollary}
+\begin{proof}
+    We start by rewriting the error calculation we found previously:
+    \begin{align}
+        \lVert f - \hat{f}_N \rVert_2^2
+        &= \lVert f \rVert_2^2 - \lVert \hat{f}_N \rVert_2^2 \\
+        &= L \sum_{n=-\infty}^{\infty} (|c_n|^2 - |\hat{c}_n|^2) \\
+        &= L \sum_{n=N+1}^{\infty} (|c_n|^2 + |c_{-n}|^2)
+    \end{align}
+    Then, we apply the lemma in order to find a bound.
+    \begin{equation}
+        \lVert f - \hat{f}_N \rVert_2^2 \leq 2L  \sum_{n=N+1}^{\infty} \frac{\lVert f^{(p)} \rVert_1^2}{n^{2p}}
+    \end{equation}
+    Since $n^{-2p}$ is monotonically decreasing for $p \geq 0$, we can convert this into an integral inequality.
+    \begin{equation}
+        2L \sum_{n=N+1}^{\infty} \frac{\lVert f^{(p)} \rVert_1^2}{n^{2p}} \leq 2L \int_{N}^{\infty} \frac{\lVert f^{(p)} \rVert_1^2}{x^{2p}}\ dx 
+    \end{equation}
+    Simplifying, we obtain:
+    \begin{equation}
+        \lVert f - \hat{f}_N \rVert_2^2 \leq \frac{2L \lVert f^{(p)} \rVert_1^2}{(2p - 1)N^{2p - 1}}
+    \end{equation}
+    Finally, we solve for $N$ by upper bounding our entire expression by $\varepsilon$.
+    \begin{equation}
+        \sqrt[2p-1]{\frac{2L \lVert f^{(p)} \rVert_1^2}{(2p - 1)\varepsilon}} \leq N
+    \end{equation}
+\end{proof}
+
+\begin{corollary}
+    Giardina and Chilian proved that:\\
+    Let $f$ be a continuous, bounded function such that $\sup_x |f(x)| = B < \infty$. Suppose that we wish to bound the truncation error $\lVert f -\hat{f}_N \rVert_2^2 \leq \varepsilon$.  Then, the following condition suffices:
+    \begin{equation}
+        N \geq \frac{2L B^2}{\varepsilon}
+    \end{equation}
+\end{corollary}
+
+\section{References}
+
+\begin{enumerate}
+    \item C. Giardina and P. Chirlian, "Bounds on the truncation error of periodic signals," in IEEE Transactions on Circuit Theory, vol. 19, no. 2, pp. 206-207, March 1972, doi: 10.1109/TCT.1972.1083433.
+\end{enumerate}
+
+\end{document}
